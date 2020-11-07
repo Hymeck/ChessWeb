@@ -2,8 +2,8 @@
 {
     public class Side : BaseEntity
     {
-        public int GameId { get; set; }
-        public int PlayerId { get; set; }
-        public int ColorId { get; set; }
+        public long GameId { get; set; }
+        public long PlayerId { get; set; }
+        public long ColorId { get; set; }
     }
 }

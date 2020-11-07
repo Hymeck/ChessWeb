@@ -20,7 +20,7 @@ namespace ChessWeb.Persistence.Implementations
             entities.AsEnumerable();
 
         public T Get(long id) => 
-            entities.SingleOrDefault(s => s.Id == id);
+            entities.FirstOrDefault(s => s.Id == id);
 
         public void Insert(T entity)
         {

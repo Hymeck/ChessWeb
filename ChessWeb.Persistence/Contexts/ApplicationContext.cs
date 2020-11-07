@@ -15,6 +15,10 @@ namespace ChessWeb.Persistence.Contexts
         {
             base.OnModelCreating(modelBuilder);
             new PlayerMap(modelBuilder.Entity<Player>());
+            new ColorMap(modelBuilder.Entity<Color>());
+            new GameMap(modelBuilder.Entity<Game>());
+            new MoveMap(modelBuilder.Entity<Move>());
+            new SideMap(modelBuilder.Entity<Side>());
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

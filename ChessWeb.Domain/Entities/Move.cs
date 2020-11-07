@@ -1,9 +1,9 @@
 ﻿namespace ChessWeb.Domain.Entities
 {
-    public class Moves : BaseEntity
+    public class Move : BaseEntity
     {
-        public int GameId { get; set; }
-        public int PlayerId { get; set; }
+        public long GameId { get; set; }
+        public long PlayerId { get; set; }
         public string Fen { get; set; }
         public string MoveNext { get; set; }
     }
