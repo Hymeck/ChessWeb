@@ -9,9 +9,9 @@ namespace ChessWeb.Domain.Maps
         public void BuildEntity(EntityTypeBuilder<Side> builder)
         {
             builder.HasKey(e => e.Id);
-            builder.HasOne(typeof(Game)).WithMany().HasForeignKey(nameof(Side.GameId));
-            builder.HasOne(typeof(Player)).WithMany().HasForeignKey(nameof(Side.PlayerId));
-            builder.HasOne(typeof(Color)).WithMany().HasForeignKey(nameof(Side.ColorId));
+            builder.HasOne(e => e.Game).WithMany().HasForeignKey("GameId");
+            builder.HasOne(e => e.Player).WithMany().HasForeignKey("PlayerId");
+            builder.HasOne(e => e.Color).WithMany().HasForeignKey("ColorId");
         }
     }
 }

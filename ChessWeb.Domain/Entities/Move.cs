@@ -2,8 +2,8 @@
 {
     public class Move : BaseEntity
     {
-        public long GameId { get; set; }
-        public long PlayerId { get; set; }
+        public Game Game { get; set; }
+        public Player Player { get; set; }
         public string Fen { get; set; }
         public string MoveNext { get; set; }
     }

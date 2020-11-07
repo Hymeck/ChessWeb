@@ -9,8 +9,8 @@ namespace ChessWeb.Domain.Maps
         public void BuildEntity(EntityTypeBuilder<Move> builder)
         {
             builder.HasKey(e => e.Id);
-            builder.HasOne(typeof(Game)).WithMany().HasForeignKey(nameof(Move.GameId));
-            builder.HasOne(typeof(Player)).WithMany().HasForeignKey(nameof(Move.PlayerId));
+            builder.HasOne(e => e.Game).WithMany().HasForeignKey("GameId");
+            builder.HasOne(e => e.Player).WithMany().HasForeignKey("PlayerId");
             builder.Property(e => e.Fen).HasMaxLength(100);
             builder.Property(e => e.MoveNext).HasMaxLength(5);
         }

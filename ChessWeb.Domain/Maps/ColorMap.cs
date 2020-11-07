@@ -7,6 +7,10 @@ namespace ChessWeb.Domain.Maps
     {
         public ColorMap(EntityTypeBuilder<Color> builder) => BuildEntity(builder);
 
-        public void BuildEntity(EntityTypeBuilder<Color> builder) => builder.HasKey(e => e.Id);
+        public void BuildEntity(EntityTypeBuilder<Color> builder)
+        {
+            builder.HasKey(e => e.Id);
+            builder.HasData(new {Id = 1L, ColorType = true}, new {Id = 2L, ColorType = false});
+        }
     }
 }

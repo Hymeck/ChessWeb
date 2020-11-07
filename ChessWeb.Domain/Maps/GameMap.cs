@@ -11,6 +11,7 @@ namespace ChessWeb.Domain.Maps
         {
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Fen).HasMaxLength(100);
+            builder.HasData(new {Id = 1L, Fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"});
         }
     }
 }
