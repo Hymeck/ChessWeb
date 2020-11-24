@@ -5,7 +5,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Services" />
+      <ProjectReference Include="..\ChessWeb.Domain\ChessWeb.Domain.csproj" />
+      <ProjectReference Include="..\ChessWeb.Persistence\ChessWeb.Persistence.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="ChessEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\..\Self\Chess\ChessEngine\bin\Debug\net5.0\ChessEngine.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

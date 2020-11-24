@@ -16,6 +16,7 @@ namespace ChessWeb.Persistence.Contexts
             base.OnModelCreating(modelBuilder);
             new PlayerMap(modelBuilder.Entity<Player>());
             new ColorMap(modelBuilder.Entity<Color>());
+            // new ChessGameInfoMap(modelBuilder.Entity<ChessGameInfo>());
             new GameMap(modelBuilder.Entity<Game>());
             new MoveMap(modelBuilder.Entity<Move>());
             new SideMap(modelBuilder.Entity<Side>());
