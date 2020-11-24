@@ -1,6 +1,7 @@
 ﻿namespace ChessWeb.Domain.Entities
 {
-    public class ChessGameInfo : BaseEntity
+    // public class ChessGameInfo : BaseEntity
+    public class ChessGameInfo
     {
         public bool HasWhiteKingMoved {get; set;}
         public bool HasBlackKingMoved {get; set;}

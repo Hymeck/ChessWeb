@@ -23,7 +23,9 @@ namespace ChessWeb.Playground
             ShowEntities(gameRepository);
             
             IRepository<Side> sideRepository = new Repository<Side>(applicationContext);
-            // AddEntities(sideRepository, YieldSides);
+            
+            #region InsertToSideTable
+            // uncomment if you need to insert data to 'Side' table
             // var whiteColor = colorRepository.Get(1);
             // var blackColor = colorRepository.Get(2);
             // var game = gameRepository.Get(1);
@@ -33,8 +35,10 @@ namespace ChessWeb.Playground
             // var blackSide = new Side {Color = blackColor, Game = game, Player = player2};
             // sideRepository.Insert(whiteSide);
             // sideRepository.Insert(blackSide);
-            
+            #endregion InsertToSideTable
             ShowEntities(sideRepository);
+            
+            // PrintInfo(game.ChessGameInfo);
         }
 
         private static void ShowEntities<T>(IRepository<T> repository) where T : BaseEntity
@@ -42,6 +46,14 @@ namespace ChessWeb.Playground
             foreach (var entity in repository.GetAll())
                 WriteLine(GetEntityString(entity));
         }
+
+        // private static void PrintInfo(ChessGameInfo info)
+        // {
+        //     var printString = info == null
+        //         ? "Null"
+        //         : $"w s: {info.WhiteKingSquare}; b s: {info.BlackKingSquare}";
+        //     WriteLine(printString);
+        // }
 
         private static string GetEntityString(BaseEntity entity) =>
             entity switch
@@ -51,7 +63,7 @@ namespace ChessWeb.Playground
                 Move m => $"Move. {m.Id}. GameId: {m.Game.Id}. PlayerNick: {m.Player.Nickname}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",
                 Player p => $"Player. {p.Id}. {p.Nickname}, {p.Email}, {p.Password}",
-                _ => $"BaseEntity or it's inheritor. {entity.Id}."
+                _ => $"BaseEntity or it's unmentioned inheritor. {entity.Id}."
             };
     }
 }

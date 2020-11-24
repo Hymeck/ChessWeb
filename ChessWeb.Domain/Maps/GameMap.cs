@@ -12,44 +12,25 @@ namespace ChessWeb.Domain.Maps
         {
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Fen).HasMaxLength(100);
-            builder.HasOne(e => e.ChessGameInfo).WithMany().HasForeignKey("ChessGameInfoId");
-            // var testGame = new Game
-            // {
-            //     Id = 1L, 
-            //     Fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-            //     ChessGameInfo = new ChessGameInfo
-            //     {
-            //         Id = 1L,
-            //         HasBlackKingMoved = false,
-            //         BlackKingSquare = "e8",
-            //         HasWhiteKingMoved = false,
-            //         HasBlackKingsideRookMoved = false,
-            //         HasBlackQueensideRookMoved = false,
-            //         HasWhiteKingsideRookMoved = false,
-            //         HasWhiteQueensideRookMoved = false,
-            //         WhiteKingSquare = "e1"
-            //     }
-            // };
-            builder.OwnsOne(e => e.ChessGameInfo).HasData(new List<Game>
-            {
-                new Game
+            builder.HasData(
+                new
                 {
                     Id = 1L,
                     Fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-                    ChessGameInfo = new ChessGameInfo
-                    {
-                        Id = 1L,
-                        HasBlackKingMoved = false,
-                        BlackKingSquare = "e8",
-                        HasWhiteKingMoved = false,
-                        HasBlackKingsideRookMoved = false,
-                        HasBlackQueensideRookMoved = false,
-                        HasWhiteKingsideRookMoved = false,
-                        HasWhiteQueensideRookMoved = false,
-                        WhiteKingSquare = "e1"
-                    }
-                }
-            });
+                });
+            builder.OwnsOne(e => e.ChessGameInfo).HasData(
+                new
+                {
+                    HasWhiteKingMoved = false,
+                    HasBlackKingMoved = false,
+                    HasWhiteQueensideRookMoved = false,
+                    HasWhiteKingsideRookMoved = false,
+                    HasBlackQueensideRookMoved = false,
+                    HasBlackKingsideRookMoved = false,
+                    WhiteKingSquare = "e1",
+                    BlackKingSquare = "e8",
+                    GameId = 1L
+                });
         }
     }
 }
