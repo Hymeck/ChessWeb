@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using ChessWeb.Domain.Entities;
-using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Implementations;
-using ChessWeb.Persistence.Interfaces;
+using ChessWeb.Persistence.Contexts;
+using ChessWeb.Domain.Interfaces;
 using static System.Console;
 
 namespace ChessWeb.Playground
@@ -13,10 +13,28 @@ namespace ChessWeb.Playground
     {
         static void Main(string[] args)
         {
-            // MainFunction();
-            PlayingWithMove();
+            MainFunction();
+            // PlayingWithMove();
         }
 
+        private static void PlayingWithGame()
+        {
+            using var applicationContext = new ApplicationContext();
+
+            IRepository<Game> gameRepository = new Repository<Game>(applicationContext);
+            var game1 = gameRepository.Get(1);
+            
+            IRepository<ChessGameInfo> chessRepository = new Repository<ChessGameInfo>(applicationContext);
+            var info1 = chessRepository.Get(1);
+
+            game1.ChessGameInfo = info1;
+            info1.Game = game1;
+            gameRepository.Update(game1);
+            chessRepository.Update(info1);
+            
+            WriteLine(GetEntityString(game1));
+        }
+        
         private static void PlayingWithMove()
         {
             using var applicationContext = new ApplicationContext();

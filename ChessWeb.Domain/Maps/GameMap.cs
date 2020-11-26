@@ -13,7 +13,11 @@ namespace ChessWeb.Domain.Maps
         {
             builder.HasKey(e => e.Id);
             builder.Property(e => e.Fen).HasMaxLength(100);
-            builder.HasOne(e => e.ChessGameInfo).WithMany().HasForeignKey("ChessGameInfoId");
+            // builder.Ignore(e => e.ChessGameInfo);
+            builder
+                .HasOne(e => e.ChessGameInfo)
+                .WithOne(e => e.Game)
+                .HasForeignKey(nameof(ChessGameInfo));
             builder.HasData(
                 new
                 {

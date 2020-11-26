@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using ChessWeb.Domain.Entities;
+using ChessWeb.Domain.Interfaces;
 using ChessWeb.Persistence.Contexts;
-using ChessWeb.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Implementations
@@ -21,6 +21,7 @@ namespace ChessWeb.Persistence.Implementations
 
         public Move Get(long id) => 
             entities
+                .AsQueryable()
                 .Include(e => e.Game)
                 .Include(e => e.Player)
                 .FirstOrDefault(s => s.Id == id);

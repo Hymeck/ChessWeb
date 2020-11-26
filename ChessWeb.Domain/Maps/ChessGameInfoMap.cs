@@ -17,6 +17,7 @@ namespace ChessWeb.Domain.Maps
             builder.Property(e => e.HasBlackKingsideRookMoved);
             builder.Property(e => e.WhiteKingSquare).HasMaxLength(2);
             builder.Property(e => e.BlackKingSquare).HasMaxLength(2);
+            // builder.Ignore(e => e.Game);
             // initial position information
             builder.HasData(new
             {

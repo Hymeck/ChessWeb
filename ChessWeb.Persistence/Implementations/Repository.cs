@@ -1,10 +1,10 @@
 ﻿using ChessWeb.Domain.Entities;
-using ChessWeb.Persistence.Contexts;
-using ChessWeb.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChessWeb.Domain.Interfaces;
+using ChessWeb.Persistence.Contexts;
 
 namespace ChessWeb.Persistence.Implementations
 {

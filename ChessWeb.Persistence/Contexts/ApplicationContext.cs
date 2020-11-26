@@ -1,12 +1,19 @@
 ﻿using ChessWeb.Domain.Entities;
+using ChessWeb.Domain.Interfaces;
 using ChessWeb.Domain.Maps;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Contexts
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext : DbContext, IApplicationContext
     {
         protected readonly string databaseName = "chess_db";
+        
+        public DbSet<Color> Colors { get; set; }
+        public DbSet<Game> Games { get; set; }
+        public DbSet<Move> Moves { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<Side> Sides { get; set; }
         
         public ApplicationContext() {}
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {}

@@ -4,14 +4,16 @@ using ChessWeb.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChessWeb.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201126220542_Game_ChessGameInfo_DropNavProps")]
+    partial class Game_ChessGameInfo_DropNavProps
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,9 @@ namespace ChessWeb.Persistence.Migrations
             modelBuilder.Entity("ChessWeb.Domain.Entities.ChessGameInfo", b =>
                 {
                     b.Property<long>("Id")
-                        .HasColumnType("bigint");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
 
                     b.Property<string>("BlackKingSquare")
                         .HasMaxLength(2)
@@ -236,17 +240,6 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("Sides");
                 });
 
-            modelBuilder.Entity("ChessWeb.Domain.Entities.ChessGameInfo", b =>
-                {
-                    b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
-                        .WithOne("ChessGameInfo")
-                        .HasForeignKey("ChessWeb.Domain.Entities.ChessGameInfo", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
             modelBuilder.Entity("ChessWeb.Domain.Entities.Move", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
@@ -281,11 +274,6 @@ namespace ChessWeb.Persistence.Migrations
                     b.Navigation("Game");
 
                     b.Navigation("Player");
-                });
-
-            modelBuilder.Entity("ChessWeb.Domain.Entities.Game", b =>
-                {
-                    b.Navigation("ChessGameInfo");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,7 +1,7 @@
 ﻿using ChessWeb.Domain.Entities;
 using System.Collections.Generic;
 
-namespace ChessWeb.Persistence.Interfaces
+namespace ChessWeb.Domain.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
