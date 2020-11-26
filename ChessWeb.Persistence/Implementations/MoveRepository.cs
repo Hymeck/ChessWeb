@@ -1,27 +1,30 @@
-﻿using ChessWeb.Domain.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using ChessWeb.Domain.Entities;
 using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ChessWeb.Persistence.Implementations
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity  
-    {  
+    public class MoveRepository: IRepository<Move>
+    {
         private readonly ApplicationContext context;
-        private DbSet<T> entities;
+        public readonly DbSet<Move> entities;
 
-        public Repository(ApplicationContext context) =>
-            (this.context, entities) = (context, context.Set<T>());
+        public MoveRepository(ApplicationContext context) =>
+            (this.context, entities) = (context, context.Set<Move>());
         
-        public IEnumerable<T> GetAll() => 
+        public IEnumerable<Move> GetAll() => 
             entities.AsEnumerable();
 
-        public T Get(long id) => 
-            entities.FirstOrDefault(s => s.Id == id);
-        public void Insert(T entity)
+        public Move Get(long id) => 
+            entities
+                .Include(e => e.Game)
+                .Include(e => e.Player)
+                .FirstOrDefault(s => s.Id == id);
+        public void Insert(Move entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -30,7 +33,7 @@ namespace ChessWeb.Persistence.Implementations
             context.SaveChanges();
         }
   
-        public void Update(T entity)
+        public void Update(Move entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -38,7 +41,7 @@ namespace ChessWeb.Persistence.Implementations
             context.SaveChanges();  
         }
 
-        public void Delete(T entity)
+        public void Delete(Move entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -47,7 +50,7 @@ namespace ChessWeb.Persistence.Implementations
             context.SaveChanges();  
         }
         
-        public void Remove(T entity)
+        public void Remove(Move entity)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));

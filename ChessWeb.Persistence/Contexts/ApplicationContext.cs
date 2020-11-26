@@ -16,6 +16,7 @@ namespace ChessWeb.Persistence.Contexts
             base.OnModelCreating(modelBuilder);
             new PlayerMap(modelBuilder.Entity<Player>());
             new ColorMap(modelBuilder.Entity<Color>());
+            new ChessGameInfoMap(modelBuilder.Entity<ChessGameInfo>());
             new GameMap(modelBuilder.Entity<Game>());
             new MoveMap(modelBuilder.Entity<Move>());
             new SideMap(modelBuilder.Entity<Side>());
@@ -23,7 +24,9 @@ namespace ChessWeb.Persistence.Contexts
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
+            optionsBuilder
+                // .UseLazyLoadingProxies()
+                .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
         }
     }
 }

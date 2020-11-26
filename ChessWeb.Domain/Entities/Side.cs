@@ -2,8 +2,8 @@
 {
     public class Side : BaseEntity
     {
-        public Game Game { get; set; }
-        public Player Player { get; set; }
-        public Color Color { get; set; }
+        public virtual Game Game { get; set; }
+        public virtual Player Player { get; set; }
+        public virtual Color Color { get; set; }
     }
 }

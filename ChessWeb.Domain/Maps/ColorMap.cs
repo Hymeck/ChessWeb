@@ -10,6 +10,8 @@ namespace ChessWeb.Domain.Maps
         public void BuildEntity(EntityTypeBuilder<Color> builder)
         {
             builder.HasKey(e => e.Id);
+            builder.Property(e => e.ColorType);
+            builder.HasIndex(e => e.ColorType).IsUnique();
             builder.HasData(new {Id = 1L, ColorType = true}, new {Id = 2L, ColorType = false});
         }
     }

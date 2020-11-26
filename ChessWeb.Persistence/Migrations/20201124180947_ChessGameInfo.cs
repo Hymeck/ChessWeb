@@ -9,7 +9,8 @@ namespace ChessWeb.Persistence.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "ChessGameInfo_BlackKingSquare",
                 table: "Game",
-                type: "nvarchar(max)",
+                type: "nvarchar(2)",
+                maxLength: 2,
                 nullable: true);
 
             migrationBuilder.AddColumn<bool>(
@@ -51,7 +52,8 @@ namespace ChessWeb.Persistence.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "ChessGameInfo_WhiteKingSquare",
                 table: "Game",
-                type: "nvarchar(max)",
+                type: "nvarchar(2)",
+                maxLength: 2,
                 nullable: true);
 
             migrationBuilder.UpdateData(

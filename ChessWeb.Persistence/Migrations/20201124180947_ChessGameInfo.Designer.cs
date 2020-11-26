@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChessWeb.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20201124172138_ChessGameInfo")]
+    [Migration("20201124180947_ChessGameInfo")]
     partial class ChessGameInfo
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -195,7 +195,8 @@ namespace ChessWeb.Persistence.Migrations
                                 .UseIdentityColumn();
 
                             b1.Property<string>("BlackKingSquare")
-                                .HasColumnType("nvarchar(max)");
+                                .HasMaxLength(2)
+                                .HasColumnType("nvarchar(2)");
 
                             b1.Property<bool>("HasBlackKingMoved")
                                 .HasColumnType("bit");
@@ -216,7 +217,8 @@ namespace ChessWeb.Persistence.Migrations
                                 .HasColumnType("bit");
 
                             b1.Property<string>("WhiteKingSquare")
-                                .HasColumnType("nvarchar(max)");
+                                .HasMaxLength(2)
+                                .HasColumnType("nvarchar(2)");
 
                             b1.HasKey("GameId");
 

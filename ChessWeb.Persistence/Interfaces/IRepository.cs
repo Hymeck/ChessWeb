@@ -9,6 +9,7 @@ namespace ChessWeb.Persistence.Interfaces
         T Get(long id);
         void Insert(T entity);
         void Update(T entity);
+        // void InsertOrUpdate(T entity);
         void Delete(T entity);
         void Remove(T entity);
         void SaveChanges();
