@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Persistence.Implementations;
 using ChessWeb.Persistence.Contexts;
@@ -11,12 +12,32 @@ namespace ChessWeb.Playground
 {
     class Playground
     {
+        private static IUnitOfWork _unitOfWork = new UnitOfWork(new ApplicationContext());
         static void Main(string[] args)
         {
-            MainFunction();
+            // MainFunction();
             // PlayingWithMove();
+            PlayingWithUnitOfWork();
+            // using var applicationContext = new ApplicationContext();
+            // IRepository<Color> colorRepository = new Repository<Color>(applicationContext);
+            // ShowEntities(colorRepository);
         }
 
+        private static async void PlayingWithUnitOfWork()
+        {
+            foreach (var e in _unitOfWork.Colors.GetAll())
+                WriteLine(GetEntityString(e));
+            
+            foreach (var e in _unitOfWork.Players.GetAll())
+                WriteLine(GetEntityString(e));
+            
+            foreach (var e in _unitOfWork.Moves.GetAll())
+                WriteLine(GetEntityString(e));
+            
+            foreach (var e in _unitOfWork.Games.GetAll())
+                WriteLine(GetEntityString(e));
+        }
+        
         private static void PlayingWithGame()
         {
             using var applicationContext = new ApplicationContext();
@@ -47,11 +68,11 @@ namespace ChessWeb.Playground
             // var side1 = sideRepository.Get(1);
             // var game1 = side1.Game;
             
-            IRepository<Move> moveRepository = new MoveRepository(applicationContext);
-            // var firstMove = new Move {Game = game1, Player = side1.Player, Fen = game1.Fen, MoveNext = "d2d4"};
-            // moveRepository.Insert(firstMove);
-            // moveRepository.Delete(moveRepository.Get(2));
-            ShowEntities(moveRepository);
+            // IRepository<Move> moveRepository = new MoveRepository(applicationContext);
+            // // var firstMove = new Move {Game = game1, Player = side1.Player, Fen = game1.Fen, MoveNext = "d2d4"};
+            // // moveRepository.Insert(firstMove);
+            // // moveRepository.Delete(moveRepository.Get(2));
+            // ShowEntities(moveRepository);
             
             // WriteLine(GetEntityString(side1));
         }

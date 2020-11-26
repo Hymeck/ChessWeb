@@ -17,8 +17,8 @@ namespace ChessWeb.Persistence.Implementations
         public async Task<T> Get(int id) =>
             await _context.Set<T>().FindAsync(id);
 
-        public async Task<IEnumerable<T>> GetAll() =>
-            await _context.Set<T>().ToListAsync();
+        public IEnumerable<T> GetAll() =>
+            _context.Set<T>();
 
         public async Task Add(T entity) => 
             await _context.Set<T>().AddAsync(entity);

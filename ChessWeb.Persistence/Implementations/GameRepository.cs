@@ -4,9 +4,9 @@ using ChessWeb.Persistence.Contexts;
 
 namespace ChessWeb.Persistence.Implementations
 {
-    public class MoveRepository : GenericRepository<Move>, IMoveRepository
+    public class GameRepository : GenericRepository<Game>, IGameRepository
     {
-        public MoveRepository(ApplicationContext context) : base(context)
+        public GameRepository(ApplicationContext context) : base(context)
         {
         }
     }

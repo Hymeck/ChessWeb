@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Contexts
 {
-    public class ApplicationContext : DbContext, IApplicationContext
+    public class ApplicationContext : DbContext
     {
         protected readonly string databaseName = "chess_db";
         

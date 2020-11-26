@@ -4,9 +4,9 @@ using ChessWeb.Persistence.Contexts;
 
 namespace ChessWeb.Persistence.Implementations
 {
-    public class MoveRepository : GenericRepository<Move>, IMoveRepository
+    public class ColorRepository : GenericRepository<Color>, IColorRepository
     {
-        public MoveRepository(ApplicationContext context) : base(context)
+        public ColorRepository(ApplicationContext context) : base(context)
         {
         }
     }
