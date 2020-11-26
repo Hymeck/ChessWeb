@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChessWeb.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20201124180947_ChessGameInfo")]
-    partial class ChessGameInfo
+    [Migration("20201126222110_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,7 +19,57 @@ namespace ChessWeb.Persistence.Migrations
             modelBuilder
                 .UseIdentityColumns()
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0-rc.2.20475.6");
+                .HasAnnotation("ProductVersion", "5.0.0");
+
+            modelBuilder.Entity("ChessWeb.Domain.Entities.ChessGameInfo", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BlackKingSquare")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.Property<bool>("HasBlackKingMoved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasBlackKingsideRookMoved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasBlackQueensideRookMoved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasWhiteKingMoved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasWhiteKingsideRookMoved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasWhiteQueensideRookMoved")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("WhiteKingSquare")
+                        .HasMaxLength(2)
+                        .HasColumnType("nvarchar(2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChessGameInfo");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            BlackKingSquare = "e8",
+                            HasBlackKingMoved = false,
+                            HasBlackKingsideRookMoved = false,
+                            HasBlackQueensideRookMoved = false,
+                            HasWhiteKingMoved = false,
+                            HasWhiteKingsideRookMoved = false,
+                            HasWhiteQueensideRookMoved = false,
+                            WhiteKingSquare = "e1"
+                        });
+                });
 
             modelBuilder.Entity("ChessWeb.Domain.Entities.Color", b =>
                 {
@@ -33,7 +83,10 @@ namespace ChessWeb.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Color");
+                    b.HasIndex("ColorType")
+                        .IsUnique();
+
+                    b.ToTable("Colors");
 
                     b.HasData(
                         new
@@ -61,7 +114,7 @@ namespace ChessWeb.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Game");
+                    b.ToTable("Games");
 
                     b.HasData(
                         new
@@ -98,7 +151,7 @@ namespace ChessWeb.Persistence.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Move");
+                    b.ToTable("Moves");
                 });
 
             modelBuilder.Entity("ChessWeb.Domain.Entities.Player", b =>
@@ -125,7 +178,7 @@ namespace ChessWeb.Persistence.Migrations
                         .IsUnique()
                         .HasFilter("[Nickname] IS NOT NULL");
 
-                    b.ToTable("Player");
+                    b.ToTable("Players");
 
                     b.HasData(
                         new
@@ -182,67 +235,18 @@ namespace ChessWeb.Persistence.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Side");
+                    b.ToTable("Sides");
                 });
 
-            modelBuilder.Entity("ChessWeb.Domain.Entities.Game", b =>
+            modelBuilder.Entity("ChessWeb.Domain.Entities.ChessGameInfo", b =>
                 {
-                    b.OwnsOne("ChessWeb.Domain.Entities.ChessGameInfo", "ChessGameInfo", b1 =>
-                        {
-                            b1.Property<long>("GameId")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("bigint")
-                                .UseIdentityColumn();
+                    b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
+                        .WithOne("ChessGameInfo")
+                        .HasForeignKey("ChessWeb.Domain.Entities.ChessGameInfo", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<string>("BlackKingSquare")
-                                .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)");
-
-                            b1.Property<bool>("HasBlackKingMoved")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasBlackKingsideRookMoved")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasBlackQueensideRookMoved")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasWhiteKingMoved")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasWhiteKingsideRookMoved")
-                                .HasColumnType("bit");
-
-                            b1.Property<bool>("HasWhiteQueensideRookMoved")
-                                .HasColumnType("bit");
-
-                            b1.Property<string>("WhiteKingSquare")
-                                .HasMaxLength(2)
-                                .HasColumnType("nvarchar(2)");
-
-                            b1.HasKey("GameId");
-
-                            b1.ToTable("Game");
-
-                            b1.WithOwner()
-                                .HasForeignKey("GameId");
-
-                            b1.HasData(
-                                new
-                                {
-                                    GameId = 1L,
-                                    BlackKingSquare = "e8",
-                                    HasBlackKingMoved = false,
-                                    HasBlackKingsideRookMoved = false,
-                                    HasBlackQueensideRookMoved = false,
-                                    HasWhiteKingMoved = false,
-                                    HasWhiteKingsideRookMoved = false,
-                                    HasWhiteQueensideRookMoved = false,
-                                    WhiteKingSquare = "e1"
-                                });
-                        });
-
-                    b.Navigation("ChessGameInfo");
+                    b.Navigation("Game");
                 });
 
             modelBuilder.Entity("ChessWeb.Domain.Entities.Move", b =>
@@ -279,6 +283,11 @@ namespace ChessWeb.Persistence.Migrations
                     b.Navigation("Game");
 
                     b.Navigation("Player");
+                });
+
+            modelBuilder.Entity("ChessWeb.Domain.Entities.Game", b =>
+                {
+                    b.Navigation("ChessGameInfo");
                 });
 #pragma warning restore 612, 618
         }
