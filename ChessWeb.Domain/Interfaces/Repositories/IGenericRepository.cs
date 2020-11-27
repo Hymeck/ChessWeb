@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ChessWeb.Domain.Interfaces
+namespace ChessWeb.Domain.Interfaces.Repositories
 {
     public interface IGenericRepository<T> where T : class
     {

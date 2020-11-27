@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChessWeb.Domain.Interfaces;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 

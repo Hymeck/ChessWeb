@@ -1,5 +1,5 @@
 ﻿using ChessWeb.Domain.Entities;
-using ChessWeb.Domain.Interfaces;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 
 namespace ChessWeb.Persistence.Implementations

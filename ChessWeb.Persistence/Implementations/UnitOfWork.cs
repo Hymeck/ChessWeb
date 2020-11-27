@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChessWeb.Domain.Interfaces;
+using ChessWeb.Domain.Interfaces.Repositories;
+using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Persistence.Contexts;
 
 namespace ChessWeb.Persistence.Implementations

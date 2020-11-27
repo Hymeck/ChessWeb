@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ChessWeb.Domain.Interfaces.Repositories;
 
-namespace ChessWeb.Domain.Interfaces
+namespace ChessWeb.Domain.Interfaces.UnitsOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
