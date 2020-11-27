@@ -17,25 +17,26 @@ namespace ChessWeb.Playground
         {
             // MainFunction();
             // PlayingWithMove();
-            PlayingWithUnitOfWork();
+            PrintAllEntities();
             // using var applicationContext = new ApplicationContext();
             // IRepository<Color> colorRepository = new Repository<Color>(applicationContext);
             // ShowEntities(colorRepository);
         }
-
-        private static async void PlayingWithUnitOfWork()
+        
+        private static void PrintAllEntities()
         {
-            foreach (var e in _unitOfWork.Colors.GetAll())
+            PrintAll(_unitOfWork.Colors.GetAll());
+            PrintAll(_unitOfWork.Players.GetAll());
+            PrintAll(_unitOfWork.ChessGameInfos.GetAll());
+            PrintAll(_unitOfWork.Games.GetAll());
+            PrintAll(_unitOfWork.Sides.GetAll());
+        }
+
+        private static void PrintAll<T>(IEnumerable<T> collection) where T : BaseEntity
+        {
+            foreach (var e in collection)
                 WriteLine(GetEntityString(e));
-            
-            foreach (var e in _unitOfWork.Players.GetAll())
-                WriteLine(GetEntityString(e));
-            
-            foreach (var e in _unitOfWork.Moves.GetAll())
-                WriteLine(GetEntityString(e));
-            
-            foreach (var e in _unitOfWork.Games.GetAll())
-                WriteLine(GetEntityString(e));
+            WriteLine("--------------");
         }
         
         private static void PlayingWithGame()
@@ -125,7 +126,7 @@ namespace ChessWeb.Playground
         private static string GetEntityString(BaseEntity entity) =>
             entity switch
             {
-                Game g => $"Game. {g.Id}. FEN: {g.Fen}. Additional info: {g.ChessGameInfo}",
+                Game g => $"Game. {g.Id}. FEN: {g.Fen}. Additional info: id {g.Id}, {g.ChessGameInfo}",
                 Side s => $"Side. {s.Id}. GameId: {s.Game.Id}. PlayerNick: {s.Player.Nickname}. Color: {s.Color}",
                 Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.Player?.Nickname}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",
