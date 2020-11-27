@@ -15,12 +15,54 @@ namespace ChessWeb.Playground
         private static IUnitOfWork _unitOfWork = new UnitOfWork(new ApplicationContext());
         static void Main(string[] args)
         {
-            // MainFunction();
-            // PlayingWithMove();
+            // PlayingWithSides();
+            // PlayingWithMoves();
             PrintAllEntities();
-            // using var applicationContext = new ApplicationContext();
-            // IRepository<Color> colorRepository = new Repository<Color>(applicationContext);
-            // ShowEntities(colorRepository);
+        }
+
+        private static void PlayingWithSides()
+        {
+            var game1 = _unitOfWork.Games.Get(1);
+            var whitePlayer = _unitOfWork.Players.Get(1);
+            var blackPlayer = _unitOfWork.Players.Get(2);
+            
+            var whiteColor = _unitOfWork.Colors.Get(1);
+            var blackColor = _unitOfWork.Colors.Get(2);
+            
+            var whiteSide = new Side
+            {
+                Game = game1,
+                Color = whiteColor,
+                Player = whitePlayer
+            };
+            var blackSide = new Side
+            {
+                Game = game1,
+                Color = blackColor,
+                Player = blackPlayer
+            };
+
+
+            _unitOfWork.Sides.Add(whiteSide);
+            _unitOfWork.Sides.Add(blackSide);
+            _unitOfWork.Complete();
+        }
+
+        private static void PlayingWithMoves()
+        {
+            var game1 = _unitOfWork.Games.Get(1);
+            var whitePlayer = _unitOfWork.Players.Get(1);
+
+            var firstMove = new Move
+            {
+                Player = whitePlayer,
+                Game = game1,
+                Fen = game1.Fen,
+                MoveNext = "e2e4"
+            };
+            
+            _unitOfWork.Moves.Add(firstMove);
+            _unitOfWork.Complete();
         }
         
         private static void PrintAllEntities()

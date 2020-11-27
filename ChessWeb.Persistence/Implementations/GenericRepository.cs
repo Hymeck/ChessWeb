@@ -14,14 +14,14 @@ namespace ChessWeb.Persistence.Implementations
         public GenericRepository(ApplicationContext context) => 
             _context = context;
 
-        public virtual async Task<T> Get(int id) =>
-            await _context.Set<T>().FindAsync(id);
+        public virtual T Get(long id) =>
+            _context.Set<T>().Find(id);
 
         public virtual IEnumerable<T> GetAll() =>
             _context.Set<T>().ToList();
 
-        public async Task Add(T entity) => 
-            await _context.Set<T>().AddAsync(entity);
+        public void Add(T entity) => 
+            _context.Set<T>().Add(entity);
 
         public void Delete(T entity) =>
             _context.Set<T>().Remove(entity);

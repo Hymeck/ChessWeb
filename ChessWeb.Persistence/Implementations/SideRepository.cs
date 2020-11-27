@@ -12,12 +12,12 @@ namespace ChessWeb.Persistence.Implementations
         {
         }
 
-        public override async Task<Side> Get(int id)
+        public override Side Get(long id)
         {
-            var entity = await base.Get(id);
-            await _context.Entry(entity).Reference(e => e.Game).LoadAsync();
-            await _context.Entry(entity).Reference(e => e.Player).LoadAsync();
-            await _context.Entry(entity).Reference(e => e.Color).LoadAsync();
+            var entity = base.Get(id);
+            _context.Entry(entity).Reference(e => e.Game).LoadAsync();
+            _context.Entry(entity).Reference(e => e.Player).LoadAsync();
+            _context.Entry(entity).Reference(e => e.Color).LoadAsync();
             return entity;
         }
 

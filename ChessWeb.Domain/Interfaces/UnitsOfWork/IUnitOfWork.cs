@@ -12,6 +12,6 @@ namespace ChessWeb.Domain.Interfaces.UnitsOfWork
         IMoveRepository Moves { get; }
         IPlayerRepository Players { get; }
         ISideRepository Sides { get; }
-        Task<int> Complete();
+        int Complete();
     }
 }

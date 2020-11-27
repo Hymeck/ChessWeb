@@ -37,7 +37,7 @@ namespace ChessWeb.Persistence.Implementations
 
         protected virtual void Dispose(bool disposing) { if (disposing) _context.Dispose(); }
 
-        public async Task<int> Complete() =>
-            await _context.SaveChangesAsync();
+        public int Complete() =>
+            _context.SaveChanges();
     }
 }
