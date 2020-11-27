@@ -8,6 +8,7 @@ namespace ChessWeb.Persistence.Implementations
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationContext _context;
+        public IChessGameInfoRepository ChessGameInfos { get; set; }
         public IColorRepository Colors { get; }
         public IGameRepository Games { get; }
         public IMoveRepository Moves { get; }
@@ -19,10 +20,12 @@ namespace ChessWeb.Persistence.Implementations
             // todo: add other repos
             _context = context;
             // todo: remove tight coupling in later
+            ChessGameInfos = new ChessGameInfoRepository(_context);
             Colors = new ColorRepository(_context);
             Players = new PlayerRepository(_context);
             Moves = new MoveRepository(_context);
             Games = new GameRepository(_context);
+            Sides = new SideRepository(_context);
         }
 
         public void Dispose()

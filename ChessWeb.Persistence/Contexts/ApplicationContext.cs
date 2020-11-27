@@ -9,6 +9,7 @@ namespace ChessWeb.Persistence.Contexts
     {
         protected readonly string databaseName = "chess_db";
         
+        public DbSet<ChessGameInfo> ChessGameInfos { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Move> Moves { get; set; }
