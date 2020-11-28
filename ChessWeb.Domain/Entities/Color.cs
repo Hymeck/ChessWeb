@@ -6,5 +6,8 @@
 
         public override string ToString() =>
             ColorType ? "White" : "Black";
+
+        public char ToChar() =>
+            ColorType ? 'w' : 'b';
     }
 }

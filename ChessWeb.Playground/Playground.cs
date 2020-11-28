@@ -6,6 +6,8 @@ using ChessWeb.Domain.Entities;
 using ChessWeb.Persistence.Implementations;
 using ChessWeb.Persistence.Contexts;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Service.Interfaces;
+using ChessWeb.Service.Services;
 using static System.Console;
 
 namespace ChessWeb.Playground
@@ -18,8 +20,25 @@ namespace ChessWeb.Playground
             // PlayingWithSides();
             // PlayingWithMoves();
             PrintAllEntities();
+            // MakeMove();
         }
 
+        private static void MakeMove()
+        {
+            var game1 = _unitOfWork.Games.Get(1);
+            var sides = _unitOfWork.Sides.GetAll().Where(x => x.Game == game1);
+
+            var move1 = _unitOfWork.Moves.Get(1);
+            WriteLine($"Current move: {GetEntityString(move1)}");
+            var side = sides.FirstOrDefault(x => x.Player == move1.Player);
+            WriteLine("Moving side: " + GetEntityString(side));
+            WriteLine("Moving player: " + GetEntityString(side.Player));
+            
+            IChessService chessService = new ChessService(_unitOfWork);
+            var nextGame = chessService.MakeMove(game1, move1, side);
+            WriteLine($"Game after move: {GetEntityString(nextGame)}");
+        }
+        
         private static void PlayingWithSides()
         {
             var game1 = _unitOfWork.Games.Get(1);
@@ -85,7 +104,7 @@ namespace ChessWeb.Playground
         private static string GetEntityString(BaseEntity entity) =>
             entity switch
             {
-                Game g => $"Game. {g.Id}. FEN: {g.Fen}. Additional info: id {g.Id}",
+                Game g => $"Game. {g.Id}. FEN: {g.Fen}",
                 Side s => $"Side. {s.Id}. GameId: {s.Game.Id}. PlayerNick: {s.Player.Nickname}. Color: {s.Color}",
                 Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.Player?.Nickname}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",
