@@ -69,7 +69,6 @@ namespace ChessWeb.Playground
         {
             PrintAll(_unitOfWork.Colors.GetAll());
             PrintAll(_unitOfWork.Players.GetAll());
-            PrintAll(_unitOfWork.ChessGameInfos.GetAll());
             PrintAll(_unitOfWork.Games.GetAll());
             PrintAll(_unitOfWork.Sides.GetAll());
             PrintAll(_unitOfWork.Moves.GetAll());
@@ -86,12 +85,11 @@ namespace ChessWeb.Playground
         private static string GetEntityString(BaseEntity entity) =>
             entity switch
             {
-                Game g => $"Game. {g.Id}. FEN: {g.Fen}. Additional info: id {g.Id}, {g.ChessGameInfo}",
+                Game g => $"Game. {g.Id}. FEN: {g.Fen}. Additional info: id {g.Id}",
                 Side s => $"Side. {s.Id}. GameId: {s.Game.Id}. PlayerNick: {s.Player.Nickname}. Color: {s.Color}",
                 Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.Player?.Nickname}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",
                 Player p => $"Player. {p.Id}. {p.Nickname}, {p.Email}, {p.Password}",
-                ChessGameInfo i => $"ChessGameInfo. {i.Id}, {i}",
                 _ => $"BaseEntity or it's unknown inheritor. {entity.Id}."
             };
     }

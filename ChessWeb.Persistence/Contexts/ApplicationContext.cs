@@ -8,8 +8,6 @@ namespace ChessWeb.Persistence.Contexts
     public class ApplicationContext : DbContext
     {
         protected readonly string databaseName = "chess_db";
-        
-        public DbSet<ChessGameInfo> ChessGameInfos { get; set; }
         public DbSet<Color> Colors { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Move> Moves { get; set; }
@@ -24,7 +22,6 @@ namespace ChessWeb.Persistence.Contexts
             base.OnModelCreating(modelBuilder);
             new PlayerMap(modelBuilder.Entity<Player>());
             new ColorMap(modelBuilder.Entity<Color>());
-            new ChessGameInfoMap(modelBuilder.Entity<ChessGameInfo>());
             new GameMap(modelBuilder.Entity<Game>());
             new MoveMap(modelBuilder.Entity<Move>());
             new SideMap(modelBuilder.Entity<Side>());

@@ -6,7 +6,6 @@ namespace ChessWeb.Domain.Interfaces.UnitsOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
-        IChessGameInfoRepository ChessGameInfos { get; set; }
         IColorRepository Colors { get; }
         IGameRepository Games { get; }
         IMoveRepository Moves { get; }
