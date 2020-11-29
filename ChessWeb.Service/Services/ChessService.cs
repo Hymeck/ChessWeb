@@ -2,6 +2,7 @@
 using ChessEngine;
 using ChessEngine.Console;
 using ChessEngine.Domain;
+using ChessEngine.Exceptions;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Service.Interfaces;
@@ -30,18 +31,31 @@ namespace ChessWeb.Service.Services
                 return game;
 
             var moveNext = move.MoveNext;
-            var squares = ConsoleMoveInput.ParseMove(moveNext);
-            var nextChessGame = chessGame.Move(squares);
-            // invalid move
-            if (nextChessGame == chessGame)
+            try
+            {
+                var squares = MoveInputParser.ParseMove(moveNext);
+                var nextChessGame = chessGame.Move(squares);
+                // invalid move
+                if (nextChessGame == chessGame)
+                    return game;
+
+                game.Fen = nextChessGame.ToString();
+
+                _unitOfWork.Games.Update(game);
+                _unitOfWork.Complete();
+
                 return game;
+            }
 
-            game.Fen = nextChessGame.ToString();
-            
-            _unitOfWork.Games.Update(game);
-            _unitOfWork.Complete();
+            catch (FormatException)
+            {
+                return game;
+            }
 
-            return game;
+            catch (ChessGameException)
+            {
+                return game;
+            }
         }
     }
 }
