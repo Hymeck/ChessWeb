@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using ChessEngine;
 using ChessEngine.Console;
 using ChessEngine.Domain;
@@ -35,9 +36,9 @@ namespace ChessWeb.Service.Services
             {
                 var squares = MoveInputParser.ParseMove(moveNext);
                 var nextChessGame = chessGame.Move(squares);
-                // invalid move
-                if (nextChessGame == chessGame)
-                    return game;
+                // // invalid move
+                // if (nextChessGame == chessGame)
+                //     return game;
 
                 game.Fen = nextChessGame.ToString();
 
@@ -47,13 +48,15 @@ namespace ChessWeb.Service.Services
                 return game;
             }
 
-            catch (FormatException)
+            catch (FormatException e)
             {
+                Debug.WriteLine(e.Message + "\n" +e.StackTrace);
                 return game;
             }
 
-            catch (ChessGameException)
+            catch (ChessGameException e)
             {
+                Debug.WriteLine(e.Message + "\n" +e.StackTrace);
                 return game;
             }
         }

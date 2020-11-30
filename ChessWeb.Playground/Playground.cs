@@ -93,7 +93,7 @@ namespace ChessWeb.Playground
             PrintAll(_unitOfWork.Moves.GetAll());
         }
 
-        private static void PrintAll<T>(IEnumerable<T> collection) where T : BaseEntity
+        private static void PrintAll<T>(IEnumerable<T> collection) where T : class
         {
             WriteLine(typeof(T).Name + " table:");
             foreach (var e in collection)
@@ -101,15 +101,15 @@ namespace ChessWeb.Playground
             WriteLine("--------------");
         }
 
-        private static string GetEntityString(BaseEntity entity) =>
+        private static string GetEntityString<T>(T entity) where T : class =>
             entity switch
             {
                 Game g => $"Game. {g.Id}. FEN: {g.Fen}",
                 Side s => $"Side. {s.Id}. GameId: {s.Game.Id}. PlayerNick: {s.Player.Nickname}. Color: {s.Color}",
                 Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.Player?.Nickname}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",
-                Player p => $"Player. {p.Id}. {p.Nickname}, {p.Email}, {p.Password}",
-                _ => $"BaseEntity or it's unknown inheritor. {entity.Id}."
+                Player p => $"Player. {p.Id}. {p.Nickname}, {p.Email}",
+                _ => "BaseEntity or it's unknown inheritor"
             };
     }
 }

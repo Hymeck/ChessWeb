@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ChessWeb": {
+    "ChessWeb.Application": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
