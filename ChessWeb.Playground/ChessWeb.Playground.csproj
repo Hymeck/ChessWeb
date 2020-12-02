@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ChessWeb.Client\ChessWeb.Client.csproj" />
       <ProjectReference Include="..\ChessWeb.Service\ChessWeb.Service.csproj" />
     </ItemGroup>
 

@@ -8,6 +8,7 @@ using ChessWeb.Persistence.Contexts;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Service.Interfaces;
 using ChessWeb.Service.Services;
+using ChessWeb.Client;
 using static System.Console;
 
 namespace ChessWeb.Playground
@@ -21,6 +22,13 @@ namespace ChessWeb.Playground
             // PlayingWithMoves();
             PrintAllEntities();
             // MakeMove();
+        }
+
+        private static void PlayinWithClient()
+        {
+            var host = "someHost";
+            var user = "Hymeck";
+            var client = new ChessClient(host, user);
         }
 
         private static void MakeMove()

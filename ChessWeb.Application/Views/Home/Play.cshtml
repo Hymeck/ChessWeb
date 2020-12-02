@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Играть";
+}
+
+@if(User.Identity.IsAuthenticated)
+{
+    <p>@User.Identity.Name</p>
+ 
+    <form asp-controller="Games" asp-action="Play" asp-route-userName="@User.Identity.Name">
+        <input type="submit" value="Играть" />
+    </form>
+}
+else
+{
+    <a asp-controller="Account" asp-action="Login">Вход</a>
+    <a asp-controller="Account" asp-action="Register">Регистрация</a>
+}
