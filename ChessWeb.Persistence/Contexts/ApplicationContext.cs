@@ -1,18 +1,20 @@
 ﻿using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces;
 using ChessWeb.Domain.Maps;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Contexts
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationContext : IdentityDbContext<User, UserRole, int>
     {
         protected readonly string databaseName = "chess_db";
-        public DbSet<Color> Colors { get; set; }
-        public DbSet<Game> Games { get; set; }
-        public DbSet<Move> Moves { get; set; }
-        public DbSet<Player> Players { get; set; }
-        public DbSet<Side> Sides { get; set; }
+        public virtual DbSet<Color> Colors { get; set; }
+        public virtual DbSet<Game> Games { get; set; }
+        public virtual DbSet<Move> Moves { get; set; }
+        public virtual DbSet<User> Players { get; set; }
+        public virtual DbSet<Side> Sides { get; set; }
         
         public ApplicationContext() {}
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {}
@@ -20,7 +22,7 @@ namespace ChessWeb.Persistence.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            new PlayerMap(modelBuilder.Entity<Player>());
+            new PlayerMap(modelBuilder.Entity<User>());
             new ColorMap(modelBuilder.Entity<Color>());
             new GameMap(modelBuilder.Entity<Game>());
             new MoveMap(modelBuilder.Entity<Move>());

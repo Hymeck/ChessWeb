@@ -3,7 +3,7 @@
     public class Move : BaseEntity
     {
         public virtual Game Game { get; set; }
-        public virtual Player Player { get; set; }
+        public virtual User User { get; set; }
         public string Fen { get; set; }
         public string MoveNext { get; set; }
     }

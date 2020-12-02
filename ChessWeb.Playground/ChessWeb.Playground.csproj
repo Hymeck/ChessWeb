@@ -6,8 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ChessWeb.Domain\ChessWeb.Domain.csproj" />
-      <ProjectReference Include="..\ChessWeb.Persistence\ChessWeb.Persistence.csproj" />
       <ProjectReference Include="..\ChessWeb.Service\ChessWeb.Service.csproj" />
     </ItemGroup>
 
