@@ -10,7 +10,7 @@ namespace ChessWeb.Domain.Maps
         {
             builder.HasKey(e => e.Id);
             builder.HasOne(e => e.Game).WithMany().HasForeignKey("GameId");
-            builder.HasOne(e => e.Player).WithMany().HasForeignKey("PlayerId");
+            builder.HasOne(e => e.User).WithMany().HasForeignKey("PlayerId");
             builder.HasOne(e => e.Color).WithMany().HasForeignKey("ColorId");
         }
     }

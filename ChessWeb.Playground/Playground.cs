@@ -30,9 +30,9 @@ namespace ChessWeb.Playground
 
             var move1 = _unitOfWork.Moves.Get(1);
             WriteLine($"Current move: {GetEntityString(move1)}");
-            var side = sides.FirstOrDefault(x => x.Player == move1.Player);
+            var side = sides.FirstOrDefault(x => x.User == move1.User);
             WriteLine("Moving side: " + GetEntityString(side));
-            WriteLine("Moving player: " + GetEntityString(side.Player));
+            WriteLine("Moving player: " + GetEntityString(side.User));
             
             IChessService chessService = new ChessService(_unitOfWork);
             var nextGame = chessService.MakeMove(game1, move1, side);
@@ -52,13 +52,13 @@ namespace ChessWeb.Playground
             {
                 Game = game1,
                 Color = whiteColor,
-                Player = whitePlayer
+                User = whitePlayer
             };
             var blackSide = new Side
             {
                 Game = game1,
                 Color = blackColor,
-                Player = blackPlayer
+                User = blackPlayer
             };
 
 
@@ -74,7 +74,7 @@ namespace ChessWeb.Playground
 
             var firstMove = new Move
             {
-                Player = whitePlayer,
+                User = whitePlayer,
                 Game = game1,
                 Fen = game1.Fen,
                 MoveNext = "e2e4"
@@ -105,10 +105,10 @@ namespace ChessWeb.Playground
             entity switch
             {
                 Game g => $"Game. {g.Id}. FEN: {g.Fen}",
-                Side s => $"Side. {s.Id}. GameId: {s.Game.Id}. PlayerNick: {s.Player.Nickname}. Color: {s.Color}",
-                Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.Player?.Nickname}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
+                Side s => $"Side. {s.Id}. GameId: {s.Game?.Id}. PlayerNick: {s.User?.UserName}. Color: {s.Color}",
+                Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.User?.UserName}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",
-                Player p => $"Player. {p.Id}. {p.Nickname}, {p.Email}",
+                User u => $"User. {u.Id}. {u.UserName}, {u.Email}",
                 _ => "BaseEntity or it's unknown inheritor"
             };
     }

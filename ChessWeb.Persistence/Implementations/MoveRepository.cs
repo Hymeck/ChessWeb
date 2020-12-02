@@ -16,7 +16,7 @@ namespace ChessWeb.Persistence.Implementations
         {
             var entity = base.Get(id);
             _context.Entry(entity).Reference(e => e.Game).Load();
-            _context.Entry(entity).Reference(e => e.Player).Load();
+            _context.Entry(entity).Reference(e => e.User).Load();
             return entity;
         }
 
@@ -25,7 +25,7 @@ namespace ChessWeb.Persistence.Implementations
             foreach (var entity in base.GetAll())
             {
                 _context.Entry(entity).Reference(e => e.Game).Load();
-                _context.Entry(entity).Reference(e => e.Player).Load();
+                _context.Entry(entity).Reference(e => e.User).Load();
                 yield return entity;
             }
         }

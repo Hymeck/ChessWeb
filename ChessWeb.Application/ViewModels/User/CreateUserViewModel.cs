@@ -1,8 +1,8 @@
-﻿namespace ChessWeb.Application.ViewModels
+﻿namespace ChessWeb.Application.ViewModels.User
 {
     public class CreateUserViewModel
     {
-        public string Nickname { get; set; }
+        public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
     }

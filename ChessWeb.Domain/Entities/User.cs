@@ -2,8 +2,7 @@
 
 namespace ChessWeb.Domain.Entities
 {
-    public class Player : IdentityUser
+    public class User : IdentityUser<int>
     {
-        public string Nickname { get; set; }
     }
 }

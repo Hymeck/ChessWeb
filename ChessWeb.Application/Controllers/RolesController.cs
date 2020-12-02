@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ChessWeb.Application.ViewModels;
+using ChessWeb.Application.ViewModels.Role;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +10,9 @@ namespace ChessWeb.Application.Controllers
 {
     public class RolesController : Controller
     {
-        RoleManager<IdentityRole> _roleManager;
-        UserManager<Player> _userManager;
-        public RolesController(RoleManager<IdentityRole> roleManager, UserManager<Player> userManager)
+        RoleManager<UserRole> _roleManager;
+        UserManager<User> _userManager;
+        public RolesController(RoleManager<UserRole> roleManager, UserManager<User> userManager)
         {
             _roleManager = roleManager;
             _userManager = userManager;
@@ -25,7 +25,7 @@ namespace ChessWeb.Application.Controllers
         {
             if (!string.IsNullOrEmpty(name))
             {
-                var result = await _roleManager.CreateAsync(new IdentityRole(name));
+                var result = await _roleManager.CreateAsync(new UserRole(name));
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -42,9 +42,9 @@ namespace ChessWeb.Application.Controllers
         }
          
         [HttpPost]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(string name)
         {
-            var role = await _roleManager.FindByIdAsync(id);
+            var role = await _roleManager.FindByNameAsync(name);
             if (role != null)
             {
                 var result = await _roleManager.DeleteAsync(role);
@@ -54,10 +54,10 @@ namespace ChessWeb.Application.Controllers
  
         public IActionResult UserList() => View(_userManager.Users.ToList());
  
-        public async Task<IActionResult> Edit(string userId)
+        public async Task<IActionResult> Edit(string name)
         {
             // получаем пользователя
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByNameAsync(name);
             if(user!=null)
             {
                 // получем список ролей пользователя
@@ -66,7 +66,7 @@ namespace ChessWeb.Application.Controllers
                 var model = new ChangeRoleViewModel
                 {
                     UserId = user.Id,
-                    UserNickname = user.Nickname,
+                    UserName = user.UserName,
                     UserEmail = user.Email,
                     UserRoles = userRoles,
                     AllRoles = allRoles
@@ -77,23 +77,18 @@ namespace ChessWeb.Application.Controllers
             return NotFound();
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(string userId, List<string> roles)
+        public async Task<IActionResult> Edit(string name, List<string> roles)
         {
             // получаем пользователя
-            var user = await _userManager.FindByIdAsync(userId);
-            if(user!=null)
+            var user = await _userManager.FindByNameAsync(name);
+            if (user!=null)
             {
-                // получем список ролей пользователя
                 var userRoles = await _userManager.GetRolesAsync(user);
-                // получаем все роли
                 var allRoles = _roleManager.Roles.ToList();
-                // получаем список ролей, которые были добавлены
                 var addedRoles = roles.Except(userRoles);
-                // получаем роли, которые были удалены
                 var removedRoles = userRoles.Except(roles);
  
                 await _userManager.AddToRolesAsync(user, addedRoles);
- 
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
  
                 return RedirectToAction("UserList");

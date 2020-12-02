@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ChessWeb.Application.ViewModels
+namespace ChessWeb.Application.ViewModels.User
 {
-    public class LoginViewModel
+    public class LoginUserViewModel
     {
         [Required]
         [Display(Name = "Имя пользователя")]
-        public string Nickname { get; set; }
-        [Required]
-        [Display(Name = "Электронная почта")]
-        public string Email { get; set; }
+        public string Name { get; set; }
          
         [Required]
         [DataType(DataType.Password)]
@@ -18,7 +15,6 @@ namespace ChessWeb.Application.ViewModels
          
         [Display(Name = "Запомнить?")]
         public bool RememberMe { get; set; }
-         
         public string ReturnUrl { get; set; }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ChessWeb.Application.ViewModels
+namespace ChessWeb.Application.ViewModels.User
 {
-    public class RegisterViewModel
+    public class RegisterUserViewModel
     {
         [Required]
         [Display(Name = "Имя пользователя")]
-        public string Nickname { get; set; }
+        [MaxLength(30)]
+        public string Name { get; set; }
 
         [Required]
         [Display(Name = "Электронная почта")]

@@ -1,12 +1,12 @@
-﻿@model RegisterViewModel
+﻿@model RegisterUserViewModel
 <h2>Регистрация нового пользователя</h2>
 <form method="post" asp-controller="Account" asp-action="Register">
     <div asp-validation-summary="ModelOnly"></div>
     <div>
-        <label asp-for="Nickname"></label>
+        <label asp-for="Name"></label>
         <br />
-        <input asp-for="Nickname" />
-        <span asp-validation-for="Nickname"></span>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
     </div>
     <div>
         <label asp-for="Email"></label><br />

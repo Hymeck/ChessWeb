@@ -20,7 +20,7 @@ namespace ChessWeb.Service.Services
         public Game MakeMove(Game game, Move move, Side side)
         {
             // todo: uncomment this checks
-            // if (side.Player.Id != move.Player.Id)
+            // if (side.User.Id != move.User.Id)
             //     return game;
             // if (game.Id != move.Game.Id || game.Id != side.Game.Id || move.Game.Id != side.Game.Id)
             //     return game;

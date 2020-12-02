@@ -2,17 +2,17 @@
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ChessWeb.Application.ViewModels;
+using ChessWeb.Application.ViewModels.User;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChessWeb.Application.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly UserManager<Player> _userManager;
-        private readonly SignInManager<Player> _signInManager;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
  
-        public AccountController(UserManager<Player> userManager, SignInManager<Player> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -23,15 +23,15 @@ namespace ChessWeb.Application.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterUserViewModel model)
         {
             if(ModelState.IsValid)
             {
-                var user = new Player { Nickname = model.Nickname, Email = model.Email, UserName = model.Email};
-                // добавляем пользователя
+                var user = new User { UserName = model.Name, Email = model.Email};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, "player");
                     // установка куки
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
@@ -47,40 +47,20 @@ namespace ChessWeb.Application.Controllers
             return View(model);
         }
         
-        // [HttpGet]
-        // [AllowAnonymous]
-        // public async Task<IActionResult> ConfirmEmail(string userId, string code)
-        // {
-        //     if (userId == null || code == null)
-        //     {
-        //         return View("Error");
-        //     }
-        //     var user = await _userManager.FindByIdAsync(userId);
-        //     if (user == null)
-        //     {
-        //         return View("Error");
-        //     }
-        //     var result = await _userManager.ConfirmEmailAsync(user, code);
-        //     if(result.Succeeded)
-        //         return RedirectToAction("Index", "Home");
-        //     else
-        //         return View("Error");
-        // }
-        
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            return View(new LoginUserViewModel { ReturnUrl = returnUrl });
         }
  
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginUserViewModel model)
         {
             if (ModelState.IsValid)
             {
                 var result = 
-                    await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, false);
+                    await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
                     // проверяем, принадлежит ли URL приложению

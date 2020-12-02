@@ -1,5 +1,7 @@
 using ChessWeb.Domain.Entities;
+using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Persistence.Contexts;
+using ChessWeb.Persistence.Implementations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -27,7 +29,7 @@ namespace ChessWeb.Application
             services.AddDbContext<ApplicationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
  
-            services.AddIdentity<Player, IdentityRole>(opts=> {
+            services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;   // минимальная длина
                     opts.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
                     opts.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
@@ -35,7 +37,9 @@ namespace ChessWeb.Application
                     opts.Password.RequireDigit = false; // требуются ли цифры
                 })
                 .AddEntityFrameworkStores<ApplicationContext>();
- 
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             services.AddControllersWithViews();
         }
 
