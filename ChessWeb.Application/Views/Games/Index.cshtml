@@ -3,7 +3,7 @@
     ViewBag.Title = "Список игр";
 }
 
-<a asp-action="Create">Добавить игру</a>
+<a asp-action="Create">Создать игру</a>
  
 <table class="table">
     <tr><th>ID игры</th><th>FEN игры</th></tr>
@@ -14,7 +14,7 @@
             <td>@game.Fen</td>
             <td>
                 <form asp-action="Delete" asp-route-id="@game.Id" method="post">
-                    <a class="btn btn-sm btn-primary" asp-action="Players" asp-route-id="@game.Id">Пользователи</a>
+                    <a class="btn btn-sm btn-primary" asp-action="GamePlayers" asp-route-id="@game.Id">Пользователи</a>
                     <button type="submit" class="btn btn-sm btn-danger">
                         Удалить
                     </button>

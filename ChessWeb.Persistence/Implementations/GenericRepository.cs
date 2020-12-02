@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ChessWeb.Persistence.Implementations
 {
@@ -20,13 +21,13 @@ namespace ChessWeb.Persistence.Implementations
         public virtual IEnumerable<T> GetAll() =>
             _context.Set<T>().ToList();
 
-        public void Add(T entity) => 
+        public EntityEntry<T> Add(T entity) => 
             _context.Set<T>().Add(entity);
 
-        public void Delete(T entity) =>
+        public EntityEntry<T> Delete(T entity) =>
             _context.Set<T>().Remove(entity);
 
-        public void Update(T entity) =>
+        public EntityEntry<T> Update(T entity) =>
             _context.Set<T>().Update(entity);
     }
 }

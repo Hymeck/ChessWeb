@@ -20,6 +20,7 @@ namespace ChessWeb.Playground
         {
             // PlayingWithSides();
             // PlayingWithMoves();
+            // PlayingWithPlayerAdding();
             PrintAllEntities();
             // MakeMove();
         }
@@ -31,6 +32,16 @@ namespace ChessWeb.Playground
             var client = new ChessClient(host, user);
         }
 
+        private static void PlayingWithPlayerAdding()
+        {
+            var game = _unitOfWork.Games.Get(1);
+            var user = _unitOfWork.Players.Get(2);
+            var color = _unitOfWork.Colors.Get(2);
+            IChessService chessService = new ChessService(_unitOfWork);
+            chessService.AddToGame(user, game, color);
+        }
+        
+        
         private static void MakeMove()
         {
             var game1 = _unitOfWork.Games.Get(1);

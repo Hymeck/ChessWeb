@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ChessWeb.Application.ViewModels.Game;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,16 @@ namespace ChessWeb.Application.Controllers
 
         public IActionResult Create()
         {
-            throw new NotImplementedException(nameof(Delete));
+            var game = new Game();
+            _unitOfWork.Games.Add(game);
+            var whiteColor = _unitOfWork.Colors.Get(1);
+            var blackColor = _unitOfWork.Colors.Get(2);
+            var whiteSide = new Side {Color = whiteColor, Game = game};
+            var blackSide = new Side {Color =blackColor, Game = game};
+            _unitOfWork.Sides.Add(whiteSide);
+            _unitOfWork.Sides.Add(blackSide);
+            _unitOfWork.Complete();
+            return RedirectToAction("Index");
         }
 
         public IActionResult Delete()
@@ -28,9 +38,13 @@ namespace ChessWeb.Application.Controllers
             throw new NotImplementedException(nameof(Delete));
         }
 
-        public IActionResult Players(long id)
+        public IActionResult GamePlayers(long id)
         {
-            throw new NotImplementedException(nameof(Players));
+            var game = _unitOfWork.Games.Get(id);
+            if (game == null)
+                return NotFound();
+            var sides = _unitOfWork.Sides.GetAll().Where(x => x.Game == game);
+            return View(new GameViewModel(game, sides));
         }
 
         public IActionResult Play(string userName)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using ChessEngine;
 using ChessEngine.Console;
 using ChessEngine.Domain;
@@ -7,6 +8,7 @@ using ChessEngine.Exceptions;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Service.Interfaces;
+using Color = ChessWeb.Domain.Entities.Color;
 
 namespace ChessWeb.Service.Services
 {
@@ -36,15 +38,11 @@ namespace ChessWeb.Service.Services
             {
                 var squares = MoveInputParser.ParseMove(moveNext);
                 var nextChessGame = chessGame.Move(squares);
-                // // invalid move
-                // if (nextChessGame == chessGame)
-                //     return game;
 
                 game.Fen = nextChessGame.ToString();
 
                 _unitOfWork.Games.Update(game);
                 _unitOfWork.Complete();
-
                 return game;
             }
 
@@ -59,6 +57,31 @@ namespace ChessWeb.Service.Services
                 Debug.WriteLine(e.Message + "\n" +e.StackTrace);
                 return game;
             }
+        }
+
+        public void AddToGame(User user, Game game, Color color)
+        {
+            var gameSides = _unitOfWork.Sides.GetAll().Where(x => x.Game == game);
+            
+            if (gameSides.Count() >= 2)
+                return;
+
+            var sideUser = gameSides.FirstOrDefault(x => x.User.UserName == user.UserName);
+            if (sideUser != null)
+                return;
+            
+            var colorSide = gameSides.FirstOrDefault(x => x.Color == color);
+            if (colorSide != null) 
+                return;
+            
+            var side = new Side
+            {
+                Color = color,
+                Game = game,
+                User = user
+            };
+            _unitOfWork.Sides.Add(side);
+            _unitOfWork.Complete();
         }
     }
 }

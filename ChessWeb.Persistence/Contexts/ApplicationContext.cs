@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Contexts
 {
-    public class ApplicationContext : IdentityDbContext<User, UserRole, int>
+    public class ApplicationContext : IdentityDbContext<User, UserRole, long>
     {
         protected readonly string databaseName = "chess_db";
         public virtual DbSet<Color> Colors { get; set; }

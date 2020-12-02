@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ChessWeb.Domain.Interfaces.Repositories
 {
@@ -7,8 +7,8 @@ namespace ChessWeb.Domain.Interfaces.Repositories
     {
         T Get(long id);
         IEnumerable<T> GetAll();
-        void Add(T entity);
-        void Delete(T entity);
-        void Update(T entity);
+        EntityEntry<T> Add(T entity);
+        EntityEntry<T> Delete(T entity);
+        EntityEntry<T> Update(T entity);
     }
 }

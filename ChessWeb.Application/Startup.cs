@@ -2,6 +2,8 @@ using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Implementations;
+using ChessWeb.Service.Interfaces;
+using ChessWeb.Service.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +41,9 @@ namespace ChessWeb.Application
                 .AddEntityFrameworkStores<ApplicationContext>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            
+            services.AddScoped<IChessService, ChessService>();
+
+            services.AddRazorPages();
             services.AddControllersWithViews();
         }
 

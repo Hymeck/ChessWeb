@@ -22,7 +22,7 @@ namespace ChessWeb.Application
                 {
                     var userManager = services.GetRequiredService<UserManager<User>>();
                     var rolesManager = services.GetRequiredService<RoleManager<UserRole>>();
-                    await RoleInitializer.InitializeAsync(userManager, rolesManager);
+                    await DataInitializer.InitializeAsync(userManager, rolesManager);
                 }
                 catch (Exception ex)
                 {

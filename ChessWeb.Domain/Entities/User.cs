@@ -2,7 +2,9 @@
 
 namespace ChessWeb.Domain.Entities
 {
-    public class User : IdentityUser<int>
+    public class User : IdentityUser<long>
     {
+        public override string ToString() =>
+            UserName;
     }
 }
