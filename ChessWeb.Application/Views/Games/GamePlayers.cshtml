@@ -6,28 +6,25 @@
 <a asp-action="Index">Назад</a>
  
 <table class="table">
-    <tr><th>ID игры</th><th>FEN игры</th></tr>
+    <tr><th>ID</th><th>FEN</th></tr>
     <tr><td>@Model.Id</td><td>@Model.Fen</td></tr>
+</table>
+<table class="table">
+    <tr><th>Имя пользователя</th><th>Цвет</th><th>Присоединиться</th></tr>
     @foreach (var side in Model?.Sides)
     {
         <tr>
-            <td>@(side.User == null? "Пусто" : side.User)</td>
-            <td>@(side.Color.ColorType? "Белый": "Черный")</td>
+            @if (side.User != null)
+            {
+                <td>side.User</td>
+                <td>@(side.Color.ColorType ? "Белый" : "Черный")</td>
+            }
+            else
+            {
+                <td>Пусто</td>
+                <td>@(side.Color.ColorType ? "Белый" : "Черный")</td>
+                <td><a class="btn btn-sm btn-primary" asp-action="Join" asp-route-game="@Model" asp-route-side="@side">+</a></td>
+            }
         </tr>
     }
-    @*     @foreach (var user in Model) *@
-    @*     { *@
-    @*         <tr> *@
-    @*             <td>@user.UserName</td> *@
-    @*             <td>@user.Email</td> *@
-    @*             <td> *@
-    @*                 <form asp-action="Delete" asp-route-name="@user.UserName" method="post"> *@
-    @*                     <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-name="@user.UserName">Изменить</a> *@
-    @*                     <button type="submit" class="btn btn-sm btn-danger"> *@
-    @*                         Удалить *@
-    @*                     </button> *@
-    @*                 </form> *@
-    @*             </td> *@
-    @*         </tr> *@
-    @*     } *@
 </table>

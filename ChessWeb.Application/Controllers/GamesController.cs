@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using ChessWeb.Application.ViewModels.Game;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChessWeb.Application.Controllers
 {
+    [Authorize]
     public class GamesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        public GamesController(IUnitOfWork unitOfWork)
+        private readonly UserManager<User> _userManager;
+        public GamesController(IUnitOfWork unitOfWork, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         public IActionResult Index() =>
@@ -50,6 +55,16 @@ namespace ChessWeb.Application.Controllers
         public IActionResult Play(string userName)
         {
             throw new NotImplementedException(nameof(Play));
+        }
+        
+        public async Task<IActionResult> Join(Game game, Side side)
+        {
+            var userName = HttpContext.User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(userName);
+            side.User = user;
+            _unitOfWork.Sides.Update(side);
+            _unitOfWork.Complete();
+            return RedirectToAction("Index");
         }
     }
 }
