@@ -26,7 +26,8 @@ namespace ChessWeb.Application.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            var game = new Game();
+            var gameStatus = _unitOfWork.GameStatuses.Get(1);
+            var game = new Game {GameStatus = gameStatus};
             _unitOfWork.Games.Add(game);
             var whiteColor = _unitOfWork.Colors.Get(1);
             var blackColor = _unitOfWork.Colors.Get(2);

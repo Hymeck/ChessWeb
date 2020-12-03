@@ -6,13 +6,14 @@
 <a asp-action="Create">Создать игру</a>
  
 <table class="table">
-    <tr><th>ID игры</th><th>FEN игры</th></tr>
+    <tr><th>ID игры</th><th>FEN игры</th><th>Состояние игры</th></tr>
     @foreach (var game in Model)
     {
         <tr>
             <td>@game.Id</td>
             <td>@game.Fen</td>
             <td>
+                @(game.GameStatus + " ") 
                 <form asp-action="Delete" asp-route-id="@game.Id" method="post">
                     <a class="btn btn-sm btn-primary" asp-action="GamePlayers" asp-route-id="@game.Id">Пользователи</a>
                     <button type="submit" class="btn btn-sm btn-danger">
