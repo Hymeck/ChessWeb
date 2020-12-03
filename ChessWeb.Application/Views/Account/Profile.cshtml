@@ -9,11 +9,12 @@
     </tr>
 </table>
 <table class="table">
-    <tr><th>ID игры</th></tr>
+    <tr><th>ID игры</th><th>Состояние игры</th></tr>
     @foreach (var game in Model?.UserGames)
     {
         <tr>
             <td><a class="btn btn-sm btn-primary" asp-controller="Games" asp-action="GamePlayers" asp-route-id="@game?.Id">@game?.Id</a></td>
+            <td>@game.GameStatus</td>
         </tr>
     }
 </table>

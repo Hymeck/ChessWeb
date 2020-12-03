@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Domain.Maps;
 using ChessWeb.Persistence.Contexts;
 
 namespace ChessWeb.Persistence.Implementations
@@ -14,6 +15,7 @@ namespace ChessWeb.Persistence.Implementations
         public IMoveRepository Moves { get; }
         public IPlayerRepository Players { get; }
         public ISideRepository Sides { get; }
+        public IGameStatusRepository GameStatuses { get; }
 
         public UnitOfWork(ApplicationContext context)
         {
@@ -25,6 +27,7 @@ namespace ChessWeb.Persistence.Implementations
             Moves = new MoveRepository(_context);
             Games = new GameRepository(_context);
             Sides = new SideRepository(_context);
+            GameStatuses = new GameStatusRepository(_context);
         }
 
         public void Dispose()
