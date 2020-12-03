@@ -2,7 +2,7 @@
 
 namespace ChessWeb.Application.ViewModels.User
 {
-    public class RegisterUserViewModel
+    public class UserRegisterViewModel
     {
         [Required]
         [Display(Name = "Имя пользователя")]

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ChessWeb.Application.Controllers
 {
-    [Authorize]
     public class GamesController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -24,6 +23,7 @@ namespace ChessWeb.Application.Controllers
         public IActionResult Index() =>
             View(_unitOfWork.Games.GetAll());
 
+        [Authorize]
         public IActionResult Create()
         {
             var game = new Game();
@@ -57,10 +57,12 @@ namespace ChessWeb.Application.Controllers
             throw new NotImplementedException(nameof(Play));
         }
         
-        public async Task<IActionResult> Join(Game game, Side side)
+        [Authorize]
+        public IActionResult Join(long sideId)
         {
             var userName = HttpContext.User.Identity.Name;
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = _userManager.FindByNameAsync(userName).Result;
+            var side = _unitOfWork.Sides.Get(sideId);
             side.User = user;
             _unitOfWork.Sides.Update(side);
             _unitOfWork.Complete();

@@ -11,19 +11,20 @@
 </table>
 <table class="table">
     <tr><th>Имя пользователя</th><th>Цвет</th><th>Присоединиться</th></tr>
-    @foreach (var side in Model?.Sides)
+    @foreach (var side in Model.Sides)
     {
         <tr>
             @if (side.User != null)
             {
-                <td>side.User</td>
+                <td>@side.User</td>
                 <td>@(side.Color.ColorType ? "Белый" : "Черный")</td>
+                <td></td>
             }
             else
             {
                 <td>Пусто</td>
                 <td>@(side.Color.ColorType ? "Белый" : "Черный")</td>
-                <td><a class="btn btn-sm btn-primary" asp-action="Join" asp-route-game="@Model" asp-route-side="@side">+</a></td>
+                <td><a class="btn btn-sm btn-primary" asp-action="Join" asp-route-sideId="@side.Id">+</a></td>
             }
         </tr>
     }

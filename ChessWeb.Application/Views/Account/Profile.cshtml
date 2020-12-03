@@ -1,0 +1,20 @@
+﻿@model UserProfileViewModel
+
+<table class="table">
+    <tr><th>Имя пользователя</th><th>Электронная почта</th><th>Статус почты</th></tr>
+    <tr>
+        <td>@Model.Name</td>
+        <td>@Model.Email</td>
+        <td>@(Model.EmailConfirmed? "подтверждена" : "не подтверждена")</td>
+    </tr>
+</table>
+<table class="table">
+    <tr><th>ID игры</th></tr>
+    @foreach (var game in Model?.UserGames)
+    {
+        <tr>
+            <td><a class="btn btn-sm btn-primary" asp-controller="Games" asp-action="GamePlayers" asp-route-id="@game?.Id">@game?.Id</a></td>
+        </tr>
+    }
+</table>
+

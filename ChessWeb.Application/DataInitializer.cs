@@ -12,8 +12,8 @@ namespace ChessWeb.Application
             var adminPassword = "adminpass";
             var adminNickname = "admin";
 
-            var adminRole = "admin";
-            var playerRole = "player";
+            var adminRole = "администратор";
+            var playerRole = "игрок";
             
             if (await roleManager.FindByNameAsync(adminRole) == null)
             {
