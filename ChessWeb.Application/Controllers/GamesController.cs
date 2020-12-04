@@ -27,12 +27,13 @@ namespace ChessWeb.Application.Controllers
         public IActionResult Create()
         {
             var gameStatus = _unitOfWork.GameStatuses.Get(1);
-            var game = new Game {GameStatus = gameStatus};
+            var gameSummary = new GameSummary { Status = gameStatus}; 
+            var game = new Game {GameSummary = gameSummary };
             _unitOfWork.Games.Add(game);
             var whiteColor = _unitOfWork.Colors.Get(1);
             var blackColor = _unitOfWork.Colors.Get(2);
             var whiteSide = new Side {Color = whiteColor, Game = game};
-            var blackSide = new Side {Color =blackColor, Game = game};
+            var blackSide = new Side {Color = blackColor, Game = game};
             _unitOfWork.Sides.Add(whiteSide);
             _unitOfWork.Sides.Add(blackSide);
             _unitOfWork.Complete();

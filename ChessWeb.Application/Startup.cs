@@ -53,11 +53,11 @@ namespace ChessWeb.Application
             
             app.UseDeveloperExceptionPage();
  
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseStaticFiles();
  
             app.UseRouting();
- 
+            app.UseHttpMethodOverride();
             app.UseAuthentication();    // подключение аутентификации
             app.UseAuthorization();
 

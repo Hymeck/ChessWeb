@@ -21,15 +21,33 @@ namespace ChessWeb.Playground
             // PlayingWithSides();
             // PlayingWithMoves();
             // PlayingWithPlayerAdding();
+            // CreateGame();
+            // CreateGame();
             PrintAllEntities();
             // MakeMove();
         }
 
-        private static void PlayinWithClient()
+        private static void Update()
         {
-            var host = "someHost";
-            var user = "Hymeck";
-            var client = new ChessClient(host, user);
+            var gameSummary = _unitOfWork.GameSummaries.Get(1);
+            var whiteColor = _unitOfWork.Colors.Get(1);
+            gameSummary.ActiveColor = whiteColor;
+            _unitOfWork.GameSummaries.Update(gameSummary);
+        }
+
+        private static void CreateGame()
+        {
+            // if (_unitOfWork.Games.GetAll().Any())
+            //     return;
+            
+            var status = _unitOfWork.GameStatuses.Get(1);
+            var whiteColor = _unitOfWork.Colors.Get(1);
+            var game = new Game();
+            var gameSummary = new GameSummary(game, status, whiteColor);
+            game.GameSummary = gameSummary;
+            _unitOfWork.Games.Add(game);
+            _unitOfWork.GameSummaries.Add(gameSummary);
+            _unitOfWork.Complete();
         }
 
         private static void PlayingWithPlayerAdding()
@@ -108,6 +126,8 @@ namespace ChessWeb.Playground
             PrintAll(_unitOfWork.Colors.GetAll());
             PrintAll(_unitOfWork.Players.GetAll());
             PrintAll(_unitOfWork.Games.GetAll());
+            PrintAll(_unitOfWork.GameStatuses.GetAll());
+            PrintAll(_unitOfWork.GameSummaries.GetAll());
             PrintAll(_unitOfWork.Sides.GetAll());
             PrintAll(_unitOfWork.Moves.GetAll());
         }
@@ -124,6 +144,8 @@ namespace ChessWeb.Playground
             entity switch
             {
                 Game g => $"Game. {g.Id}. FEN: {g.Fen}",
+                GameStatus gst => $"GameStatus. {gst.Id}. Status: {gst}",
+                GameSummary gs => $"GameStatus. {gs.Id}. GameId: {gs.GameId}. Status: {gs.Status}. ActiveColor: {gs.ActiveColor}",
                 Side s => $"Side. {s.Id}. GameId: {s.Game?.Id}. PlayerNick: {s.User?.UserName}. Color: {s.Color}",
                 Move m => $"Move. {m.Id}. GameId: {m.Game?.Id}. PlayerNick: {m.User?.UserName}. FEN before move: {m.Fen}. Move: {m.MoveNext}",
                 Color c => $"Color. {c.Id}. Color: {c}",

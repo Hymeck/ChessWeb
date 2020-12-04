@@ -13,7 +13,7 @@
             <td>@game.Id</td>
             <td>@game.Fen</td>
             <td>
-                @(game.GameStatus + " ") 
+                @(game.GameSummary.Status + " ") 
                 <form asp-action="Delete" asp-route-id="@game.Id" method="post">
                     <a class="btn btn-sm btn-primary" asp-action="GamePlayers" asp-route-id="@game.Id">Пользователи</a>
                     <button type="submit" class="btn btn-sm btn-danger">

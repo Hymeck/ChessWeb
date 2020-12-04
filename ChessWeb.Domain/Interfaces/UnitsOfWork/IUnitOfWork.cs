@@ -12,6 +12,7 @@ namespace ChessWeb.Domain.Interfaces.UnitsOfWork
         IPlayerRepository Players { get; }
         ISideRepository Sides { get; }
         IGameStatusRepository GameStatuses { get; }
+        IGameSummaryRepository GameSummaries { get; }
         int Complete();
     }
 }

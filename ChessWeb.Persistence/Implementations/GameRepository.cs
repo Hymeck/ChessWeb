@@ -15,7 +15,7 @@ namespace ChessWeb.Persistence.Implementations
         public override Game Get(long id)
         {
             var entity = base.Get(id);
-            _context.Entry(entity).Reference(e => e.GameStatus).Load();
+            _context.Entry(entity).Reference(e => e.GameSummary).Load();
             return entity;
         }
     }

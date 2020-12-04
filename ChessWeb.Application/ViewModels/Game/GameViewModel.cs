@@ -14,7 +14,7 @@ namespace ChessWeb.Application.ViewModels.Game
         {
             Id = game.Id;
             Fen = game.Fen;
-            Status = FromGameStatus(game.GameStatus);
+            Status = FromGameStatus(game?.GameSummary.Status);
             Sides = sides;
         }
         

@@ -16,6 +16,7 @@ namespace ChessWeb.Persistence.Implementations
         public IPlayerRepository Players { get; }
         public ISideRepository Sides { get; }
         public IGameStatusRepository GameStatuses { get; }
+        public IGameSummaryRepository GameSummaries { get; }
 
         public UnitOfWork(ApplicationContext context)
         {
@@ -28,6 +29,7 @@ namespace ChessWeb.Persistence.Implementations
             Games = new GameRepository(_context);
             Sides = new SideRepository(_context);
             GameStatuses = new GameStatusRepository(_context);
+            GameSummaries = new GameSummaryRepository(_context);
         }
 
         public void Dispose()

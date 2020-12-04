@@ -16,6 +16,7 @@ namespace ChessWeb.Persistence.Contexts
         public virtual DbSet<User> Players { get; set; }
         public virtual DbSet<Side> Sides { get; set; }
         public virtual DbSet<GameStatus> GameStatuses { get; set; }
+        public virtual DbSet<GameSummary> GameSummaries { get; set; }
         
         public ApplicationContext() {}
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {}
@@ -27,6 +28,7 @@ namespace ChessWeb.Persistence.Contexts
             new ColorMap(modelBuilder.Entity<Color>());
             new GameStatusMap(modelBuilder.Entity<GameStatus>());
             new GameMap(modelBuilder.Entity<Game>());
+            new GameSummaryMap(modelBuilder.Entity<GameSummary>());
             new MoveMap(modelBuilder.Entity<Move>());
             new SideMap(modelBuilder.Entity<Side>());
         }
