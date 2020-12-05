@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using ChessWeb.Domain.Entities;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Service.Interfaces;
 
 namespace ChessWeb.Application
 {
     public class DataInitializer
     {
-        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager, IGameService gameService)
+        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager, IGameRepository gameRepository)
         {
             var adminEmail = "admin@gmail.com";
             var adminPassword = "adminpass";
@@ -32,7 +33,7 @@ namespace ChessWeb.Application
             // racoty
             await AddUser(userManager, "Racoty", "mr.yatson@gmail.com", "racotypass", playerRole);
             
-            AddGame(gameService);
+            await AddGame(gameRepository);
         }
 
         private static async Task AddUser(UserManager<User> userManager, string nickname, string email, string password, params string[] roles)
@@ -49,10 +50,10 @@ namespace ChessWeb.Application
             }
         }
 
-        private static void AddGame(IGameService gameService)
+        private static async Task AddGame(IGameRepository gameRepository)
         {
-            if (!gameService.Any())
-                gameService.CreateGame();
+            if (await gameRepository.FindAsync(1L) == null)
+                await gameRepository.CreateGameAsync();
         }
     }
 }

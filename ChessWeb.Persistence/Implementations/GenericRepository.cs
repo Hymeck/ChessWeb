@@ -8,33 +8,33 @@ namespace ChessWeb.Persistence.Implementations
 {
     public abstract class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        protected readonly ApplicationDbContext DbContext;
+        protected readonly ApplicationDbContext _dbContext;
 
         protected GenericRepository(ApplicationDbContext dbContext) => 
-            DbContext = dbContext;
+            _dbContext = dbContext;
 
         public async Task<T> AddAsync(T entity)
         {
-            await DbContext.Set<T>().AddAsync(entity);
+            await _dbContext.Set<T>().AddAsync(entity);
             return entity;
         }
 
         public async Task<T> UpdateAsync(T entity)
         {
-            DbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Entry(entity).State = EntityState.Modified;
             return entity;
         }
 
         public async Task<T> DeleteAsync(T entity)
         {
-            DbContext.Set<T>().Remove(entity);
+            _dbContext.Set<T>().Remove(entity);
             return entity;
         }
 
-        public async Task<T> FindAsync(int id) =>
-            await DbContext.Set<T>().FindAsync(id);
+        public async Task<T> FindAsync(long id) =>
+            await _dbContext.Set<T>().FindAsync(id);
 
         public async Task<int> SaveChangesAsync() =>
-            await DbContext.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
     }
 }

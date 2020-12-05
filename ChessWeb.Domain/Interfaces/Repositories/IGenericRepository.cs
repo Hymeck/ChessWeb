@@ -11,7 +11,7 @@ namespace ChessWeb.Domain.Interfaces.Repositories
 
         Task<T> DeleteAsync(T entity);
         
-        Task<T> FindAsync(int id);
+        Task<T> FindAsync(long id);
         Task<int> SaveChangesAsync();
     }
 }

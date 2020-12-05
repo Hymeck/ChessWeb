@@ -4,14 +4,16 @@ using ChessWeb.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChessWeb.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201205110616_Game_AddSeparateUsers")]
+    partial class Game_AddSeparateUsers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,9 +64,6 @@ namespace ChessWeb.Persistence.Migrations
                     b.Property<string>("Fen")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<long>("GameSummaryId")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("WhiteUserId")
                         .HasColumnType("nvarchar(450)");
@@ -280,7 +279,22 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("ChessWeb.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("GameUser", b =>
+                {
+                    b.Property<long>("GamesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("GamesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("GameUser");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -305,21 +319,6 @@ namespace ChessWeb.Persistence.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
-                });
-
-            modelBuilder.Entity("GameUser", b =>
-                {
-                    b.Property<long>("GamesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("UsersId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("GamesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("GameUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -478,7 +477,7 @@ namespace ChessWeb.Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
-                        .WithMany()
+                        .WithMany("Sides")
                         .HasForeignKey("GameId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -511,7 +510,7 @@ namespace ChessWeb.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("ChessWeb.Domain.Entities.UserRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -538,7 +537,7 @@ namespace ChessWeb.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("ChessWeb.Domain.Entities.UserRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -563,6 +562,8 @@ namespace ChessWeb.Persistence.Migrations
             modelBuilder.Entity("ChessWeb.Domain.Entities.Game", b =>
                 {
                     b.Navigation("GameSummary");
+
+                    b.Navigation("Sides");
                 });
 #pragma warning restore 612, 618
         }

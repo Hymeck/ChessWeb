@@ -8,5 +8,7 @@
         public User User { get; set; }
         public long ColorId { get; set; }
         public Color Color { get; set; }
+
+        public bool IsWhite => ColorId == 1;
     }
 }

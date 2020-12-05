@@ -5,6 +5,7 @@ using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ChessWeb.Application.ViewModels.User;
+using ChessWeb.Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChessWeb.Application.Controllers
@@ -13,11 +14,14 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        private readonly IGameRepository _gameRepository;
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IGameRepository gameRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _gameRepository = gameRepository;
         }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -37,12 +41,10 @@ namespace ChessWeb.Application.Controllers
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
                 }
-                else
+                
+                foreach (var error in result.Errors)
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
             return View(model);
@@ -66,18 +68,12 @@ namespace ChessWeb.Application.Controllers
                 {
                     // проверяем, принадлежит ли URL приложению
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
                         return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+
+                    return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
-                }
+
+                ModelState.AddModelError("", "Неправильный логин и (или) пароль");
             }
             return View(model);
         }
@@ -86,21 +82,18 @@ namespace ChessWeb.Application.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            throw new NotImplementedException(nameof(Profile));
-            // var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
-            // var games = _unitOfWork.Sides
-            //     .GetAll()
-            //     .Where(x => x.User?.Id == user.Id)
-            //     .Select(x => x.Game);
-            // return View(new UserProfileViewModel(user, games));
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var games = 
+                (await _gameRepository.GetAllAsync())
+                .Where(x => x.WhiteUser?.UserName == user.UserName || x.BlackUser?.UserName == user.UserName);
+            return View(new UserProfileViewModel(user, games));
         }
     }
 }

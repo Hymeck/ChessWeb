@@ -8,7 +8,15 @@ namespace ChessWeb.Domain.Entities
     {
         [MaxLength(100)]
         public string Fen { get; set; } = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        public List<Side> Sides { get; set; }
+        public string WhiteUserId { get; set; }
+        public User WhiteUser { get; set; }
+        public string BlackUserId { get; set; }
+        public User BlackUser { get; set; }
+        public long GameSummaryId { get; set; }
         public GameSummary GameSummary { get; set; }
+
+        public Game()
+        {
+        }
     }
 }

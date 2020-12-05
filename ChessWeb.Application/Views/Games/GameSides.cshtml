@@ -17,13 +17,13 @@
             @if (side.User != null)
             {
                 <td>@side.User</td>
-                <td>@(side.Color.ColorType ? "Белый" : "Черный")</td>
+                <td>@(side.ColorId == 1 ? "Белый" : "Черный")</td>
                 <td></td>
             }
             else
             {
                 <td>Пусто</td>
-                <td>@(side.Color.ColorType ? "Белый" : "Черный")</td>
+                <td>@(side.ColorId == 1 ? "Белый" : "Черный")</td>
                 <td><a class="btn btn-sm btn-primary" asp-action="Join" asp-route-sideId="@side.Id">+</a></td>
             }
         </tr>

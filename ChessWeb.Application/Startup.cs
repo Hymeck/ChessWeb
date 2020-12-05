@@ -26,11 +26,10 @@ namespace ChessWeb.Application
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddTransient<IUserValidator<User>, CustomUserValidator>();
- 
             services
-                .AddDbContext<ApplicationDbContext>(options => 
-                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                // .AddDbContext<ApplicationDbContext>(options => 
+                // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                .AddDbContext<ApplicationDbContext>();
  
             services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;   // минимальная длина
@@ -65,7 +64,7 @@ namespace ChessWeb.Application
             app.UseStaticFiles();
  
             app.UseRouting();
-            app.UseAuthentication();    // подключение аутентификации
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

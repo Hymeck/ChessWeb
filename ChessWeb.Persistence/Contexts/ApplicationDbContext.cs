@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Contexts
 {
-    public class ApplicationDbContext : IdentityDbContext<User>
+    public class ApplicationDbContext : IdentityDbContext<User, UserRole, string>
     {
         protected readonly string databaseName = "ChessWebDb";
         public DbSet<Color> Colors { get; set; }
@@ -14,7 +14,7 @@ namespace ChessWeb.Persistence.Contexts
         public DbSet<Side> Sides { get; set; }
         public DbSet<GameStatus> GameStatuses { get; set; }
         public DbSet<GameSummary> GameSummaries { get; set; }
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
+        // public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
         public ApplicationDbContext()
         {
@@ -26,10 +26,6 @@ namespace ChessWeb.Persistence.Contexts
             base.OnModelCreating(modelBuilder);
             new ColorMap(modelBuilder.Entity<Color>());
             new GameStatusMap(modelBuilder.Entity<GameStatus>());
-            // new GameMap(modelBuilder.Entity<Game>());
-            // new GameSummaryMap(modelBuilder.Entity<GameSummary>());
-            // new MoveMap(modelBuilder.Entity<Move>());
-            // new SideMap(modelBuilder.Entity<Side>());
 
             #region User
             modelBuilder
@@ -47,8 +43,13 @@ namespace ChessWeb.Persistence.Contexts
 
             modelBuilder
                 .Entity<Game>()
-                .HasMany(e => e.Sides)
-                .WithOne(e => e.Game);
+                .HasOne(e => e.WhiteUser)
+                .WithMany();
+            
+            modelBuilder
+                .Entity<Game>()
+                .HasOne(e => e.BlackUser)
+                .WithMany();
             #endregion Game
 
             #region Move
