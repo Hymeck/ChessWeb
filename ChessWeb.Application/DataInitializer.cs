@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using ChessWeb.Domain.Entities;
+using ChessWeb.Service.Interfaces;
 
 namespace ChessWeb.Application
 {
     public class DataInitializer
     {
-        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager)
+        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager, IGameService gameService)
         {
             var adminEmail = "admin@gmail.com";
             var adminPassword = "adminpass";
@@ -30,6 +31,8 @@ namespace ChessWeb.Application
             await AddUser(userManager, "Hymeck", "noonimf@gmail.com", "hymeckpass", playerRole);
             // racoty
             await AddUser(userManager, "Racoty", "mr.yatson@gmail.com", "racotypass", playerRole);
+            
+            AddGame(gameService);
         }
 
         private static async Task AddUser(UserManager<User> userManager, string nickname, string email, string password, params string[] roles)
@@ -44,6 +47,12 @@ namespace ChessWeb.Application
                         await userManager.AddToRoleAsync(admin, role);
                 }
             }
+        }
+
+        private static void AddGame(IGameService gameService)
+        {
+            if (!gameService.Any())
+                gameService.CreateGame();
         }
     }
 }

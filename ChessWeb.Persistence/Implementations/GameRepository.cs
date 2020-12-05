@@ -16,7 +16,16 @@ namespace ChessWeb.Persistence.Implementations
         {
             var entity = base.Get(id);
             _context.Entry(entity).Reference(e => e.GameSummary).Load();
+            // _context.Entry(entity).Reference(e => e.GameSummary.Status).Load();
+            // _context.Entry(entity).Reference(e => e.GameSummary.ActiveColor).Load();
+            // _context.Entry(entity).Reference(e => e.GameSummary.WhiteUser).Load();
+            // _context.Entry(entity).Reference(e => e.GameSummary.BlackUser).Load();
             return entity;
+        }
+
+        public IEnumerable<Game> GetUserGames(User user)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

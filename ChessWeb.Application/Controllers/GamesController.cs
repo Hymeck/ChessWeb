@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ChessWeb.Application.ViewModels.Game;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,29 +15,21 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
-        public GamesController(IUnitOfWork unitOfWork, UserManager<User> userManager)
+        private readonly IGameService _gameService;
+        public GamesController(IUnitOfWork unitOfWork, UserManager<User> userManager, IGameService gameService)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _gameService = gameService;
         }
 
         public IActionResult Index() =>
-            View(_unitOfWork.Games.GetAll());
+            View(_gameService.GetAll());
 
         [Authorize]
         public IActionResult Create()
         {
-            var gameStatus = _unitOfWork.GameStatuses.Get(1);
-            var gameSummary = new GameSummary { Status = gameStatus}; 
-            var game = new Game {GameSummary = gameSummary };
-            _unitOfWork.Games.Add(game);
-            var whiteColor = _unitOfWork.Colors.Get(1);
-            var blackColor = _unitOfWork.Colors.Get(2);
-            var whiteSide = new Side {Color = whiteColor, Game = game};
-            var blackSide = new Side {Color = blackColor, Game = game};
-            _unitOfWork.Sides.Add(whiteSide);
-            _unitOfWork.Sides.Add(blackSide);
-            _unitOfWork.Complete();
+            _gameService.CreateGame();
             return RedirectToAction("Index");
         }
 
@@ -45,7 +38,7 @@ namespace ChessWeb.Application.Controllers
             throw new NotImplementedException(nameof(Delete));
         }
 
-        public IActionResult GamePlayers(long id)
+        public IActionResult GameSides(long id)
         {
             var game = _unitOfWork.Games.Get(id);
             if (game == null)
@@ -64,10 +57,7 @@ namespace ChessWeb.Application.Controllers
         {
             var userName = HttpContext.User.Identity.Name;
             var user = _userManager.FindByNameAsync(userName).Result;
-            var side = _unitOfWork.Sides.Get(sideId);
-            side.User = user;
-            _unitOfWork.Sides.Update(side);
-            _unitOfWork.Complete();
+            _gameService.Join(user, sideId);
             return RedirectToAction("Index");
         }
     }

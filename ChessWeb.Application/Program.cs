@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using ChessWeb.Application;
 using ChessWeb.Domain.Entities;
+using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,8 @@ try
 {
     var userManager = services.GetRequiredService<UserManager<User>>();
     var rolesManager = services.GetRequiredService<RoleManager<UserRole>>();
-    await DataInitializer.InitializeAsync(userManager, rolesManager);
+    var gameService = services.GetRequiredService<IGameService>();
+    await DataInitializer.InitializeAsync(userManager, rolesManager, gameService);
 }
 catch (Exception ex)
 {

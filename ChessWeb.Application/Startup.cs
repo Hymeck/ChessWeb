@@ -42,6 +42,7 @@ namespace ChessWeb.Application
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IChessService, ChessService>();
+            services.AddScoped<IGameService, GameService>();
 
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllersWithViews();
@@ -57,7 +58,6 @@ namespace ChessWeb.Application
             app.UseStaticFiles();
  
             app.UseRouting();
-            app.UseHttpMethodOverride();
             app.UseAuthentication();    // подключение аутентификации
             app.UseAuthorization();
 

@@ -27,14 +27,6 @@ namespace ChessWeb.Playground
             // MakeMove();
         }
 
-        private static void Update()
-        {
-            var gameSummary = _unitOfWork.GameSummaries.Get(1);
-            var whiteColor = _unitOfWork.Colors.Get(1);
-            gameSummary.ActiveColor = whiteColor;
-            _unitOfWork.GameSummaries.Update(gameSummary);
-        }
-
         private static void CreateGame()
         {
             // if (_unitOfWork.Games.GetAll().Any())
