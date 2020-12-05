@@ -8,24 +8,21 @@ namespace ChessWeb.Persistence.Implementations
 {
     public class GameRepository : GenericRepository<Game>, IGameRepository
     {
-        public GameRepository(ApplicationContext context) : base(context)
+        public GameRepository(ApplicationDbContext dbContext) : base(dbContext) {}
+
+        public Task<IEnumerable<Game>> GetUserGames(User user)
         {
+            throw new System.NotImplementedException(nameof(GetUserGames));
         }
 
-        public override Game Get(long id)
+        public Task CreateGame()
         {
-            var entity = base.Get(id);
-            _context.Entry(entity).Reference(e => e.GameSummary).Load();
-            // _context.Entry(entity).Reference(e => e.GameSummary.Status).Load();
-            // _context.Entry(entity).Reference(e => e.GameSummary.ActiveColor).Load();
-            // _context.Entry(entity).Reference(e => e.GameSummary.WhiteUser).Load();
-            // _context.Entry(entity).Reference(e => e.GameSummary.BlackUser).Load();
-            return entity;
+            throw new System.NotImplementedException(nameof(CreateGame));
         }
 
-        public IEnumerable<Game> GetUserGames(User user)
+        public Task Join(User user, Side side)
         {
-            throw new System.NotImplementedException();
+            throw new System.NotImplementedException(nameof(Join));
         }
     }
 }

@@ -1,5 +1,5 @@
 using ChessWeb.Domain.Entities;
-using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Implementations;
 using ChessWeb.Service.Interfaces;
@@ -28,8 +28,9 @@ namespace ChessWeb.Application
         {
             // services.AddTransient<IUserValidator<User>, CustomUserValidator>();
  
-            services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services
+                .AddDbContext<ApplicationDbContext>(options => 
+                    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
  
             services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;   // минимальная длина
@@ -38,11 +39,17 @@ namespace ChessWeb.Application
                     opts.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
                     opts.Password.RequireDigit = false; // требуются ли цифры
                 })
-                .AddEntityFrameworkStores<ApplicationContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             services.AddScoped<IChessService, ChessService>();
             services.AddScoped<IGameService, GameService>();
+            services.AddTransient<IColorRepository, ColorRepository>();
+            services.AddTransient<IGameRepository, GameRepository>();
+            services.AddTransient<IGameStatusRepository, GameStatusRepository>();
+            services.AddTransient<IGameSummaryRepository, GameSummaryRepository>();
+            services.AddTransient<IMoveRepository, MoveRepository>();
+            services.AddTransient<ISideRepository, SideRepository>();
 
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllersWithViews();

@@ -1,33 +1,40 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace ChessWeb.Persistence.Implementations
 {
-    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+    public abstract class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        protected readonly ApplicationContext _context;
+        protected readonly ApplicationDbContext DbContext;
 
-        public GenericRepository(ApplicationContext context) => 
-            _context = context;
+        protected GenericRepository(ApplicationDbContext dbContext) => 
+            DbContext = dbContext;
 
-        public virtual T Get(long id) =>
-            _context.Set<T>().Find(id);
+        public async Task<T> AddAsync(T entity)
+        {
+            await DbContext.Set<T>().AddAsync(entity);
+            return entity;
+        }
 
-        public virtual IEnumerable<T> GetAll() =>
-            _context.Set<T>().ToList();
+        public async Task<T> UpdateAsync(T entity)
+        {
+            DbContext.Entry(entity).State = EntityState.Modified;
+            return entity;
+        }
 
-        public EntityEntry<T> Add(T entity) => 
-            _context.Set<T>().Add(entity);
+        public async Task<T> DeleteAsync(T entity)
+        {
+            DbContext.Set<T>().Remove(entity);
+            return entity;
+        }
 
-        public EntityEntry<T> Delete(T entity) =>
-            _context.Set<T>().Remove(entity);
+        public async Task<T> FindAsync(int id) =>
+            await DbContext.Set<T>().FindAsync(id);
 
-        public EntityEntry<T> Update(T entity) =>
-            _context.Set<T>().Update(entity);
+        public async Task<int> SaveChangesAsync() =>
+            await DbContext.SaveChangesAsync();
     }
 }

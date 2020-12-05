@@ -1,10 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ChessWeb.Application.ViewModels.User;
-using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChessWeb.Application.Controllers
@@ -13,12 +13,10 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IUnitOfWork _unitOfWork;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IUnitOfWork unitOfWork)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _unitOfWork = unitOfWork;
         }
         [HttpGet]
         public IActionResult Register()
@@ -96,12 +94,13 @@ namespace ChessWeb.Application.Controllers
         [Authorize]
         public IActionResult Profile()
         {
-            var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
-            var games = _unitOfWork.Sides
-                .GetAll()
-                .Where(x => x.User?.Id == user.Id)
-                .Select(x => x.Game);
-            return View(new UserProfileViewModel(user, games));
+            throw new NotImplementedException(nameof(Profile));
+            // var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
+            // var games = _unitOfWork.Sides
+            //     .GetAll()
+            //     .Where(x => x.User?.Id == user.Id)
+            //     .Select(x => x.Game);
+            // return View(new UserProfileViewModel(user, games));
         }
     }
 }

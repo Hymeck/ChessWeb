@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChessWeb.Application.ViewModels.Game;
 using ChessWeb.Domain.Entities;
-using ChessWeb.Domain.Interfaces.UnitsOfWork;
 using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,12 +12,10 @@ namespace ChessWeb.Application.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly IGameService _gameService;
-        public GamesController(IUnitOfWork unitOfWork, UserManager<User> userManager, IGameService gameService)
+        public GamesController(UserManager<User> userManager, IGameService gameService)
         {
-            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _gameService = gameService;
         }
@@ -40,11 +37,12 @@ namespace ChessWeb.Application.Controllers
 
         public IActionResult GameSides(long id)
         {
-            var game = _unitOfWork.Games.Get(id);
-            if (game == null)
-                return NotFound();
-            var sides = _unitOfWork.Sides.GetAll().Where(x => x.Game == game);
-            return View(new GameViewModel(game, sides));
+            throw new NotImplementedException(nameof(GameSides));
+            // var game = _unitOfWork.Games.Get(id);
+            // if (game == null)
+            //     return NotFound();
+            // var sides = _unitOfWork.Sides.GetAll().Where(x => x.Game == game);
+            // return View(new GameViewModel(game, sides));
         }
 
         public IActionResult Play(string userName)

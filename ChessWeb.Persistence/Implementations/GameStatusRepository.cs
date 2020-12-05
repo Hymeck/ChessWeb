@@ -6,8 +6,6 @@ namespace ChessWeb.Persistence.Implementations
 {
     public class GameStatusRepository : GenericRepository<GameStatus>, IGameStatusRepository
     {
-        public GameStatusRepository(ApplicationContext context) : base(context)
-        {
-        }
+        public GameStatusRepository(ApplicationDbContext dbContext) : base(dbContext) {}
     }
 }

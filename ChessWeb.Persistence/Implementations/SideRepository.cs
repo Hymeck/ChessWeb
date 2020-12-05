@@ -8,28 +8,6 @@ namespace ChessWeb.Persistence.Implementations
 {
     public class SideRepository : GenericRepository<Side>, ISideRepository
     {
-        public SideRepository(ApplicationContext context) : base(context)
-        {
-        }
-
-        public override Side Get(long id)
-        {
-            var entity = base.Get(id);
-            _context.Entry(entity).Reference(e => e.Game).LoadAsync();
-            _context.Entry(entity).Reference(e => e.User).LoadAsync();
-            _context.Entry(entity).Reference(e => e.Color).LoadAsync();
-            return entity;
-        }
-
-        public override IEnumerable<Side> GetAll()
-        {
-            foreach (var entity in base.GetAll())
-            {
-                _context.Entry(entity).Reference(e => e.Game).Load();
-                _context.Entry(entity).Reference(e => e.User).Load();
-                _context.Entry(entity).Reference(e => e.Color).Load();
-                yield return entity;
-            }
-        }
+        public SideRepository(ApplicationDbContext dbContext) : base(dbContext) {}
     }
 }

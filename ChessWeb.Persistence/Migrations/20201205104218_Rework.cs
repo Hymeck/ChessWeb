@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ChessWeb.Persistence.Migrations
 {
-    public partial class Player_PkToLong : Migration
+    public partial class Rework : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,8 +11,7 @@ namespace ChessWeb.Persistence.Migrations
                 name: "AspNetRoles",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -26,8 +25,7 @@ namespace ChessWeb.Persistence.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -75,12 +73,25 @@ namespace ChessWeb.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GameStatuses",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<byte>(type: "tinyint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameStatuses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<long>(type: "bigint", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -101,7 +112,7 @@ namespace ChessWeb.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -123,7 +134,7 @@ namespace ChessWeb.Persistence.Migrations
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -140,8 +151,8 @@ namespace ChessWeb.Persistence.Migrations
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    RoleId = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -164,7 +175,7 @@ namespace ChessWeb.Persistence.Migrations
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -181,22 +192,69 @@ namespace ChessWeb.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "GameSummaries",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    GameId = table.Column<long>(type: "bigint", nullable: false),
+                    Status = table.Column<byte>(type: "tinyint", nullable: false),
+                    LastMove = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true),
+                    ActiveColor = table.Column<bool>(type: "bit", nullable: false),
+                    Winner = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameSummaries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GameSummaries_Games_GameId",
+                        column: x => x.GameId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GameUser",
+                columns: table => new
+                {
+                    GamesId = table.Column<long>(type: "bigint", nullable: false),
+                    UsersId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GameUser", x => new { x.GamesId, x.UsersId });
+                    table.ForeignKey(
+                        name: "FK_GameUser_AspNetUsers_UsersId",
+                        column: x => x.UsersId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GameUser_Games_GamesId",
+                        column: x => x.GamesId,
+                        principalTable: "Games",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Moves",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GameId = table.Column<long>(type: "bigint", nullable: true),
-                    PlayerId = table.Column<long>(type: "bigint", nullable: true),
-                    Fen = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    MoveNext = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: true)
+                    GameId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Fen = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MoveNext = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Moves", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Moves_AspNetUsers_PlayerId",
-                        column: x => x.PlayerId,
+                        name: "FK_Moves_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -205,7 +263,7 @@ namespace ChessWeb.Persistence.Migrations
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,16 +272,16 @@ namespace ChessWeb.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GameId = table.Column<long>(type: "bigint", nullable: true),
-                    PlayerId = table.Column<long>(type: "bigint", nullable: true),
-                    ColorId = table.Column<long>(type: "bigint", nullable: true)
+                    GameId = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ColorId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sides", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Sides_AspNetUsers_PlayerId",
-                        column: x => x.PlayerId,
+                        name: "FK_Sides_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -232,29 +290,36 @@ namespace ChessWeb.Persistence.Migrations
                         column: x => x.ColorId,
                         principalTable: "Colors",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Sides_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "Colors",
                 columns: new[] { "Id", "ColorType" },
-                values: new object[] { 1L, true });
+                values: new object[,]
+                {
+                    { 1L, true },
+                    { 2L, false }
+                });
 
             migrationBuilder.InsertData(
-                table: "Colors",
-                columns: new[] { "Id", "ColorType" },
-                values: new object[] { 2L, false });
-
-            migrationBuilder.InsertData(
-                table: "Games",
-                columns: new[] { "Id", "Fen" },
-                values: new object[] { 1L, "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" });
+                table: "GameStatuses",
+                columns: new[] { "Id", "Status" },
+                values: new object[,]
+                {
+                    { 1L, (byte)0 },
+                    { 2L, (byte)1 },
+                    { 3L, (byte)2 },
+                    { 4L, (byte)3 },
+                    { 5L, (byte)4 },
+                    { 6L, (byte)5 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -289,13 +354,6 @@ namespace ChessWeb.Persistence.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_Email",
-                table: "AspNetUsers",
-                column: "Email",
-                unique: true,
-                filter: "[Email] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
@@ -309,14 +367,31 @@ namespace ChessWeb.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_GameStatuses_Status",
+                table: "GameStatuses",
+                column: "Status",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameSummaries_GameId",
+                table: "GameSummaries",
+                column: "GameId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GameUser_UsersId",
+                table: "GameUser",
+                column: "UsersId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Moves_GameId",
                 table: "Moves",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Moves_PlayerId",
+                name: "IX_Moves_UserId",
                 table: "Moves",
-                column: "PlayerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sides_ColorId",
@@ -329,9 +404,9 @@ namespace ChessWeb.Persistence.Migrations
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Sides_PlayerId",
+                name: "IX_Sides_UserId",
                 table: "Sides",
-                column: "PlayerId");
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -350,6 +425,15 @@ namespace ChessWeb.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "GameStatuses");
+
+            migrationBuilder.DropTable(
+                name: "GameSummaries");
+
+            migrationBuilder.DropTable(
+                name: "GameUser");
 
             migrationBuilder.DropTable(
                 name: "Moves");
