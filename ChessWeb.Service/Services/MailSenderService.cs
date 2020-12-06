@@ -1,11 +1,9 @@
-﻿using System.IO;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ChessWeb.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using MimeKit;
+using MailKit.Net.Smtp;
 
 namespace ChessWeb.Service.Services
 {
@@ -31,32 +29,26 @@ namespace ChessWeb.Service.Services
 
         public async Task SendMailAsync(string recipientName, string subject, string message)
         {
-            var fromMessage = new MailAddress(_smtpOptions.Username, "ChessWeb");
-            var mailAddress = recipientName;
-            var toMessage = new MailAddress(mailAddress);
-            var mailMessage = new MailMessage(fromMessage, toMessage)
+            var emailMessage = new MimeMessage();
+
+            emailMessage.From.Add(new MailboxAddress("У Артемки в хатке", _smtpOptions.Username));
+            emailMessage.To.Add(new MailboxAddress("", recipientName));
+            emailMessage.Subject = subject;
+
+            var htmlMessage = string.Format("<p>{0}</p>", message);
+            
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
-                Subject = subject,
-                // todo: uncomment when make html template
-                IsBodyHtml = true,
+                Text = htmlMessage
             };
 
-            // todo: add html string.Format(messageTemplate, message)
-            var htmlMessage = message;
-
-            // 5. set message's body
-            mailMessage.Body = $"<p>{htmlMessage}</p>";
-
-            // 6. initialize smtpClient
-            using var smtpClient = new SmtpClient(_smtpOptions.Host, _smtpOptions.Port)
+            using (var client = new SmtpClient())
             {
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password),
-            };
-
-            smtpClient.Send(mailMessage);
+                await client.ConnectAsync(_smtpOptions.Host, _smtpOptions.Port, false);
+                await client.AuthenticateAsync(_smtpOptions.Username, _smtpOptions.Password);
+                await client.SendAsync(emailMessage);
+                await client.DisconnectAsync(true);
+            }
         }
     }
 }
