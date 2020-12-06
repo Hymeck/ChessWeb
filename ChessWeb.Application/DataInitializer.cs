@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Service.Interfaces;
@@ -14,8 +15,8 @@ namespace ChessWeb.Application
             var adminPassword = "adminpass";
             var adminNickname = "admin";
 
-            var adminRole = "администратор";
-            var playerRole = "игрок";
+            var adminRole = Roles.AdminRole;
+            var playerRole = Roles.PlayerRole;
             
             if (await roleManager.FindByNameAsync(adminRole) == null)
             {

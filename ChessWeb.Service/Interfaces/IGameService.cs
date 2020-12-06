@@ -8,6 +8,7 @@ namespace ChessWeb.Service.Interfaces
     public interface IGameService
     {
         Task<IEnumerable<Game>> GetAllAsync();
+        Task<IEnumerable<Game>> GetUserGamesAsync(User user);
         Task CreateGameAsync();
 
         Task<Game> FindAsync(long id);

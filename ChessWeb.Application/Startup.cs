@@ -22,8 +22,6 @@ namespace ChessWeb.Application
         {
             Configuration = configuration;
         }
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services
@@ -32,11 +30,11 @@ namespace ChessWeb.Application
                 .AddDbContext<ApplicationDbContext>();
  
             services.AddIdentity<User, UserRole>(opts=> {
-                    opts.Password.RequiredLength = 5;   // минимальная длина
-                    opts.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
-                    opts.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
-                    opts.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
-                    opts.Password.RequireDigit = false; // требуются ли цифры
+                    opts.Password.RequiredLength = 5;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireLowercase = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireDigit = false;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -54,7 +52,6 @@ namespace ChessWeb.Application
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             

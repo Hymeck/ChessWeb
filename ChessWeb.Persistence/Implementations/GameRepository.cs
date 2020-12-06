@@ -20,7 +20,12 @@ namespace ChessWeb.Persistence.Implementations
                 .Include(e => e.WhiteUser)
                 .Include(e => e.BlackUser)
                 .OrderBy(e => e.Id).ToListAsync();
-        
+
+        public async Task<IEnumerable<Game>> GetUserGamesAsync(User user) =>
+            (await GetAllAsync()).Where(x =>
+                x.WhiteUser?.UserName == user.UserName || 
+                x.BlackUser?.UserName == user.UserName);
+
         public async Task CreateGameAsync()
         {
             var whiteColor = await _dbContext.Colors.FindAsync(1L);

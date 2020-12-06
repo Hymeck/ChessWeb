@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ChessWeb.Application.ViewModels.User;
-using ChessWeb.Domain.Interfaces.Repositories;
+using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
 namespace ChessWeb.Application.Controllers
@@ -14,12 +13,12 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IGameRepository _gameRepository;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IGameRepository gameRepository)
+        private readonly IGameService _gameService;
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IGameService gameService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _gameRepository = gameRepository;
+            _gameService = gameService;
         }
 
         [HttpGet]
@@ -36,8 +35,7 @@ namespace ChessWeb.Application.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "player");
-                    // установка куки
+                    await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
                     await _signInManager.SignInAsync(user, false);
                     return RedirectToAction("Index", "Home");
                 }
@@ -66,7 +64,6 @@ namespace ChessWeb.Application.Controllers
                     await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    // проверяем, принадлежит ли URL приложению
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                         return Redirect(model.ReturnUrl);
 
@@ -90,10 +87,8 @@ namespace ChessWeb.Application.Controllers
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
-            var games = 
-                (await _gameRepository.GetAllAsync())
-                .Where(x => x.WhiteUser?.UserName == user.UserName || x.BlackUser?.UserName == user.UserName);
-            return View(new UserProfileViewModel(user, games));
+            var userGames = await _gameService.GetUserGamesAsync(user);
+            return View(new UserProfileViewModel(user, userGames));
         }
     }
 }

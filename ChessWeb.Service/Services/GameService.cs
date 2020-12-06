@@ -18,21 +18,6 @@ namespace ChessWeb.Service.Services
         //     _unitOfWork.Sides.Update(side);
         //     _unitOfWork.Complete();
         // }
-        //
-        // public bool Any() =>
-        //     _unitOfWork.Games.GetAll().Any();
-        //
-        // public IEnumerable<Game> GetUserGames(User user)
-        // {
-        //     var games = _unitOfWork.Sides
-        //         .GetAll()
-        //         .Where(x => x.User?.Id == user.Id)
-        //         .Select(x => x.Game);
-        //     foreach (var game in games)
-        //     {
-        //         
-        //     }
-        // }
         public GameService(IGameRepository gameRepository, ISideRepository sideRepository)
         {
             _gameRepository = gameRepository;
@@ -43,6 +28,9 @@ namespace ChessWeb.Service.Services
         {
             return await _gameRepository.GetAllAsync();
         }
+
+        public async Task<IEnumerable<Game>> GetUserGamesAsync(User user) => 
+            await _gameRepository.GetUserGamesAsync(user);
 
         public async Task CreateGameAsync()
         {
@@ -74,11 +62,6 @@ namespace ChessWeb.Service.Services
         }
 
         public bool Any()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public IEnumerable<Game> GetUserGamesAsync(User user)
         {
             throw new System.NotImplementedException();
         }

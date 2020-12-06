@@ -1,13 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Application.ViewModels.Role;
 using ChessWeb.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChessWeb.Application.Controllers
 {
+    [Authorize(Roles = Roles.AdminRole)]
     public class RolesController : Controller
     {
         RoleManager<UserRole> _roleManager;
@@ -17,9 +20,11 @@ namespace ChessWeb.Application.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        public IActionResult Index() => View(_roleManager.Roles.ToList());
+        public IActionResult Index() => 
+            View(_roleManager.Roles.ToList());
  
-        public IActionResult Create() => View();
+        public IActionResult Create() => 
+            View();
         [HttpPost]
         public async Task<IActionResult> Create(string name)
         {
@@ -56,11 +61,9 @@ namespace ChessWeb.Application.Controllers
  
         public async Task<IActionResult> Edit(string name)
         {
-            // получаем пользователя
             var user = await _userManager.FindByNameAsync(name);
             if(user!=null)
             {
-                // получем список ролей пользователя
                 var userRoles = await _userManager.GetRolesAsync(user);
                 var allRoles = _roleManager.Roles.ToList();
                 var model = new ChangeRoleViewModel
@@ -79,7 +82,6 @@ namespace ChessWeb.Application.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(string name, List<string> roles)
         {
-            // получаем пользователя
             var user = await _userManager.FindByNameAsync(name);
             if (user!=null)
             {

@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ChessWeb.Application.Controllers
 {
-    [Authorize(Roles = "администратор")]
+    [Authorize(Roles = Roles.AdminRole)]
     public class UsersController : Controller
     {
         UserManager<User> _userManager;
@@ -31,7 +32,7 @@ namespace ChessWeb.Application.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "игрок");
+                    await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
                     return RedirectToAction("Index");
                 }
                 else
