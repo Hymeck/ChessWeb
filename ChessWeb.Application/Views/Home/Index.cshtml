@@ -4,6 +4,8 @@
 
 @if(User.Identity.IsAuthenticated)
 {
+    // todo: delete this button when dev of sending finishes
+    <a class="btn btn-sm btn-primary" asp-controller="Home" asp-action="TestSend">Отправить</a>
     <p>@User.Identity.Name</p>
     @if (User.IsInRole("администратор"))
     {

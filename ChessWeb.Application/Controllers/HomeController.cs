@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ChessWeb.Application.ViewModels;
+using ChessWeb.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ChessWeb.Application.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IMailSender _mailSender;
+        public HomeController(ILogger<HomeController> logger, IMailSender mailSender)
         {
             _logger = logger;
+            _mailSender = mailSender;
         }
 
         public IActionResult Index()
@@ -27,6 +30,14 @@ namespace ChessWeb.Application.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+        }
+
+        [Authorize]
+        // todo: remove when dev of sendings finishes
+        public async Task<IActionResult> TestSend()
+        {
+            await _mailSender.SendMailAsync("noonimf@gmail.com", "Test subject", "Test message");
+            return RedirectToAction("Index");
         }
     }
 }

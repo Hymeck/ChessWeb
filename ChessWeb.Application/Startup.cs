@@ -28,7 +28,7 @@ namespace ChessWeb.Application
                 // .AddDbContext<ApplicationDbContext>(options => 
                 // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
                 .AddDbContext<ApplicationDbContext>();
- 
+            
             services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;
                     opts.Password.RequireNonAlphanumeric = false;
@@ -41,6 +41,9 @@ namespace ChessWeb.Application
             
             services.AddScoped<IChessService, ChessService>();
             services.AddScoped<IGameService, GameService>();
+            
+            services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.SectionName));
+            services.AddTransient<IMailSender, MailSenderService>();
             services.AddTransient<IColorRepository, ColorRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
             services.AddTransient<IGameStatusRepository, GameStatusRepository>();

@@ -9,7 +9,10 @@ namespace ChessWeb.Application
 {
     public class DataInitializer
     {
-        public static async Task InitializeAsync(UserManager<User> userManager, RoleManager<UserRole> roleManager, IGameRepository gameRepository)
+        public static async Task InitializeAsync(
+            UserManager<User> userManager, 
+            RoleManager<UserRole> roleManager, 
+            IGameRepository gameRepository)
         {
             var adminEmail = "admin@gmail.com";
             var adminPassword = "adminpass";
