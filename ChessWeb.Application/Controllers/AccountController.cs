@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using ChessWeb.Application.ViewModels.User;
 using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace ChessWeb.Application.Controllers
 {
@@ -14,11 +15,20 @@ namespace ChessWeb.Application.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IGameService _gameService;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IGameService gameService)
+        private readonly IMailSender _mailSender;
+        private readonly ILogger<AccountController> _logger;
+        public AccountController(
+            UserManager<User> userManager, 
+            SignInManager<User> signInManager, 
+            IGameService gameService,
+            IMailSender mailSender,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _gameService = gameService;
+            _mailSender = mailSender;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,6 +47,7 @@ namespace ChessWeb.Application.Controllers
                 {
                     await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
                     await _signInManager.SignInAsync(user, false);
+                    await SendConfirmEmailAsync(user);
                     return RedirectToAction("Index", "Home");
                 }
                 
@@ -46,6 +57,26 @@ namespace ChessWeb.Application.Controllers
                 }
             }
             return View(model);
+        }
+        
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogError($"Specified user does not exist. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
+                return NotFound();
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+                return RedirectToAction("Profile", "Account");
+            else
+            {
+                _logger.LogError($"Email confirm fails. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
+                return NotFound();
+            }
         }
         
         [HttpGet]
@@ -89,6 +120,28 @@ namespace ChessWeb.Application.Controllers
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             var userGames = await _gameService.GetUserGamesAsync(user);
             return View(new UserProfileViewModel(user, userGames));
+        }
+
+        private async Task SendConfirmEmailAsync(User user)
+        {
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action(
+                "ConfirmEmail",
+                "Account",
+                new { userId = user.Id, code = code },
+                protocol: HttpContext.Request.Scheme);
+                    
+            await _mailSender.SendMailAsync(user.Email, "Подтверждение учетной записи",
+                $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Confirm(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            await SendConfirmEmailAsync(user);
+            return RedirectToAction("Index", "Home");
         }
     }
 }
