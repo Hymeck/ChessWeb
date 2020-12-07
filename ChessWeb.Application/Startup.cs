@@ -1,3 +1,4 @@
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
@@ -28,7 +29,7 @@ namespace ChessWeb.Application
                 // .AddDbContext<ApplicationDbContext>(options => 
                 // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
                 .AddDbContext<ApplicationDbContext>();
- 
+            
             services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;
                     opts.Password.RequireNonAlphanumeric = false;
@@ -36,11 +37,15 @@ namespace ChessWeb.Application
                     opts.Password.RequireUppercase = false;
                     opts.Password.RequireDigit = false;
                 })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             
             services.AddScoped<IChessService, ChessService>();
             services.AddScoped<IGameService, GameService>();
+            
+            // services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.SectionName));
+            services.AddTransient<IMailSender, MailSenderService>();
             services.AddTransient<IColorRepository, ColorRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
             services.AddTransient<IGameStatusRepository, GameStatusRepository>();
@@ -54,10 +59,19 @@ namespace ChessWeb.Application
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
-            app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            else if (env.IsProduction())
+            {
+                app.UseExceptionHandler(Routes.ErrorRoute);
+                app.UseHsts();
+            }
  
-            // app.UseHttpsRedirection();
+            app.UseStatusCodePagesWithReExecute("/Error/Index", "?statusCode={0}");
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
  
             app.UseRouting();

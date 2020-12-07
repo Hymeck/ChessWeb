@@ -5,7 +5,13 @@
     <tr>
         <td>@Model.Name</td>
         <td>@Model.Email</td>
-        <td>@(Model.EmailConfirmed? "подтверждена" : "не подтверждена")</td>
+        <td>
+            @(Model.EmailConfirmed ? "Подтверждена" : "Не подтверждена")
+            @if (!Model.EmailConfirmed)
+            {
+                <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">Подтвердить</a>
+            }
+        </td>
     </tr>
 </table>
 <table class="table">
