@@ -18,14 +18,14 @@ namespace ChessWeb.Application.ViewModels.Game
             Sides = sides;
         }
         
-        private static string FromGameStatus(string gameStatus) =>
+        private static string FromGameStatus(byte? gameStatus) =>
             gameStatus switch
             {
-                "wait" => "Ожидание",
-                "play" => "Игра",
-                "draw" => "Ничья",
-                "ww" => "Победа белого игрока",
-                "bw" => "Победа черного игрока",
+                0 => "Ожидание",
+                1 => "Игра",
+                2 => "Ничья",
+                3 => "Победа белого игрока",
+                4 => "Победа черного игрока",
                 _ => "Не определено"
             };
     }

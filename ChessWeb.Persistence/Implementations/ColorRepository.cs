@@ -6,8 +6,6 @@ namespace ChessWeb.Persistence.Implementations
 {
     public class ColorRepository : GenericRepository<Color>, IColorRepository
     {
-        public ColorRepository(ApplicationContext context) : base(context)
-        {
-        }
+        public ColorRepository(ApplicationDbContext dbContext) : base(dbContext) {}
     }
 }

@@ -1,11 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ChessWeb.Application.ViewModels.User;
-using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace ChessWeb.Application.Controllers
 {
@@ -13,13 +14,23 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly IUnitOfWork _unitOfWork;
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IUnitOfWork unitOfWork)
+        private readonly IGameService _gameService;
+        private readonly IMailSender _mailSender;
+        private readonly ILogger<AccountController> _logger;
+        public AccountController(
+            UserManager<User> userManager, 
+            SignInManager<User> signInManager, 
+            IGameService gameService,
+            IMailSender mailSender,
+            ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _unitOfWork = unitOfWork;
+            _gameService = gameService;
+            _mailSender = mailSender;
+            _logger = logger;
         }
+
         [HttpGet]
         public IActionResult Register()
         {
@@ -34,20 +45,38 @@ namespace ChessWeb.Application.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "player");
-                    // установка куки
+                    await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
                     await _signInManager.SignInAsync(user, false);
+                    await SendConfirmEmailAsync(user);
                     return RedirectToAction("Index", "Home");
                 }
-                else
+                
+                foreach (var error in result.Errors)
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
             return View(model);
+        }
+        
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogError($"Specified user does not exist. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
+                return NotFound();
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+            if (result.Succeeded)
+                return RedirectToAction("Profile", "Account");
+            else
+            {
+                _logger.LogError($"Email confirm fails. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
+                return NotFound();
+            }
         }
         
         [HttpGet]
@@ -66,20 +95,13 @@ namespace ChessWeb.Application.Controllers
                     await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
                 {
-                    // проверяем, принадлежит ли URL приложению
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                    {
                         return Redirect(model.ReturnUrl);
-                    }
-                    else
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
+
+                    return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Неправильный логин и (или) пароль");
-                }
+
+                ModelState.AddModelError("", "Неправильный логин и (или) пароль");
             }
             return View(model);
         }
@@ -88,20 +110,38 @@ namespace ChessWeb.Application.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            // удаляем аутентификационные куки
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
 
         [Authorize]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
-            var user = _userManager.FindByNameAsync(HttpContext.User.Identity.Name).Result;
-            var games = _unitOfWork.Sides
-                .GetAll()
-                .Where(x => x.User?.Id == user.Id)
-                .Select(x => x.Game);
-            return View(new UserProfileViewModel(user, games));
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var userGames = await _gameService.GetUserGamesAsync(user);
+            return View(new UserProfileViewModel(user, userGames));
+        }
+
+        private async Task SendConfirmEmailAsync(User user)
+        {
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var callbackUrl = Url.Action(
+                "ConfirmEmail",
+                "Account",
+                new { userId = user.Id, code = code },
+                protocol: HttpContext.Request.Scheme);
+                    
+            await _mailSender.SendMailAsync(user.Email, "Подтверждение учетной записи",
+                $"Подтвердите регистрацию, перейдя по ссылке: <a href='{callbackUrl}'>link</a>");
+
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Confirm(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            await SendConfirmEmailAsync(user);
+            return RedirectToAction("Index", "Home");
         }
     }
 }

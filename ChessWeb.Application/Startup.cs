@@ -1,5 +1,6 @@
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
-using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Implementations;
 using ChessWeb.Service.Interfaces;
@@ -22,43 +23,59 @@ namespace ChessWeb.Application
         {
             Configuration = configuration;
         }
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // services.AddTransient<IUserValidator<User>, CustomUserValidator>();
- 
-            services.AddDbContext<ApplicationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
- 
+            services
+                // .AddDbContext<ApplicationDbContext>(options => 
+                // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                .AddDbContext<ApplicationDbContext>();
+            
             services.AddIdentity<User, UserRole>(opts=> {
-                    opts.Password.RequiredLength = 5;   // минимальная длина
-                    opts.Password.RequireNonAlphanumeric = false;   // требуются ли не алфавитно-цифровые символы
-                    opts.Password.RequireLowercase = false; // требуются ли символы в нижнем регистре
-                    opts.Password.RequireUppercase = false; // требуются ли символы в верхнем регистре
-                    opts.Password.RequireDigit = false; // требуются ли цифры
+                    opts.Password.RequiredLength = 5;
+                    opts.Password.RequireNonAlphanumeric = false;
+                    opts.Password.RequireLowercase = false;
+                    opts.Password.RequireUppercase = false;
+                    opts.Password.RequireDigit = false;
                 })
-                .AddEntityFrameworkStores<ApplicationContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             services.AddScoped<IChessService, ChessService>();
             services.AddScoped<IGameService, GameService>();
+            
+            // services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.SectionName));
+            services.AddTransient<IMailSender, MailSenderService>();
+            services.AddTransient<IColorRepository, ColorRepository>();
+            services.AddTransient<IGameRepository, GameRepository>();
+            services.AddTransient<IGameStatusRepository, GameStatusRepository>();
+            services.AddTransient<IGameSummaryRepository, GameSummaryRepository>();
+            services.AddTransient<IMoveRepository, MoveRepository>();
+            services.AddTransient<ISideRepository, SideRepository>();
 
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            
-            app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            else if (env.IsProduction())
+            {
+                app.UseExceptionHandler(Routes.ErrorRoute);
+                app.UseHsts();
+            }
  
-            // app.UseHttpsRedirection();
+            app.UseStatusCodePagesWithReExecute("/Error/Index", "?statusCode={0}");
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
  
             app.UseRouting();
-            app.UseAuthentication();    // подключение аутентификации
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

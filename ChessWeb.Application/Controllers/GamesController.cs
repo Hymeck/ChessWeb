@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ChessWeb.Application.ViewModels.Game;
 using ChessWeb.Domain.Entities;
-using ChessWeb.Domain.Interfaces.UnitsOfWork;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -13,23 +13,24 @@ namespace ChessWeb.Application.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<User> _userManager;
         private readonly IGameService _gameService;
-        public GamesController(IUnitOfWork unitOfWork, UserManager<User> userManager, IGameService gameService)
+        private readonly ISideRepository _sideRepository;
+        
+        public GamesController(UserManager<User> userManager, IGameService gameService, ISideRepository sideRepository)
         {
-            _unitOfWork = unitOfWork;
             _userManager = userManager;
             _gameService = gameService;
+            _sideRepository = sideRepository;
         }
 
-        public IActionResult Index() =>
-            View(_gameService.GetAll());
+        public async Task<IActionResult> Index() =>
+            View(await _gameService.GetAllAsync());
 
         [Authorize]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            _gameService.CreateGame();
+            await _gameService.CreateGameAsync();
             return RedirectToAction("Index");
         }
 
@@ -38,12 +39,12 @@ namespace ChessWeb.Application.Controllers
             throw new NotImplementedException(nameof(Delete));
         }
 
-        public IActionResult GameSides(long id)
+        public async Task<IActionResult> GameSides(long id)
         {
-            var game = _unitOfWork.Games.Get(id);
+            var game = await _gameService.GetAsync(id);
             if (game == null)
                 return NotFound();
-            var sides = _unitOfWork.Sides.GetAll().Where(x => x.Game == game);
+            var sides = (await _sideRepository.GetGameSides(game)).ToList();
             return View(new GameViewModel(game, sides));
         }
 
@@ -53,11 +54,12 @@ namespace ChessWeb.Application.Controllers
         }
         
         [Authorize]
-        public IActionResult Join(long sideId)
+        public async Task<IActionResult> Join(long sideId)
         {
             var userName = HttpContext.User.Identity.Name;
-            var user = _userManager.FindByNameAsync(userName).Result;
-            _gameService.Join(user, sideId);
+            var user = await _userManager.FindByNameAsync(userName);
+            var side = await _sideRepository.FindAsync(sideId);
+            await _gameService.JoinAsync(user, side);
             return RedirectToAction("Index");
         }
     }

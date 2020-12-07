@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System.Threading.Tasks;
+using ChessWeb.Domain.Entities;
 
 namespace ChessWeb.Domain.Interfaces.Repositories
 {
-    public interface IGenericRepository<T> where T : class
+    public interface IGenericRepository<T> where T : BaseEntity
     {
-        T Get(long id);
-        IEnumerable<T> GetAll();
-        EntityEntry<T> Add(T entity);
-        EntityEntry<T> Delete(T entity);
-        EntityEntry<T> Update(T entity);
+        Task<T> AddAsync(T entity);
+
+        Task<T> UpdateAsync(T entity);
+
+        Task<T> DeleteAsync(T entity);
+        
+        Task<T> FindAsync(long id);
+        Task<int> SaveChangesAsync();
     }
 }

@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-    </PropertyGroup>
+      <UserSecretsId>be740ef2-5629-4c3c-b65d-1e6a65dae1da</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\ChessWeb.Service\ChessWeb.Service.csproj" />

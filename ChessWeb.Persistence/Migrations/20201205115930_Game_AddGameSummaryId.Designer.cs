@@ -9,9 +9,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ChessWeb.Persistence.Migrations
 {
-    [DbContext(typeof(ApplicationContext))]
-    [Migration("20201202101605_Player_PkToLong")]
-    partial class Player_PkToLong
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20201205115930_Game_AddGameSummaryId")]
+    partial class Game_AddGameSummaryId
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,20 +58,108 @@ namespace ChessWeb.Persistence.Migrations
                         .HasColumnType("bigint")
                         .UseIdentityColumn();
 
+                    b.Property<string>("BlackUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Fen")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<long>("GameSummaryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("WhiteUserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("BlackUserId");
+
+                    b.HasIndex("WhiteUserId");
+
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("ChessWeb.Domain.Entities.GameStatus", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Status")
+                        .IsUnique();
+
+                    b.ToTable("GameStatuses");
 
                     b.HasData(
                         new
                         {
                             Id = 1L,
-                            Fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+                            Status = (byte)0
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            Status = (byte)1
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            Status = (byte)2
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            Status = (byte)3
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            Status = (byte)4
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            Status = (byte)5
                         });
+                });
+
+            modelBuilder.Entity("ChessWeb.Domain.Entities.GameSummary", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<bool>("ActiveColor")
+                        .HasColumnType("bit");
+
+                    b.Property<long>("GameId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("LastMove")
+                        .HasMaxLength(5)
+                        .HasColumnType("nvarchar(5)");
+
+                    b.Property<byte>("Status")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Winner")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId")
+                        .IsUnique();
+
+                    b.ToTable("GameSummaries");
                 });
 
             modelBuilder.Entity("ChessWeb.Domain.Entities.Move", b =>
@@ -82,24 +170,22 @@ namespace ChessWeb.Persistence.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Fen")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("GameId")
+                    b.Property<long>("GameId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("MoveNext")
-                        .HasMaxLength(5)
-                        .HasColumnType("nvarchar(5)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<long?>("PlayerId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Moves");
                 });
@@ -111,14 +197,14 @@ namespace ChessWeb.Persistence.Migrations
                         .HasColumnType("bigint")
                         .UseIdentityColumn();
 
-                    b.Property<long?>("ColorId")
+                    b.Property<long>("ColorId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("GameId")
+                    b.Property<long>("GameId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("PlayerId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -126,17 +212,15 @@ namespace ChessWeb.Persistence.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("PlayerId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Sides");
                 });
 
             modelBuilder.Entity("ChessWeb.Domain.Entities.User", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .UseIdentityColumn();
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -187,10 +271,6 @@ namespace ChessWeb.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Email")
-                        .IsUnique()
-                        .HasFilter("[Email] IS NOT NULL");
-
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -204,10 +284,8 @@ namespace ChessWeb.Persistence.Migrations
 
             modelBuilder.Entity("ChessWeb.Domain.Entities.UserRole", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .UseIdentityColumn();
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -231,7 +309,22 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetRoles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+            modelBuilder.Entity("GameUser", b =>
+                {
+                    b.Property<long>("GamesId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UsersId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("GamesId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("GameUser");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -244,8 +337,9 @@ namespace ChessWeb.Persistence.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -254,7 +348,7 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetRoleClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,8 +361,9 @@ namespace ChessWeb.Persistence.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -277,7 +372,7 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetUserClaims");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -288,8 +383,9 @@ namespace ChessWeb.Persistence.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -298,13 +394,13 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<long>("RoleId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("UserId", "RoleId");
 
@@ -313,10 +409,10 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetUserRoles");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -332,15 +428,43 @@ namespace ChessWeb.Persistence.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ChessWeb.Domain.Entities.Game", b =>
+                {
+                    b.HasOne("ChessWeb.Domain.Entities.User", "BlackUser")
+                        .WithMany()
+                        .HasForeignKey("BlackUserId");
+
+                    b.HasOne("ChessWeb.Domain.Entities.User", "WhiteUser")
+                        .WithMany()
+                        .HasForeignKey("WhiteUserId");
+
+                    b.Navigation("BlackUser");
+
+                    b.Navigation("WhiteUser");
+                });
+
+            modelBuilder.Entity("ChessWeb.Domain.Entities.GameSummary", b =>
+                {
+                    b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
+                        .WithOne("GameSummary")
+                        .HasForeignKey("ChessWeb.Domain.Entities.GameSummary", "GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+                });
+
             modelBuilder.Entity("ChessWeb.Domain.Entities.Move", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
                         .WithMany()
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ChessWeb.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("PlayerId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Game");
 
@@ -351,15 +475,19 @@ namespace ChessWeb.Persistence.Migrations
                 {
                     b.HasOne("ChessWeb.Domain.Entities.Color", "Color")
                         .WithMany()
-                        .HasForeignKey("ColorId");
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ChessWeb.Domain.Entities.Game", "Game")
                         .WithMany()
-                        .HasForeignKey("GameId");
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("ChessWeb.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("PlayerId");
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Color");
 
@@ -368,7 +496,22 @@ namespace ChessWeb.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
+            modelBuilder.Entity("GameUser", b =>
+                {
+                    b.HasOne("ChessWeb.Domain.Entities.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GamesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ChessWeb.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.UserRole", null)
                         .WithMany()
@@ -377,7 +520,7 @@ namespace ChessWeb.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.User", null)
                         .WithMany()
@@ -386,7 +529,7 @@ namespace ChessWeb.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.User", null)
                         .WithMany()
@@ -395,7 +538,7 @@ namespace ChessWeb.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.UserRole", null)
                         .WithMany()
@@ -410,13 +553,18 @@ namespace ChessWeb.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<long>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("ChessWeb.Domain.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ChessWeb.Domain.Entities.Game", b =>
+                {
+                    b.Navigation("GameSummary");
                 });
 #pragma warning restore 612, 618
         }

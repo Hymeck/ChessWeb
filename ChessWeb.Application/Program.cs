@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using ChessWeb.Application;
 using ChessWeb.Domain.Entities;
-using ChessWeb.Service.Interfaces;
+using ChessWeb.Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,10 +19,10 @@ try
 {
     var userManager = services.GetRequiredService<UserManager<User>>();
     var rolesManager = services.GetRequiredService<RoleManager<UserRole>>();
-    var gameService = services.GetRequiredService<IGameService>();
-    await DataInitializer.InitializeAsync(userManager, rolesManager, gameService);
+    var gameRepository = services.GetRequiredService<IGameRepository>();
+    await DataInitializer.InitializeAsync(userManager, rolesManager, gameRepository);
 }
-catch (Exception ex)
+catch (Exception )
 {
     Debug.WriteLine("Something goes wrong with data seeding");
 }

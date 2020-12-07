@@ -2,8 +2,13 @@
 {
     public class Side : BaseEntity
     {
-        public virtual Game Game { get; set; }
-        public virtual User User { get; set; }
-        public virtual Color Color { get; set; }
+        public long GameId { get; set; }
+        public Game Game { get; set; }
+        public string UserId { get; set; }
+        public User User { get; set; }
+        public long ColorId { get; set; }
+        public Color Color { get; set; }
+
+        public bool IsWhite => ColorId == 1;
     }
 }

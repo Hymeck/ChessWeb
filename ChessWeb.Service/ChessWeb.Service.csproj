@@ -10,8 +10,12 @@
 
     <ItemGroup>
       <Reference Include="ChessEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>..\..\..\..\Self\Chess\ChessEngine\bin\Debug\net5.0\ChessEngine.dll</HintPath>
+        <HintPath>ChessEngine.dll</HintPath>
       </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="NETCore.MailKit" Version="2.0.3" />
     </ItemGroup>
 
 </Project>

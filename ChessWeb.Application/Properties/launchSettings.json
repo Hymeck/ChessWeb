@@ -15,13 +15,22 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "ChessWeb.Application": {
+    "ChessWeb.Development": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5000;https://localhost:5001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "ChessWeb.Production": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5000;https://localhost:5001",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
   }
