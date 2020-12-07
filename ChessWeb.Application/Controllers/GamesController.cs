@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Application.ViewModels.Game;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
@@ -33,10 +34,16 @@ namespace ChessWeb.Application.Controllers
             await _gameService.CreateGameAsync();
             return RedirectToAction("Index");
         }
-
-        public IActionResult Delete()
+        
+        [HttpPost]
+        [Authorize(Roles = Roles.AdminRole)]
+        public async Task<IActionResult> Delete(long id)
         {
-            throw new NotImplementedException(nameof(Delete));
+            var game = await _gameService.FindAsync(id);
+            if (game == null)
+                return NotFound();
+            await _gameService.DeleteGameAsync(game);
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> GameSides(long id)
@@ -44,7 +51,7 @@ namespace ChessWeb.Application.Controllers
             var game = await _gameService.GetAsync(id);
             if (game == null)
                 return NotFound();
-            var sides = (await _sideRepository.GetGameSides(game)).ToList();
+            var sides = await _sideRepository.GetGameSides(game);
             return View(new GameViewModel(game, sides));
         }
 

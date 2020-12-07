@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace ChessWeb.Client
 {
@@ -9,6 +11,8 @@ namespace ChessWeb.Client
         public readonly string Host;
         public readonly string User;
 
+        private const string pattern = @"""(\w+)\"":""?([^,""}]*)""?";
+        
         public ChessClient(string host, string user)
         {
             Host = host;
@@ -28,6 +32,17 @@ namespace ChessWeb.Client
             using var stream = response.GetResponseStream();
             using var reader = new StreamReader(stream);
             return reader.ReadToEnd();
+        }
+
+        private NameValueCollection ParseJson(string json)
+        {
+            var list = new NameValueCollection();
+
+            foreach (Match m in Regex.Matches(json, pattern))
+                if (m.Groups.Count == 3)
+                    list[m.Groups[1].Value] = m.Groups[2].Value;
+            
+            return list;
         }
     }
 }

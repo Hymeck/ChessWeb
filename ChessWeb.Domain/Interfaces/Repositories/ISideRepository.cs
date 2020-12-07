@@ -8,5 +8,6 @@ namespace ChessWeb.Domain.Interfaces.Repositories
     public interface ISideRepository : IGenericRepository<Side>
     {
         Task<IEnumerable<Side>> GetGameSides(Game game);
+        int GetActiveGamePlayerCount(Game game);
     }
 }

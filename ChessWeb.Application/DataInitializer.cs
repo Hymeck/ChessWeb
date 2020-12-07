@@ -56,7 +56,7 @@ namespace ChessWeb.Application
 
         private static async Task AddGame(IGameRepository gameRepository)
         {
-            if (await gameRepository.FindAsync(1L) == null)
+            if (!gameRepository.Any())
                 await gameRepository.CreateGameAsync();
         }
     }

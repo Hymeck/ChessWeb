@@ -41,7 +41,7 @@ namespace ChessWeb.Application
                 .AddDefaultTokenProviders();
 
             
-            services.AddScoped<IChessService, ChessService>();
+            services.AddScoped<IChessGameService, ChessGameService>();
             services.AddScoped<IGameService, GameService>();
             
             // services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.SectionName));

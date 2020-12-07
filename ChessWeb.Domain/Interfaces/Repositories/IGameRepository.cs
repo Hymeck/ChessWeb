@@ -10,5 +10,7 @@ namespace ChessWeb.Domain.Interfaces.Repositories
         Task<IEnumerable<Game>> GetUserGamesAsync(User user);
         Task CreateGameAsync();
         Task<Game> GetAsync(long id);
+        Task DeleteAsync(long id);
+        bool Any();
     }
 }

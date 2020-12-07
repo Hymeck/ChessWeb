@@ -11,17 +11,15 @@ namespace ChessWeb.Service.Services
     {
         private readonly IGameRepository _gameRepository;
         private readonly ISideRepository _sideRepository;
-        // public void Join(User user, long sideId)
-        // {
-        //     var side = _unitOfWork.Sides.GetAsync(sideId);
-        //     side.User = user;
-        //     _unitOfWork.Sides.Update(side);
-        //     _unitOfWork.Complete();
-        // }
-        public GameService(IGameRepository gameRepository, ISideRepository sideRepository)
+        private readonly IGameStatusRepository _gameStatusRepository;
+        private readonly IGameSummaryRepository _gameSummaryRepository;
+
+        public GameService(IGameRepository gameRepository, ISideRepository sideRepository, IGameStatusRepository gameStatusRepository, IGameSummaryRepository gameSummaryRepository)
         {
             _gameRepository = gameRepository;
             _sideRepository = sideRepository;
+            _gameStatusRepository = gameStatusRepository;
+            _gameSummaryRepository = gameSummaryRepository;
         }
 
         public async Task<IEnumerable<Game>> GetAllAsync()
@@ -58,7 +56,24 @@ namespace ChessWeb.Service.Services
             else
                 game.BlackUser = user;
 
+            var activePlayerCount = _sideRepository.GetActiveGamePlayerCount(game);
+            // 1 due to db have not changed when  _sideRepository.UpdateAsync(side);
+            if (activePlayerCount == 1)
+            {
+                var gameSummary = await _gameSummaryRepository.FindAsync(game.GameSummaryId);
+                gameSummary.Status = (await _gameStatusRepository.Play()).Status;
+                await _gameSummaryRepository.UpdateAsync(gameSummary);
+            }
+                
+            
+            await _gameRepository.UpdateAsync(game);
             await _sideRepository.SaveChangesAsync();
+        }
+
+        public async Task DeleteGameAsync(Game game)
+        {
+            await _gameRepository.DeleteAsync(game);
+            await _gameRepository.SaveChangesAsync();
         }
 
         public bool Any()

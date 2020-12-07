@@ -33,12 +33,15 @@ namespace ChessWeb.Persistence.Implementations
             var game = new Game();
             var gameSummary = new GameSummary(game, gameStatus, whiteColor);
             game.GameSummary = gameSummary;
-            await AddAsync(game);
+            await _dbContext.Games.AddAsync(game);
+            await _dbContext.GameSummaries.AddAsync(gameSummary);
             var blackColor = await _dbContext.Colors.FindAsync(2L);
             var whiteSide = new Side {Color = whiteColor, Game = game};
             var blackSide = new Side {Color = blackColor, Game = game};
-            await _dbContext.Sides.AddAsync(whiteSide);
-            await _dbContext.Sides.AddAsync(blackSide);
+            await _dbContext.Sides.AddRangeAsync(whiteSide, blackSide);
+            await SaveChangesAsync();
+            game.GameSummaryId = gameSummary.Id;
+            await UpdateAsync(game);
             await SaveChangesAsync();
         }
 
@@ -50,6 +53,15 @@ namespace ChessWeb.Persistence.Implementations
             await _dbContext.Entry(entity).Reference(e => e.GameSummary).LoadAsync();
             return entity;
         }
+
+        public async Task DeleteAsync(long id)
+        {
+            var game = await FindAsync(id);
+            await DeleteAsync(game);
+        }
+
+        public bool Any() => 
+            _dbContext.Games.Any();
 
         public Task JoinAsync(User user, Side side)
         {

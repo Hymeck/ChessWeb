@@ -7,6 +7,5 @@ namespace ChessWeb.Persistence.Implementations
     public class GameSummaryRepository : GenericRepository<GameSummary>, IGameSummaryRepository
     {
         public GameSummaryRepository(ApplicationDbContext dbContext) : base(dbContext) {}
-        
     }
 }

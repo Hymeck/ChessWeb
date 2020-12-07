@@ -22,5 +22,9 @@ namespace ChessWeb.Persistence.Implementations
 
             return sides;
         }
+
+        public int GetActiveGamePlayerCount(Game game) =>
+            _dbContext.Sides
+                .Count(x => x.Game == game && x.UserId != null);
     }
 }

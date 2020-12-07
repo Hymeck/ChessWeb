@@ -11,11 +11,11 @@ using Color = ChessWeb.Domain.Entities.Color;
 
 namespace ChessWeb.Service.Services
 {
-    public class ChessService : IChessService
+    public class ChessGameService : IChessGameService
     {
         // private IUnitOfWork _unitOfWork;
         //
-        // public ChessService(IUnitOfWork unitOfWork) => 
+        // public ChessGameService(IUnitOfWork unitOfWork) => 
         //     _unitOfWork = unitOfWork;
         //
         // public Game MakeMove(Game game, Move move, Side side)
