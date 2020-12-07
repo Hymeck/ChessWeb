@@ -31,13 +31,5 @@ namespace ChessWeb.Application.Controllers
         {
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
-
-        [Authorize]
-        // todo: remove when dev of sendings finishes
-        public async Task<IActionResult> TestSend()
-        {
-            await _mailSender.SendMailAsync("noonimf@gmail.com", "Test subject", "Test message");
-            return RedirectToAction("Index");
-        }
     }
 }

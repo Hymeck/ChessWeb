@@ -14,12 +14,7 @@
             <td>@game.Fen</td>
             <td>
                 @(game.GameSummary.Status + " ") 
-                <form asp-action="Delete" asp-route-id="@game.Id" method="post">
-                    <a class="btn btn-sm btn-primary" asp-action="GameSides" asp-route-id="@game.Id">Пользователи</a>
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        Удалить
-                    </button>
-                </form>
+                <a class="btn btn-sm btn-primary" asp-action="GameSides" asp-route-id="@game.Id">Пользователи</a>
             </td>
         </tr>
     }
