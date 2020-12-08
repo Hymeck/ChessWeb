@@ -6,7 +6,7 @@ namespace ChessWeb.Playground.Client
 {
     class Program
     {
-        private static readonly string host = "http://localhost:5000/";
+        private static readonly string host = "http://localhost:5000/api/games/";
         private static readonly string user = "Hymeck";
         static void Main(string[] args)
         {
@@ -18,17 +18,19 @@ namespace ChessWeb.Playground.Client
         private void Start()
         {
             var client = new ChessClient(host, user);
-            WriteLine(client.Host);
-            try
-            {
-                client.GetCurrentGame();
-            }
-
-            catch (System.Net.WebException e)
-            {
-                WriteLine(e.Message);
-                WriteLine(e.StackTrace);
-            }
+            WriteLine(client.MakeMove("1", "Hymeck", "e2e4"));
+            WriteLine("\n");
+            WriteLine(client.MakeMove("1", "Racoty", "e7e5"));
+            WriteLine("\n");
+            WriteLine(client.MakeMove("1", "Hymeck", "d1h5"));
+            WriteLine("\n");
+            WriteLine(client.MakeMove("1", "Racoty", "b8c6"));
+            WriteLine("\n");
+            WriteLine(client.MakeMove("1", "Hymeck", "f1c4"));
+            WriteLine("\n");
+            WriteLine(client.MakeMove("1", "Racoty", "g8f6"));
+            WriteLine("\n");
+            WriteLine(client.MakeMove("1", "Hymeck", "h5f7"));
         }
     }
 }

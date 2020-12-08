@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
+using static System.Console;
 
 namespace ChessWeb.Client
 {
@@ -19,15 +20,15 @@ namespace ChessWeb.Client
             User = user;
         }
 
-        public void GetCurrentGame()
-        {
-            Console.WriteLine(CallServer());
-        }
+        public GameInfo GetCurrentGame() => 
+            new(ParseJson(CallServer()));
 
+        public GameInfo MakeMove(string gameId, string username, string move) =>
+            new(ParseJson(CallServer($"{gameId}/{username}/{move}")));
         private string CallServer(string param = "")
         {
             // var request = WebRequest.Create(Host + User + "/" + param);
-            var request = WebRequest.Create(Host);
+            var request = WebRequest.Create(Host + param);
             var response = request.GetResponse();
             using var stream = response.GetResponseStream();
             using var reader = new StreamReader(stream);

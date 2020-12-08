@@ -21,7 +21,7 @@ namespace ChessWeb.Domain.Entities
             {
                 0 => "Wait",
                 1 => "Play",
-                2 => "Draw",
+                2 => "Stalemate",
                 3 => "White won",
                 4 => "Black Won",
                 _ => "Undefined"
@@ -38,6 +38,10 @@ namespace ChessWeb.Domain.Entities
         public static Game StartGame() => 
             new() {ActiveColor = true};
 
+        public bool IsWaiting => Status == 0;
+        public bool IsPlaying => Status == 1;
+        public bool IsDone => Status >= 2 && Status <= 4;
+        
         public override string ToString() =>
             $"{WhiteUsername ?? "."} vs {BlackUsername ?? "."}; {Fen}";
     }

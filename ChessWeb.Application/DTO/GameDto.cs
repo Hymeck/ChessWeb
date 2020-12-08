@@ -7,7 +7,7 @@ namespace ChessWeb.Application.DTO
         public long GameId { get; set; }
         public string Fen { get; set; }
         /// <summary>
-        /// 0 - wait; 1 - play; 2 - draw; 3 - white won; 4 - black won, other - undefined
+        /// 0 - wait; 1 - play; 2 - stalemate; 3 - white won; 4 - black won, other - undefined
         /// </summary>
         public byte Status { get; set; }
         public string WhiteUsername { get; set; }
@@ -27,5 +27,8 @@ namespace ChessWeb.Application.DTO
             ActiveColor = game.VerbalActiveColor;
             Winner = game.Winner;
         }
+
+        public static GameDto FromGame(Game game) =>
+            game == null ? null : new GameDto(game);
     }
 }

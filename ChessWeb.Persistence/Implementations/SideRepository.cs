@@ -16,8 +16,8 @@ namespace ChessWeb.Persistence.Implementations
             var sides =  _dbContext.Sides.Where(x => x.Game == game).AsEnumerable();
             // foreach (var side in sides)
             // {
-            //     _dbContext.Entry(side).Reference(e => e.Color).Load();
-            //     _dbContext.Entry(side).Reference(e => e.User).Load();
+            //     await _dbContext.Entry(side).Reference(e => e.Color).LoadAsync();
+            //     await _dbContext.Entry(side).Reference(e => e.User).LoadAsync();
             // }
 
             return sides;

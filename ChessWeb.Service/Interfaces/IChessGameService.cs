@@ -1,10 +1,11 @@
-﻿using ChessWeb.Domain.Entities;
+﻿using System.Threading.Tasks;
+using ChessWeb.Domain.Entities;
 
 namespace ChessWeb.Service.Interfaces
 {
     public interface IChessGameService
     {
-        Game MakeMove(Game game, Move move, Side side);
-        void AddToGame(User user, Game game, Color color);
+        Task<Game> MakeMove(long gameId, string username, string move);
+        // Task AddToGame(User user, Game game, Color color);
     }
 }
