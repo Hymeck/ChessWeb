@@ -9,13 +9,15 @@ namespace ChessWeb.Application.ViewModels.Game
         public string Fen { get; set; }
         public string Status { get; set; }
         public IEnumerable<Side> Sides { get; set; }
+        public IEnumerable<Move> Moves { get; set; }
 
-        public GameViewModel(Domain.Entities.Game game, IEnumerable<Side> sides)
+        public GameViewModel(Domain.Entities.Game game, IEnumerable<Side> sides, IEnumerable<Move> moves)
         {
             Id = game.Id;
             Fen = game.Fen;
             Status = FromGameStatus(game.Status);
             Sides = sides;
+            Moves = moves;
         }
         
         private static string FromGameStatus(byte gameStatus) =>
@@ -28,5 +30,11 @@ namespace ChessWeb.Application.ViewModels.Game
                 4 => "Победа черного игрока",
                 _ => "Не определено"
             };
+
+        public static GameViewModel Instance(
+            Domain.Entities.Game game, 
+            IEnumerable<Side> sides,
+            IEnumerable<Move> moves) =>
+            new(game, sides, moves);
     }
 }

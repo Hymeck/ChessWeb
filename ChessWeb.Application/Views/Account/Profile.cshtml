@@ -15,12 +15,16 @@
     </tr>
 </table>
 <table class="table">
-    <tr><th>ID игры</th><th>Состояние игры</th></tr>
-    @foreach (var game in Model?.UserGames)
+    <tr><th>ID игры</th><th>FEN игры</th><th>Состояние игры</th><th>Имя черного игрока</th><th>Имя белого игрока</th><th>Победитель</th></tr>
+    @foreach (var game in Model.UserGames)
     {
         <tr>
-            <td><a class="btn btn-sm btn-primary" asp-controller="Games" asp-action="GameSides" asp-route-id="@game?.Id">@game?.Id</a></td>
-            <td>@game.GameSummaryId.</td>
+            <td><a class="btn btn-sm btn-primary" asp-controller="Games" asp-action="GameSides" asp-route-id="@game.Id">@game.Id</a></td>
+            <td>@game.Fen</td>
+            <td>@game.RussianStatusFromByte()</td>
+            <td>@game.WhiteUsername</td>
+            <td>@game.BlackUsername</td>
+            <td>@game.Winner</td>
         </tr>
     }
 </table>

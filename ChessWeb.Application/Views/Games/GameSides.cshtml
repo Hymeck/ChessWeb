@@ -29,3 +29,19 @@
         </tr>
     }
 </table>
+
+<table class="table">
+   <tr>
+       <th>ID хода</th>
+       <th>Ход</th>
+       <th>Игрок</th>
+   </tr>
+   @foreach (var move in Model.Moves)
+   {
+       <tr>
+           <td>@move.Id</td>
+           <td>@move.MoveNext</td>
+           <td>@move.User.UserName</td>
+       </tr>
+   } 
+</table>

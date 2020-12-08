@@ -17,12 +17,18 @@ namespace ChessWeb.Application.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IGameService _gameService;
         private readonly ISideRepository _sideRepository;
+        private readonly IMoveRepository _moveRepository;
         
-        public GamesController(UserManager<User> userManager, IGameService gameService, ISideRepository sideRepository)
+        public GamesController(
+            UserManager<User> userManager, 
+            IGameService gameService, 
+            ISideRepository sideRepository,
+            IMoveRepository moveRepository)
         {
             _userManager = userManager;
             _gameService = gameService;
             _sideRepository = sideRepository;
+            _moveRepository = moveRepository;
         }
 
         public async Task<IActionResult> Index() =>
@@ -52,7 +58,8 @@ namespace ChessWeb.Application.Controllers
             if (game == null)
                 return NotFound();
             var sides = await _sideRepository.GetGameSides(game);
-            return View(new GameViewModel(game, sides));
+            var moves = await _moveRepository.GetGameMoves(game);
+            return View(GameViewModel.Instance(game, sides, moves));
         }
 
         public IActionResult Play(string userName)

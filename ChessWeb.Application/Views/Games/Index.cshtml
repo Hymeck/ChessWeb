@@ -14,7 +14,7 @@
             <td>@game.Id</td>
             <td>@game.Fen</td>
             <td>
-                @(game.Status + " ") 
+                @(game.RussianStatusFromByte() + " ") 
                 @if (User.IsInRole(Roles.AdminRole))
                 {
                     <form asp-action="Delete" asp-route-id="@game.Id" method="post">

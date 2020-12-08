@@ -21,9 +21,10 @@ namespace ChessWeb.Persistence.Implementations
                 .OrderBy(e => e.Id).ToListAsync();
 
         public async Task<IEnumerable<Game>> GetUserGamesAsync(User user) =>
-            (await GetAllAsync()).Where(x =>
-                x.WhiteUser?.UserName == user.UserName || 
-                x.BlackUser?.UserName == user.UserName);
+            await _dbContext.Games
+                .Where(x => x.WhiteUser == user || x.BlackUser == user)
+                .OrderBy(x => x.Id)
+                .ToListAsync();
 
         public async Task CreateAsync()
         {

@@ -44,5 +44,16 @@ namespace ChessWeb.Domain.Entities
         
         public override string ToString() =>
             $"{WhiteUsername ?? "."} vs {BlackUsername ?? "."}; {Fen}";
+
+        public string RussianStatusFromByte() =>
+            Status switch
+            {
+                0 => "Ожидание",
+                1 => "Игра",
+                2 => "Ничья",
+                3 => "Победа белого игрока",
+                4 => "Победа черного игрока",
+                _ => "Не определено"
+            };
     }
 }

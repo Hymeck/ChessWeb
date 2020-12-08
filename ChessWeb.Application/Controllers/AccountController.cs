@@ -114,7 +114,7 @@ namespace ChessWeb.Application.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Authorize]
+        [Authorize(Roles = Roles.PlayerRole)]
         public async Task<IActionResult> Profile()
         {
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
