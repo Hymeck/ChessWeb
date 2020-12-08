@@ -13,7 +13,6 @@ namespace ChessWeb.Persistence.Contexts
         public DbSet<Move> Moves { get; set; }
         public DbSet<Side> Sides { get; set; }
         public DbSet<GameStatus> GameStatuses { get; set; }
-        public DbSet<GameSummary> GameSummaries { get; set; }
         // public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
         public ApplicationDbContext()
@@ -35,11 +34,6 @@ namespace ChessWeb.Persistence.Contexts
             #endregion User
             
             #region Game
-            modelBuilder
-                .Entity<Game>()
-                .HasOne(e => e.GameSummary)
-                .WithOne(e => e.Game)
-                .HasForeignKey<GameSummary>(e => e.GameId);
 
             modelBuilder
                 .Entity<Game>()

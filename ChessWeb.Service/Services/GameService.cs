@@ -12,14 +12,12 @@ namespace ChessWeb.Service.Services
         private readonly IGameRepository _gameRepository;
         private readonly ISideRepository _sideRepository;
         private readonly IGameStatusRepository _gameStatusRepository;
-        private readonly IGameSummaryRepository _gameSummaryRepository;
 
-        public GameService(IGameRepository gameRepository, ISideRepository sideRepository, IGameStatusRepository gameStatusRepository, IGameSummaryRepository gameSummaryRepository)
+        public GameService(IGameRepository gameRepository, ISideRepository sideRepository, IGameStatusRepository gameStatusRepository)
         {
             _gameRepository = gameRepository;
             _sideRepository = sideRepository;
             _gameStatusRepository = gameStatusRepository;
-            _gameSummaryRepository = gameSummaryRepository;
         }
 
         public async Task<IEnumerable<Game>> GetAllAsync()
@@ -32,7 +30,7 @@ namespace ChessWeb.Service.Services
 
         public async Task CreateGameAsync()
         {
-            await _gameRepository.CreateGameAsync();
+            await _gameRepository.CreateAsync();
         }
 
         public async Task<Game> FindAsync(long id)
@@ -51,20 +49,16 @@ namespace ChessWeb.Service.Services
             await _sideRepository.UpdateAsync(side);
             var game = await _gameRepository.FindAsync(side.GameId);
             user.Games.Add(game);
+            
             if (side.IsWhite)
-                game.WhiteUser = user;
+                (game.WhiteUser, game.WhiteUsername) = (user, user.UserName);
             else
-                game.BlackUser = user;
+                (game.BlackUser, game.BlackUsername) = (user, user.UserName);
 
             var activePlayerCount = _sideRepository.GetActiveGamePlayerCount(game);
             // 1 due to db have not changed when  _sideRepository.UpdateAsync(side);
             if (activePlayerCount == 1)
-            {
-                var gameSummary = await _gameSummaryRepository.FindAsync(game.GameSummaryId);
-                gameSummary.Status = (await _gameStatusRepository.Play()).Status;
-                await _gameSummaryRepository.UpdateAsync(gameSummary);
-            }
-                
+                game.Status = (await _gameStatusRepository.PlayStatus()).Status;
             
             await _gameRepository.UpdateAsync(game);
             await _sideRepository.SaveChangesAsync();

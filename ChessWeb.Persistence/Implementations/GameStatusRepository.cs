@@ -9,22 +9,22 @@ namespace ChessWeb.Persistence.Implementations
     {
         public GameStatusRepository(ApplicationDbContext dbContext) : base(dbContext) {}
         
-        public async Task<GameStatus> Wait() => 
+        public async Task<GameStatus> WaitStatus() => 
             await FindAsync(1);
 
-        public async Task<GameStatus> Play() =>
+        public async Task<GameStatus> PlayStatus() =>
             await FindAsync(2);
 
-        public async Task<GameStatus> Draw() =>
+        public async Task<GameStatus> DrawStatus() =>
             await FindAsync(3);
 
-        public async Task<GameStatus> WhiteWon() =>
+        public async Task<GameStatus> WhiteWonStatus() =>
             await FindAsync(4);
 
-        public async Task<GameStatus> BlackWon() =>
+        public async Task<GameStatus> BlackWonStatus() =>
             await FindAsync(5);
 
-        public async Task<GameStatus> Undefined() =>
+        public async Task<GameStatus> UndefinedStatus() =>
             await FindAsync(6);
     }
 }

@@ -8,7 +8,7 @@ namespace ChessWeb.Domain.Interfaces.Repositories
     {
         Task<IEnumerable<Game>> GetAllAsync();
         Task<IEnumerable<Game>> GetUserGamesAsync(User user);
-        Task CreateGameAsync();
+        Task CreateAsync();
         Task<Game> GetAsync(long id);
         Task DeleteAsync(long id);
         bool Any();

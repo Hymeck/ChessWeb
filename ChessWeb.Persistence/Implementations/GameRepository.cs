@@ -16,7 +16,6 @@ namespace ChessWeb.Persistence.Implementations
         public async Task<IEnumerable<Game>> GetAllAsync() => 
             await _dbContext.Games
                 .AsNoTracking()
-                .Include(e => e.GameSummary)
                 .Include(e => e.WhiteUser)
                 .Include(e => e.BlackUser)
                 .OrderBy(e => e.Id).ToListAsync();
@@ -26,22 +25,15 @@ namespace ChessWeb.Persistence.Implementations
                 x.WhiteUser?.UserName == user.UserName || 
                 x.BlackUser?.UserName == user.UserName);
 
-        public async Task CreateGameAsync()
+        public async Task CreateAsync()
         {
             var whiteColor = await _dbContext.Colors.FindAsync(1L);
-            var gameStatus = await _dbContext.GameStatuses.FindAsync(1L);
-            var game = new Game();
-            var gameSummary = new GameSummary(game, gameStatus, whiteColor);
-            game.GameSummary = gameSummary;
+            var game = Game.StartGame();
             await _dbContext.Games.AddAsync(game);
-            await _dbContext.GameSummaries.AddAsync(gameSummary);
             var blackColor = await _dbContext.Colors.FindAsync(2L);
             var whiteSide = new Side {Color = whiteColor, Game = game};
             var blackSide = new Side {Color = blackColor, Game = game};
             await _dbContext.Sides.AddRangeAsync(whiteSide, blackSide);
-            await SaveChangesAsync();
-            game.GameSummaryId = gameSummary.Id;
-            await UpdateAsync(game);
             await SaveChangesAsync();
         }
 
@@ -50,7 +42,6 @@ namespace ChessWeb.Persistence.Implementations
             var entity = await FindAsync(id);
             await _dbContext.Entry(entity).Reference(e => e.WhiteUser).LoadAsync();
             await _dbContext.Entry(entity).Reference(e => e.BlackUser).LoadAsync();
-            await _dbContext.Entry(entity).Reference(e => e.GameSummary).LoadAsync();
             return entity;
         }
 
@@ -63,9 +54,9 @@ namespace ChessWeb.Persistence.Implementations
         public bool Any() => 
             _dbContext.Games.Any();
 
-        public Task JoinAsync(User user, Side side)
-        {
-            throw new NotImplementedException(nameof(JoinAsync));
-        }
+        // public Task JoinAsync(User user, Side side)
+        // {
+        //     throw new NotImplementedException(nameof(JoinAsync));
+        // }
     }
 }
