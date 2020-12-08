@@ -49,7 +49,6 @@ namespace ChessWeb.Application
             services.AddTransient<IColorRepository, ColorRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
             services.AddTransient<IGameStatusRepository, GameStatusRepository>();
-            services.AddTransient<IGameSummaryRepository, GameSummaryRepository>();
             services.AddTransient<IMoveRepository, MoveRepository>();
             services.AddTransient<ISideRepository, SideRepository>();
 

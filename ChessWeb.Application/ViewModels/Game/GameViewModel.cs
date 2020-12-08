@@ -14,11 +14,11 @@ namespace ChessWeb.Application.ViewModels.Game
         {
             Id = game.Id;
             Fen = game.Fen;
-            Status = FromGameStatus(game?.GameSummary.Status);
+            Status = FromGameStatus(game.Status);
             Sides = sides;
         }
         
-        private static string FromGameStatus(byte? gameStatus) =>
+        private static string FromGameStatus(byte gameStatus) =>
             gameStatus switch
             {
                 0 => "Ожидание",

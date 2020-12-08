@@ -5,11 +5,11 @@ namespace ChessWeb.Domain.Interfaces.Repositories
 {
     public interface IGameStatusRepository : IGenericRepository<GameStatus>
     {
-        Task<GameStatus> Wait();
-        Task<GameStatus> Play();
-        Task<GameStatus> Draw();
-        Task<GameStatus> WhiteWon();
-        Task<GameStatus> BlackWon();
-        Task<GameStatus> Undefined();
+        Task<GameStatus> WaitStatus();
+        Task<GameStatus> PlayStatus();
+        Task<GameStatus> DrawStatus();
+        Task<GameStatus> WhiteWonStatus();
+        Task<GameStatus> BlackWonStatus();
+        Task<GameStatus> UndefinedStatus();
     }
 }
