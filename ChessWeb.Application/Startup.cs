@@ -7,11 +7,9 @@ using ChessWeb.Service.Interfaces;
 using ChessWeb.Service.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace ChessWeb.Application
@@ -39,12 +37,10 @@ namespace ChessWeb.Application
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
-
             
             services.AddScoped<IChessGameService, ChessGameService>();
             services.AddScoped<IGameService, GameService>();
             
-            // services.Configure<SmtpOptions>(Configuration.GetSection(SmtpOptions.SectionName));
             services.AddTransient<IMailSender, MailSenderService>();
             services.AddTransient<IColorRepository, ColorRepository>();
             services.AddTransient<IGameRepository, GameRepository>();
@@ -72,7 +68,6 @@ namespace ChessWeb.Application
             app.UseStatusCodePagesWithReExecute("/Error/Index", "?statusCode={0}");
             app.UseHttpsRedirection();
             app.UseStaticFiles();
- 
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

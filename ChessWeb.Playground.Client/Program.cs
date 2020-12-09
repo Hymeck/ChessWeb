@@ -17,20 +17,26 @@ namespace ChessWeb.Playground.Client
 
         private void Start()
         {
-            var client = new ChessClient(host, user);
-            WriteLine(client.MakeMove("1", "Hymeck", "e2e4"));
+            // HymeckAndRacotyScholarsMate();
+        }
+
+        private void HymeckAndRacotyScholarsMate()
+        {
+            var hymeckClient = new ChessClient(host, user);
+            var racotyClient = new ChessClient(host, "Racoty");
+            WriteLine(hymeckClient.MakeMove("1", "e2e4"));
             WriteLine("\n");
-            WriteLine(client.MakeMove("1", "Racoty", "e7e5"));
+            WriteLine(racotyClient.MakeMove("1", "e7e5"));
             WriteLine("\n");
-            WriteLine(client.MakeMove("1", "Hymeck", "d1h5"));
+            WriteLine(hymeckClient.MakeMove("1", "d1h5"));
             WriteLine("\n");
-            WriteLine(client.MakeMove("1", "Racoty", "b8c6"));
+            WriteLine(racotyClient.MakeMove("1", "b8c6"));
             WriteLine("\n");
-            WriteLine(client.MakeMove("1", "Hymeck", "f1c4"));
+            WriteLine(hymeckClient.MakeMove("1", "f1c4"));
             WriteLine("\n");
-            WriteLine(client.MakeMove("1", "Racoty", "g8f6"));
+            WriteLine(racotyClient.MakeMove("1", "g8f6"));
             WriteLine("\n");
-            WriteLine(client.MakeMove("1", "Hymeck", "h5f7"));
+            WriteLine(hymeckClient.MakeMove("1", "h5f7"));
         }
     }
 }
