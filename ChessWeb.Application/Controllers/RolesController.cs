@@ -86,7 +86,6 @@ namespace ChessWeb.Application.Controllers
             if (user!=null)
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
                 var addedRoles = roles.Except(userRoles);
                 var removedRoles = userRoles.Except(roles);
  
