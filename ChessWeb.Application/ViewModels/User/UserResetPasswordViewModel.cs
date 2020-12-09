@@ -2,26 +2,23 @@
 
 namespace ChessWeb.Application.ViewModels.User
 {
-    public class UserRegisterViewModel
+    public class UserResetPasswordViewModel
     {
-        [Required]
-        [Display(Name = "Имя юзверя")]
-        [MaxLength(30)]
-        public string Name { get; set; }
-
+        public string Code { get; set; }
+        
         [Required]
         [Display(Name = "Адрес электронной почты")]
         public string Email { get; set; }
-
+        
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Пароль-король")]
+        [Display(Name = "Новый пароль")]
         public string Password { get; set; }
- 
+        
         [Required]
         [Compare(nameof(Password), ErrorMessage = "Пересечение указанных паролей дает пустое множество")]
         [DataType(DataType.Password)]
-        [Display(Name = "Еще раз пароль")]
-        public string PasswordConfirm { get; set; }
+        [Display(Name = "Еще раз новый пароль")]
+        public string ConfirmPassword { get; set; }
     }
 }

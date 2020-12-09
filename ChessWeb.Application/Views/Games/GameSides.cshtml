@@ -2,28 +2,34 @@
 @{
     ViewBag.Title = "Сведение об игре";
 }
- 
-<a asp-action="Index">Назад</a>
+
+<h2>@ViewBag.Title</h2>
+
+<a asp-action="Index">Вспять</a>
  
 <table class="table">
     <tr><th>ID</th><th>FEN</th><th>Состояние</th></tr>
     <tr><td>@Model.Id</td><td>@Model.Fen</td><td>@Model.Status</td></tr>
 </table>
 <table class="table">
-    <tr><th>Имя пользователя</th><th>Цвет</th><th>Присоединиться</th></tr>
+    <tr>
+        <th>Имя юзверя</th>
+        <th>Сущность</th>
+        <th>Присоединиться</th>
+    </tr>
     @foreach (var side in Model.Sides)
     {
         <tr>
             @if (side.User != null)
             {
                 <td>@side.User</td>
-                <td>@(side.ColorId == 1 ? "Белый" : "Черный")</td>
+                <td>@(side.ColorId == 1 ? "Ангел" : "Черт")</td>
                 <td></td>
             }
             else
             {
                 <td>Пусто</td>
-                <td>@(side.ColorId == 1 ? "Белый" : "Черный")</td>
+                <td>@(side.ColorId == 1 ? "Ангел" : "Черт")</td>
                 <td><a class="btn btn-sm btn-primary" asp-action="Join" asp-route-sideId="@side.Id">+</a></td>
             }
         </tr>

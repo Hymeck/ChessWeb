@@ -3,26 +3,39 @@
     ViewBag.Title = "Учетная запись";
 }
 
+<h2>@ViewBag.Title</h2>
 <table class="table">
-    <tr><th>Имя пользователя</th><th>Электронная почта</th><th>Статус почты</th></tr>
+    <tr>
+        <th>Имя юзверя</th>
+        <th>Адрес электронная почты</th>
+        <th>Состояние адреса электронной почты</th>
+    </tr>
     <tr>
         <td>@Model.Name</td>
         <td>@Model.Email</td>
         <td>
-            @(Model.EmailConfirmed ? "Подтверждена" : "Не подтверждена")
+            @(Model.EmailConfirmed ? "Твердый" : "Нетвердый")
             @if (!Model.EmailConfirmed)
             {
-                <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">Подтвердить</a>
+                <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">Сделать твердным</a>
             }
         </td>
     </tr>
 </table>
+<p><a asp-controller="Account" asp-action="ChangePassword">Произвести переоценку ценностей</a></p>
 <table class="table">
-    <tr><th>ID игры</th><th>FEN игры</th><th>Состояние игры</th><th>Имя черного игрока</th><th>Имя белого игрока</th><th>Победитель</th></tr>
+    <tr>
+        <th>ID игры</th>
+        <th>FEN игры</th>
+        <th>Состояние игры</th>
+        <th>Имя ангела</th>
+        <th>Имя черта</th>
+        <th>Взобравшийся на голову</th>
+    </tr>
     @foreach (var game in Model.UserGames)
     {
         <tr>
-            <td><a class="btn btn-sm btn-primary" asp-controller="Games" asp-action="GameSides" asp-route-id="@game.Id">@game.Id</a></td>
+            <td><a asp-controller="Games" asp-action="GameSides" asp-route-id="@game.Id">@game.Id</a></td>
             <td>@game.Fen</td>
             <td>@game.RussianStatusFromByte()</td>
             <td>@game.WhiteUsername</td>

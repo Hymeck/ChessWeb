@@ -4,6 +4,7 @@ namespace ChessWeb.Application.ViewModels.User
 {
     public class UserProfileViewModel
     {
+        public string UserId { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
         public bool EmailConfirmed { get; set; }
@@ -11,6 +12,7 @@ namespace ChessWeb.Application.ViewModels.User
 
         public UserProfileViewModel(Domain.Entities.User user, IEnumerable<Domain.Entities.Game> games)
         {
+            UserId = user.Id;
             Name = user.UserName;
             Email = user.Email;
             EmailConfirmed = user.EmailConfirmed;

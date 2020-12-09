@@ -5,7 +5,7 @@ namespace ChessWeb.Application.ViewModels.User
     public class UserLoginViewModel
     {
         [Required]
-        [Display(Name = "Имя пользователя")]
+        [Display(Name = "Имя юзверя")]
         public string Name { get; set; }
          
         [Required]
