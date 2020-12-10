@@ -38,32 +38,35 @@ namespace ChessWeb.Application.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
-            if(ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (await _userManager.FindByEmailAsync(model.Email) != null)
-                {
-                    ModelState.AddModelError("", "Некий иной юзверь зажал этот адрес электронной почты");
-                    return View(model);
-                }
+                ModelState.AddModelError("", "Неверные вводы");
+                return View(model);
+            }
                 
-                var user = new User { UserName = model.Name, Email = model.Email};
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
-                    await _signInManager.SignInAsync(user, false);
-                    await SendConfirmEmailAsync(user);
-                    
-                    ViewBag.Message = "Навестите почту и сделайте ее твердой";
-                    
-                    // return RedirectToAction("Index", "Home");
-                    return View("EmailConfirmInfo");
-                }
+            if (await _userManager.FindByEmailAsync(model.Email) != null)
+            {
+                ModelState.AddModelError("", "Некий иной юзверь зажал этот адрес электронной почты");
+                return View(model);
+            }
                 
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.Description);
-                }
+            var user = new User { UserName = model.Name, Email = model.Email};
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
+                await _signInManager.SignInAsync(user, false);
+                await SendConfirmEmailAsync(user);
+                    
+                ViewBag.Message = "Навестите почту и сделайте ее твердой";
+                    
+                // return RedirectToAction("Index", "Home");
+                return View("EmailConfirmInfo");
+            }
+                
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
             }
             return View(model);
         }
@@ -98,16 +101,18 @@ namespace ChessWeb.Application.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result =
-                    await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
-                if (result.Succeeded)
-                    return RedirectToAction("Index", "Home");
-                
-                ModelState.AddModelError("Error", "Неправильное имя юзверя и (или?) пароль");
+                ModelState.AddModelError("", "Неверные вводы");
+                return View(model);
             }
-            
+                
+            var result =
+                await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
+            if (result.Succeeded)
+                return RedirectToAction("Index", "Home");
+                
+            ModelState.AddModelError("", "Неправильное имя юзверя и (или?) пароль");
             return View(model);
         }
  
@@ -121,36 +126,35 @@ namespace ChessWeb.Application.Controllers
         
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
-        
+        public IActionResult ForgotPassword() => 
+            View();
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ForgotPassword(UserForgotPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
-                {
-                    ModelState.AddModelError("", "Небытие юзверя или нетвердый адрес электронной почты");
-                    return View(model);
-                }
-
-                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var callbackUrl = Url.Action(
-                    "ResetPassword", 
-                    "Account", 
-                    new { userId = user.Id, code = code }, 
-                    protocol: HttpContext.Request.Scheme);
-                await _mailSender.SendMailAsync(user.Email, "Бросок пароля прогибом", $"Для броска пароля прогибом ступайте по мосту: <a href='{callbackUrl}'>мост</a>");
-                return View("ForgotPasswordConfirmation");
+                ModelState.AddModelError("", "Неверные вводы");
+                return View(model);
             }
-            
-            return View(model);
+                
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
+            {
+                ModelState.AddModelError("", "Небытие юзверя или нетвердый адрес электронной почты");
+                return View(model);
+            }
+
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = Url.Action(
+                "ResetPassword", 
+                "Account", 
+                new { userId = user.Id, code = code }, 
+                protocol: HttpContext.Request.Scheme);
+            await _mailSender.SendMailAsync(user.Email, "Бросок пароля прогибом", $"Для броска пароля прогибом ступайте по мосту: <a href='{callbackUrl}'>мост</a>");
+            return View("ForgotPasswordConfirmation");
         }
         
 
@@ -195,43 +199,43 @@ namespace ChessWeb.Application.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("Вводы", "Что-то не то-с");
+                ModelState.AddModelError("", "Неверные вводы");
                 return View(model);
             }
+            
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
-            {
                 return View("Error");
-            }
+            
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
-            {
                 return View("ResetPasswordConfirmation");
-            }
-            foreach (var error in result.Errors)
-            {
+            
+            foreach (var error in result.Errors) 
                 ModelState.AddModelError(string.Empty, error.Description);
-            }
             return View(model);
         }
         
         [HttpGet]
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-        
+        public IActionResult ChangePassword() => 
+            View();
+
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> ChangePassword(UserChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
-                ModelState.AddModelError("Вводы", "Что-то не то-с");
+            {
+                ModelState.AddModelError("", "Неверные вводы");
+                return View("ChangePassword");
+            }
+                
+            
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (result.Succeeded)
                 return View("ChangePasswordConfirmation");
-            ModelState.AddModelError("Вводы", "Что-то не то-с");
+            ModelState.AddModelError("", "Опрокидень смены пароля");
             return View("ChangePassword");
         }
     }

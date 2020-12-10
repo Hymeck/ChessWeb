@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ChessWeb.Application.Constants.Labels;
+using ChessWeb.Application.Stuff;
 
 namespace ChessWeb.Application.ViewModels.User
 {
@@ -7,16 +8,16 @@ namespace ChessWeb.Application.ViewModels.User
     {
         public string Code { get; set; }
         
-        [Required]
+        [OwnRequired(EmailLabels.Email)]
         [Display(Name = EmailLabels.Email)]
         public string Email { get; set; }
         
-        [Required]
+        [OwnRequired(PasswordLabels.NewPassword)]
         [DataType(DataType.Password)]
         [Display(Name = PasswordLabels.NewPassword)]
         public string Password { get; set; }
         
-        [Required]
+        [OwnRequired(PasswordLabels.NewPasswordConfirm)]
         [Compare(nameof(Password), ErrorMessage = PasswordLabels.PasswordConfirmError)]
         [DataType(DataType.Password)]
         [Display(Name = PasswordLabels.NewPasswordConfirm)]

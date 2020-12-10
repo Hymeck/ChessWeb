@@ -61,11 +61,6 @@ namespace ChessWeb.Application.Controllers
             var moves = await _moveRepository.GetGameMoves(game);
             return View(GameViewModel.Instance(game, sides, moves));
         }
-
-        public IActionResult Play(string userName)
-        {
-            throw new NotImplementedException(nameof(Play));
-        }
         
         [Authorize]
         public async Task<IActionResult> Join(long sideId)

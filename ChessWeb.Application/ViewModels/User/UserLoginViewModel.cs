@@ -1,15 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ChessWeb.Application.Constants.Labels;
+using ChessWeb.Application.Stuff;
 
 namespace ChessWeb.Application.ViewModels.User
 {
     public class UserLoginViewModel
     {
-        [Required]
+        [OwnRequired(UserLabels.UserName)]
         [Display(Name = UserLabels.UserName)]
         public string Name { get; set; }
          
-        [Required]
+        [OwnRequired(PasswordLabels.Password)]
         [DataType(DataType.Password)]
         [Display(Name = PasswordLabels.Password)]
         public string Password { get; set; }
