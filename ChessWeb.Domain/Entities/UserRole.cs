@@ -2,7 +2,7 @@
 
 namespace ChessWeb.Domain.Entities
 {
-    public class UserRole : IdentityRole<int>
+    public class UserRole : IdentityRole
     {
         public UserRole() {}
 

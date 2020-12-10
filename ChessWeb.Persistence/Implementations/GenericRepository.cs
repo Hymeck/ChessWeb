@@ -1,32 +1,40 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Persistence.Implementations
 {
-    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+    public abstract class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        protected readonly ApplicationContext _context;
+        protected readonly ApplicationDbContext _dbContext;
 
-        public GenericRepository(ApplicationContext context) => 
-            _context = context;
+        protected GenericRepository(ApplicationDbContext dbContext) => 
+            _dbContext = dbContext;
 
-        public virtual T Get(long id) =>
-            _context.Set<T>().Find(id);
+        public async Task<T> AddAsync(T entity)
+        {
+            await _dbContext.Set<T>().AddAsync(entity);
+            return entity;
+        }
 
-        public virtual IEnumerable<T> GetAll() =>
-            _context.Set<T>().ToList();
+        public async Task<T> UpdateAsync(T entity)
+        {
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            return entity;
+        }
 
-        public void Add(T entity) => 
-            _context.Set<T>().Add(entity);
+        public async Task<T> DeleteAsync(T entity)
+        {
+            _dbContext.Set<T>().Remove(entity);
+            return entity;
+        }
 
-        public void Delete(T entity) =>
-            _context.Set<T>().Remove(entity);
+        public async Task<T> FindAsync(long id) =>
+            await _dbContext.Set<T>().FindAsync(id);
 
-        public void Update(T entity) =>
-            _context.Set<T>().Update(entity);
+        public async Task<int> SaveChangesAsync() =>
+            await _dbContext.SaveChangesAsync();
     }
 }

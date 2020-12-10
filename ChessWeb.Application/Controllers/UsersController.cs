@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ChessWeb.Application.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = Roles.AdminRole)]
     public class UsersController : Controller
     {
         UserManager<User> _userManager;
@@ -23,7 +24,7 @@ namespace ChessWeb.Application.Controllers
             View();
  
         [HttpPost]
-        public async Task<IActionResult> Create(CreateUserViewModel model)
+        public async Task<IActionResult> Create(UserCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -31,7 +32,7 @@ namespace ChessWeb.Application.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "player");
+                    await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
                     return RedirectToAction("Index");
                 }
                 else
@@ -54,12 +55,12 @@ namespace ChessWeb.Application.Controllers
             {
                 return NotFound();
             }
-            var model = new EditUserViewModel {Id = user.Id, Name = user.UserName, Email = user.Email};
+            var model = new UserEditViewModel {Id = user.Id, Name = user.UserName, Email = user.Email};
             return View(model);
         }
  
         [HttpPost]
-        public async Task<IActionResult> Edit(EditUserViewModel model)
+        public async Task<IActionResult> Edit(UserEditViewModel model)
         {
             if (ModelState.IsValid)
             {

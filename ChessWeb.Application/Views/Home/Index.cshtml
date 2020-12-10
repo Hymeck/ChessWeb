@@ -1,22 +1,24 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using ChessWeb.Application.Constants
+@{
+    ViewBag.Title = "Начальная страница";
 }
 
 @if(User.Identity.IsAuthenticated)
 {
     <p>@User.Identity.Name</p>
- 
+    @if (User.IsInRole(Roles.AdminRole))
+    {
+        <a class="btn btn-sm btn-primary" asp-controller="Users" asp-action="Index">Юзвери</a>
+        <a class="btn btn-sm btn-primary" asp-controller="Roles" asp-action="Index">Роли</a>
+    }
+                          
     <form method="post" asp-controller="Account" asp-action="Logout">
-        <input type="submit" value="Выход" />
+        <button type="submit" class="btn btn-primary">Убежать из зоопарка</button>
     </form>
 }
+
 else
 {
-    <a asp-controller="Account" asp-action="Login">Вход</a>
+    <a asp-controller="Account" asp-action="Login">Оставить надежду</a>
     <a asp-controller="Account" asp-action="Register">Регистрация</a>
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
