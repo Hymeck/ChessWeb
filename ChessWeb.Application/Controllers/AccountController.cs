@@ -100,18 +100,14 @@ namespace ChessWeb.Application.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = 
+                var result =
                     await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
                 if (result.Succeeded)
-                {
-                    if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
-                        return Redirect(model.ReturnUrl);
-
                     return RedirectToAction("Index", "Home");
-                }
-
-                ModelState.AddModelError("Вводы", "Неправильное имя юзверя и (или?) пароль-король");
+                
+                ModelState.AddModelError("Error", "Неправильное имя юзверя и (или?) пароль");
             }
+            
             return View(model);
         }
  
@@ -141,7 +137,7 @@ namespace ChessWeb.Application.Controllers
                 if (user == null || !await _userManager.IsEmailConfirmedAsync(user))
                 {
                     ModelState.AddModelError("", "Небытие юзверя или нетвердый адрес электронной почты");
-                    return View("ForgotPasswordConfirmation");
+                    return View(model);
                 }
 
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
