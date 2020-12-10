@@ -32,5 +32,5 @@ RUN dotnet publish -c release -o /app --no-restore
 FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 COPY --from=build /app ./
-ENTRYPOINT ["dotnet", "chessbsuir.dll"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet chessbsuir.dll
+ENTRYPOINT ["dotnet", "ChessWeb.Application.dll"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet ChessWeb.Application.dll
