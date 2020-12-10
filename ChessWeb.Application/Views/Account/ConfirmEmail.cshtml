@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = "Затвердение почты";
+    ViewBag.Title = EmailLabels.ConfirmEmailTitle;
 }
 
 <h2>@ViewBag.Title</h2>
 <div>
-    <p>Благодарим за подтверждение почты. Можете перейти мост входа в учетную запись: <a asp-controller="Account" asp-action="Login">мост</a></p>
+    <p>@MessageLabels.ConfirmEmailText <a asp-controller="Account" asp-action="Login">@MessageLabels.LinkText</a></p>
 </div>

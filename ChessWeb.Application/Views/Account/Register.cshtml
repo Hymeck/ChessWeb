@@ -1,6 +1,6 @@
 ﻿@model UserRegisterViewModel
 @{
-    ViewBag.Title = "Регистрация юзверя";
+    ViewBag.Title = UserLabels.RegistrationTitle;
 }
 
 <h2>@ViewBag.Title</h2>
@@ -31,7 +31,7 @@
             </div>
             
             <div>
-                <button type="submit" class="btn btn-primary">Регистрация</button>
+                <button type="submit" class="btn btn-primary">@UserLabels.RegistrationButton</button>
             </div>
             
         </form>

@@ -1,6 +1,6 @@
 ﻿@model UserLoginViewModel
 @{
-    ViewBag.Title = "Прощание с надеждой";
+    ViewBag.Title = MessageLabels.LoginTitle;
 }
 
 <h2>@ViewBag.Title</h2>
@@ -28,11 +28,11 @@
             </div>
 
             <div>
-                <button type="submit" class="btn btn-primary">Войти</button>
+                <button type="submit" class="btn btn-primary">@LoginLabels.LoginButton</button>
             </div>
 
             <div>
-                <a asp-action="ForgotPassword">Беды с содержимым черепа</a>
+                <a asp-action="ForgotPassword">@LoginLabels.ForgotPasswordButton</a>
             </div>
         </form>
     </div>

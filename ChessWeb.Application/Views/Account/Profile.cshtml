@@ -1,36 +1,36 @@
 ﻿@model UserProfileViewModel
 @{
-    ViewBag.Title = "Учетная запись";
+    ViewBag.Title = UserLabels.ProfileTitle;
 }
 
 <h2>@ViewBag.Title</h2>
 <table class="table">
     <tr>
-        <th>Имя юзверя</th>
-        <th>Адрес электронная почты</th>
-        <th>Состояние адреса электронной почты</th>
+        <th>@UserLabels.UserName</th>
+        <th>@EmailLabels.Email</th>
+        <th>@EmailLabels.EmailStatus</th>
     </tr>
     <tr>
         <td>@Model.Name</td>
         <td>@Model.Email</td>
         <td>
-            @(Model.EmailConfirmed ? "Твердый" : "Нетвердый")
+            @(Model.EmailConfirmed ? EmailLabels.ConfirmedEmail : EmailLabels.NotConfirmedEmail)
             @if (!Model.EmailConfirmed)
             {
-                <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">Сделать твердным</a>
+                <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">@EmailLabels.ConfirmEmailLink</a>
             }
         </td>
     </tr>
 </table>
-<p><a asp-controller="Account" asp-action="ChangePassword">Произвести переоценку ценностей</a></p>
+<p><a asp-controller="Account" asp-action="ChangePassword">@PasswordLabels.ChangePasswordLink</a></p>
 <table class="table">
     <tr>
         <th>ID игры</th>
         <th>FEN игры</th>
         <th>Состояние игры</th>
-        <th>Имя ангела</th>
-        <th>Имя черта</th>
-        <th>Взобравшийся на голову</th>
+        <th>@UserLabels.WhitePlayerName</th>
+        <th>@UserLabels.BlackPlayerName</th>
+        <th>@UserLabels.Winner</th>
     </tr>
     @foreach (var game in Model.UserGames)
     {
