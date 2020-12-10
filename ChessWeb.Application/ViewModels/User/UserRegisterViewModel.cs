@@ -1,27 +1,28 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ChessWeb.Application.Constants.Labels;
 
 namespace ChessWeb.Application.ViewModels.User
 {
     public class UserRegisterViewModel
     {
         [Required]
-        [Display(Name = "Имя юзверя")]
+        [Display(Name = UserLabels.UserName)]
         [MaxLength(30)]
         public string Name { get; set; }
 
         [Required]
-        [Display(Name = "Адрес электронной почты")]
+        [Display(Name = EmailLabels.Email)]
         public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Пароль-король")]
+        [Display(Name = PasswordLabels.RegisterPassword)]
         public string Password { get; set; }
  
         [Required]
-        [Compare(nameof(Password), ErrorMessage = "Пересечение указанных паролей дает пустое множество")]
+        [Compare(nameof(Password), ErrorMessage = PasswordLabels.PasswordConfirmError)]
         [DataType(DataType.Password)]
-        [Display(Name = "Еще раз пароль")]
+        [Display(Name = PasswordLabels.PasswordConfirm)]
         public string PasswordConfirm { get; set; }
     }
 }

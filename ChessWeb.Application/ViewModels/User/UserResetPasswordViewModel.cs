@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ChessWeb.Application.Constants.Labels;
 
 namespace ChessWeb.Application.ViewModels.User
 {
@@ -7,18 +8,18 @@ namespace ChessWeb.Application.ViewModels.User
         public string Code { get; set; }
         
         [Required]
-        [Display(Name = "Адрес электронной почты")]
+        [Display(Name = EmailLabels.Email)]
         public string Email { get; set; }
         
         [Required]
         [DataType(DataType.Password)]
-        [Display(Name = "Новый пароль")]
+        [Display(Name = PasswordLabels.NewPassword)]
         public string Password { get; set; }
         
         [Required]
-        [Compare(nameof(Password), ErrorMessage = "Пересечение указанных паролей дает пустое множество")]
+        [Compare(nameof(Password), ErrorMessage = PasswordLabels.PasswordConfirmError)]
         [DataType(DataType.Password)]
-        [Display(Name = "Еще раз новый пароль")]
+        [Display(Name = PasswordLabels.NewPasswordConfirm)]
         public string ConfirmPassword { get; set; }
     }
 }
