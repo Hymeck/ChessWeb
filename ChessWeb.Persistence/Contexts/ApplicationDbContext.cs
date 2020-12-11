@@ -13,12 +13,12 @@ namespace ChessWeb.Persistence.Contexts
         public DbSet<Move> Moves { get; set; }
         public DbSet<Side> Sides { get; set; }
         public DbSet<GameStatus> GameStatuses { get; set; }
-        // public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
-        public ApplicationDbContext()
-        {
-            
-        }
+        // public ApplicationDbContext()
+        // {
+        //     
+        // }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,11 +75,11 @@ namespace ChessWeb.Persistence.Contexts
             
         }
         
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder
-                // .UseLazyLoadingProxies()
-                .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
-        }
+        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // {
+        //     optionsBuilder
+        //         // .UseLazyLoadingProxies()
+        //         .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
+        // }
     }
 }
