@@ -13,8 +13,9 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
         .ConfigureWebHostDefaults(webBuilder =>
         {
             webBuilder
-                .UseStartup<Startup>()
-                .UseUrls("http://*:" + BuildData.HostPort);
+                .UseStartup<Startup>();
+            if (!BuildData.IsDevelopment)
+                webBuilder.UseUrls("http://*:" + BuildData.HostPort);
         });
 
 var host = CreateHostBuilder(args).Build();
