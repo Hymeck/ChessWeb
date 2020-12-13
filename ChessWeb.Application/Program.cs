@@ -10,7 +10,13 @@ using Microsoft.Extensions.Hosting;
 
 static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+        .ConfigureWebHostDefaults(webBuilder =>
+        {
+            webBuilder
+                .UseStartup<Startup>();
+            if (!BuildData.IsDevelopment)
+                webBuilder.UseUrls("http://*:" + BuildData.HostPort);
+        });
 
 var host = CreateHostBuilder(args).Build();
 using var scope = host.Services.CreateScope();

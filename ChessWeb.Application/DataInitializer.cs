@@ -35,7 +35,7 @@ namespace ChessWeb.Application
             // hymeck
             await AddUser(userManager, "Hymeck", "noonimf@gmail.com", "hymeckpass", playerRole);
             // racoty
-            await AddUser(userManager, "Racoty", "mr.yatson@gmail.com", "racotypass", playerRole);
+            // await AddUser(userManager, "Racoty", "mr.yatson@gmail.com", "racotypass", playerRole);
             
             await AddGame(gameRepository);
         }

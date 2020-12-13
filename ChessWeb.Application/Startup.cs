@@ -1,3 +1,4 @@
+using System;
 using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
@@ -8,6 +9,7 @@ using ChessWeb.Service.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -17,17 +19,31 @@ namespace ChessWeb.Application
     public class Startup
     {
         public IConfiguration Configuration { get; }
-        public Startup(IConfiguration configuration)
+        public IWebHostEnvironment Env { get; }
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            services
-                // .AddDbContext<ApplicationDbContext>(options => 
-                // options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-                .AddDbContext<ApplicationDbContext>();
-            
+            var connection = DatabaseConnectionString;
+            if (Env.IsProduction())
+            {
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<ApplicationDbContext>(options =>
+                        options.UseNpgsql(connection));
+            }
+
+            else
+            {
+                services
+                    .AddDbContext<ApplicationDbContext>(options =>
+                        options.UseSqlServer(connection));
+                // .AddDbContext<ApplicationDbContext>();
+            }
+
             services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;
                     opts.Password.RequireNonAlphanumeric = false;
@@ -79,5 +95,25 @@ namespace ChessWeb.Application
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
+        
+        private string GetHerokuConnectionString() 
+        {
+            // Get the connection string from the ENV variables
+            // postgres://{user}:{password}@{hostname}:{port}/{database-name}
+            var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+
+            // parse the connection string
+            var databaseUri = new Uri(connectionUrl);
+
+            var db = databaseUri.LocalPath.TrimStart('/');
+            var userInfo = databaseUri.UserInfo.Split(':', StringSplitOptions.RemoveEmptyEntries);
+
+            return $"User ID={userInfo[0]};Password={userInfo[1]};Host={databaseUri.Host};Port={databaseUri.Port};Database={db};Pooling=true;SSL Mode=Require;Trust Server Certificate=True;";
+        }
+
+        public string DatabaseConnectionString =>
+            Env.IsDevelopment()
+                ? Configuration.GetConnectionString("DefaultConnection")
+                : GetHerokuConnectionString();
     }
 }

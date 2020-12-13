@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using ChessWeb.Service.Interfaces;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using MimeKit;
 using MailKit.Net.Smtp;
 
@@ -9,11 +9,10 @@ namespace ChessWeb.Service.Services
 {
     public class SmtpOptions
     {
-        public const string SectionName = "SmtpOptions";
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public string Host { get; set; }
-        public int Port { get; set; }
+        public string Username { get; }
+        public string Password { get; }
+        public string Host { get; }
+        public int Port { get; }
 
         public SmtpOptions(string username, string password, string host, int port)
         {
@@ -25,10 +24,25 @@ namespace ChessWeb.Service.Services
 
         public static SmtpOptions FromConfiguration(IConfiguration configuration)
         {
-            var userName = configuration["SmtpUsername"];
-            var password = configuration["SmtpPassword"];
-            var host = configuration["SmtpHost"];
+            string userName;
+            string password;
+            string host;
             var port = 25;
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                // require secrets.json
+                userName = configuration["SmtpUsername"];
+                password = configuration["SmtpPassword"];
+                host = configuration["SmtpHost"];
+            }
+
+            else
+            {
+                userName = Environment.GetEnvironmentVariable("SmtpUsername");
+                password = Environment.GetEnvironmentVariable("SmtpPassword");
+                host = Environment.GetEnvironmentVariable("SmtpHost");
+            }
+            
             return new SmtpOptions(userName, password, host, port);
         }
     }
