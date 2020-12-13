@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-      <UserSecretsId>e8915191-1780-438b-9d14-40f0ac1e189d</UserSecretsId>
   </PropertyGroup>
 
     <ItemGroup>
@@ -10,12 +9,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.1" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.1" />
     </ItemGroup>

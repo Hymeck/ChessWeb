@@ -6,7 +6,8 @@ namespace ChessWeb.Playground.Client
 {
     class Program
     {
-        private static readonly string host = "http://localhost:5000/api/games/";
+        // private static readonly string host = "http://localhost:5000/api/games/";
+        private static readonly string host = "http://chessbsuir.herokuapp.com/api/games/";
         private static readonly string user = "Hymeck";
         static void Main(string[] args)
         {
@@ -18,8 +19,16 @@ namespace ChessWeb.Playground.Client
         private void Start()
         {
             // HymeckAndRacotyScholarsMate();
+            Look();
         }
 
+        private void Look()
+        {
+            var client = new ChessClient(host, user);
+            var info = client.GetCurrentGame("1");
+            WriteLine(info);
+        }
+        
         private void HymeckAndRacotyScholarsMate()
         {
             var hymeckClient = new ChessClient(host, user);

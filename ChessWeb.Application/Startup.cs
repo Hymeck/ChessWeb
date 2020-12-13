@@ -6,6 +6,8 @@ using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Implementations;
 using ChessWeb.Service.Interfaces;
 using ChessWeb.Service.Services;
+using ChessWeb.SignalR.Client;
+using ChessWeb.SignalR.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +29,8 @@ namespace ChessWeb.Application
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = DatabaseConnectionString;
+            // var connection = DatabaseConnectionString;
+            var connection = GetHerokuConnectionString();
             if (Env.IsProduction())
             {
                 services
@@ -38,10 +41,14 @@ namespace ChessWeb.Application
 
             else
             {
-                services
-                    .AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlServer(connection));
+                // services
+                //     // .AddDbContext<ApplicationDbContext>(options =>
+                //     //     options.UseSqlServer(connection));
                 // .AddDbContext<ApplicationDbContext>();
+                
+                services
+                    .AddEntityFrameworkNpgsql()
+                    .AddDbContext<ApplicationDbContext>();
             }
 
             services.AddIdentity<User, UserRole>(opts=> {
@@ -53,6 +60,18 @@ namespace ChessWeb.Application
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+            services.AddSignalR();
             
             services.AddScoped<IChessGameService, ChessGameService>();
             services.AddScoped<IGameService, GameService>();
@@ -65,6 +84,7 @@ namespace ChessWeb.Application
             services.AddTransient<ISideRepository, SideRepository>();
 
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddServerSideBlazor();
             services.AddControllersWithViews();
         }
 
@@ -85,14 +105,15 @@ namespace ChessWeb.Application
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapHub<SendboxHub>(SandboxClient.HubUrl);
+                endpoints.MapBlazorHub("/sandbox");
             });
         }
         
@@ -100,7 +121,9 @@ namespace ChessWeb.Application
         {
             // Get the connection string from the ENV variables
             // postgres://{user}:{password}@{hostname}:{port}/{database-name}
-            var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            // var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+            var connectionUrl =
+                "postgres://uikbdgoiuzaabs:f01c116697df4f7800d93686721c13c64e813cc8411de5f80af89b05d11f7135@ec2-54-246-67-245.eu-west-1.compute.amazonaws.com:5432/d29cpkqqe1m7i0";
 
             // parse the connection string
             var databaseUri = new Uri(connectionUrl);

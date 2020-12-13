@@ -7,10 +7,15 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ChessWeb.Service\ChessWeb.Service.csproj" />
+      <ProjectReference Include="..\ChessWeb.SignalR.Server\ChessWeb.SignalR.Server.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Views\Sandbox\Sandbox.razor" />
     </ItemGroup>
 
 </Project>
