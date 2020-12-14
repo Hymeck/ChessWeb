@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChessWeb.SignalR.Server
 {
-    public class SendboxHub : Hub
+    public class SandboxHub : Hub
     {
         private static readonly Dictionary<string, string> userLookup = new ();
 
@@ -38,7 +38,7 @@ namespace ChessWeb.SignalR.Server
         {
             var id = Context.ConnectionId;
             Console.WriteLine($"Disconnected {e?.Message} {id}");
-            if (!userLookup.TryGetValue(id, out string username))
+            if (!userLookup.TryGetValue(id, out var username))
                 username = "[unknown]";
             userLookup.Remove(id);
             await Clients.AllExcept(id).SendAsync(

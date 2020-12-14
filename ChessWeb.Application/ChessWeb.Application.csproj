@@ -14,8 +14,4 @@
       <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.1" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Include="Views\Sandbox\Sandbox.razor" />
-    </ItemGroup>
-
 </Project>

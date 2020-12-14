@@ -11,14 +11,13 @@ namespace ChessWeb.Application.Controllers
     
     public class SandboxController : Controller
     {
-        private readonly IHubContext<SendboxHub> _hubContext;
+        private readonly IHubContext<SandboxHub> _hubContext;
     
-        public SandboxController(IHubContext<SendboxHub> hubContext)
+        public SandboxController(IHubContext<SandboxHub> hubContext)
         {
             _hubContext = hubContext;
         }
-    
-        [Route("/")]
+        
         public ActionResult Index()
         {
             return View();
