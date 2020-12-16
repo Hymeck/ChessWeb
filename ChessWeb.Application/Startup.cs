@@ -29,8 +29,7 @@ namespace ChessWeb.Application
         }
         public void ConfigureServices(IServiceCollection services)
         {
-            // var connection = DatabaseConnectionString;
-            var connection = GetHerokuConnectionString();
+            var connection = DatabaseConnectionString;
             if (Env.IsProduction())
             {
                 services
@@ -41,14 +40,9 @@ namespace ChessWeb.Application
 
             else
             {
-                // services
-                //     // .AddDbContext<ApplicationDbContext>(options =>
-                //     //     options.UseSqlServer(connection));
-                // .AddDbContext<ApplicationDbContext>();
-                
                 services
-                    .AddEntityFrameworkNpgsql()
-                    .AddDbContext<ApplicationDbContext>();
+                    .AddDbContext<ApplicationDbContext>(options =>
+                        options.UseSqlServer(connection));
             }
 
             services.AddIdentity<User, UserRole>(opts=> {
@@ -91,9 +85,7 @@ namespace ChessWeb.Application
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             else if (env.IsProduction())
             {
@@ -113,8 +105,8 @@ namespace ChessWeb.Application
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapHub<ChessGameHub>(ChessGameClient.HubUrl);
-                endpoints.MapBlazorHub("/Blazor/_blazor");
-                endpoints.MapFallbackToPage("~/Blazor/{*clientrouts:nonfile}", "/Blazor/_Host");
+                endpoints.MapBlazorHub("/Sandbox/_blazor");
+                endpoints.MapFallbackToPage("~/Sandbox/{*clientrouts:nonfile}", "/Sandbox/_Host");
             });
         }
         
@@ -122,9 +114,7 @@ namespace ChessWeb.Application
         {
             // Get the connection string from the ENV variables
             // postgres://{user}:{password}@{hostname}:{port}/{database-name}
-            // var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
-            var connectionUrl =
-                "postgres://uikbdgoiuzaabs:f01c116697df4f7800d93686721c13c64e813cc8411de5f80af89b05d11f7135@ec2-54-246-67-245.eu-west-1.compute.amazonaws.com:5432/d29cpkqqe1m7i0";
+            var connectionUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
 
             // parse the connection string
             var databaseUri = new Uri(connectionUrl);

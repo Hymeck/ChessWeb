@@ -25,42 +25,34 @@ namespace ChessWeb.SignalR.Client
         {
             if (!_started)
             {
+                // create connection
                 _hubConnection = new HubConnectionBuilder()
                     .WithUrl(_navigationManager.ToAbsoluteUri(HubUrl))
                     .Build();
-                Console.WriteLine($"{nameof(ChessGameClient)}: calling {nameof(StartAsync)}");
                 
                 // register Events
                 _hubConnection.On<string, string>(MethodNames.Receive, HandleReceiveMessage);
-                // _hubConnection.On<string>(MethodNames.Move, UpdateBoard);
+                _hubConnection.On<string>(MethodNames.Update, HandleChangedBoard);
 
                 _started = true;
                 await _hubConnection.StartAsync();
                 await _hubConnection.SendAsync(MethodNames.Register, _username);
-                // await _hubConnection.SendAsync(MethodNames.GetBoard);
             }
         }
 
-        public async Task Move(string move)
-        {
-            await _hubConnection.SendAsync(MethodNames.Move, move);
-        }
+        public async Task<bool> Move(string move) => 
+            await _hubConnection.InvokeAsync<bool>(MethodNames.Move, move);
 
-        public void UpdateBoard(string fenBoard)
-        {
+        public async Task ResetBoard() =>
+            await _hubConnection.InvokeAsync(MethodNames.Reset);
+
+        private void HandleChangedBoard(string fenBoard) => 
             BoardChanged?.Invoke(this, new BoardChangedEventArgs(EditBoard(fenBoard)));
-        }
-        
+
         private void HandleReceiveMessage(string username, string message) => 
             MessageReceived?.Invoke(this, new MessageReceivedEventArgs(username, message));
-
-        // private void HandleChangedBoard(string fenBoard) => 
-        //     BoardChanged?.Invoke(this, new BoardChangedEventArgs(EditBoard(fenBoard)));
-
         public event EventHandler<MessageReceivedEventArgs> MessageReceived;
         public event EventHandler<BoardChangedEventArgs> BoardChanged;
-        
-        // public event EventHandler<MoveReceivedEventArgs> MoveReceived;
         
         public async Task StopAsync()
         {
@@ -73,11 +65,8 @@ namespace ChessWeb.SignalR.Client
             }
         }
         
-        public async ValueTask DisposeAsync()
-        {
-            Console.WriteLine($"{nameof(ChessGameClient)}: {nameof(DisposeAsync)}");
+        public async ValueTask DisposeAsync() => 
             await StopAsync();
-        }
 
         private string[] EditBoard(string board)
         {
@@ -90,17 +79,14 @@ namespace ChessWeb.SignalR.Client
             return data.ToString().Split('/');
         }
 
-        public async Task<string[]> GetBoard()
-        {
-            var pieces = await _hubConnection.InvokeAsync<string>(MethodNames.GetBoard);
-            return EditBoard(pieces);
-        }
+        public async Task<string[]> GetBoard() => 
+            EditBoard(await _hubConnection.InvokeAsync<string>(MethodNames.GetBoard));
     }
 
     public class MoveReceivedEventArgs : EventArgs
     {
-        public string Username { get; set; }
-        public string Move { get; set; }
+        public string Username { get; }
+        public string Move { get; }
         public MoveReceivedEventArgs(string username, string move)
         {
             Username = username;

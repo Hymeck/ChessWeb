@@ -3,6 +3,7 @@
 @inject NavigationManager navigationManager;
 
 <h1>Резвильня</h1>
+<a href="/" target="_self">К дому</a>
 <div class="top-row px-4">
     @if (_isPlaying)
     {
@@ -14,8 +15,8 @@
 
     @if (!_isPlaying)
     {
-        <input maxlength="32" @bind="_username" placeholder="Кликуха"/>
-        <button @onclick="Join">Примкнуть</button>
+        <input maxlength="32" @bind="_username" placeholder="Кликуха" class="form-control"/>
+        <button @onclick="Join" class="btn btn-primary">Примкнуть</button>
     }
 
     @if (_message != null)
@@ -34,15 +35,20 @@
                 </div>
             }
             <div>
-                <p>a b c d e f g h</p>
+                <p>abcdefgh</p>
             </div>
         </div>
         
         <div>
-            <input placeholder="выпад" @bind="_move"/>
+            <input placeholder="выпад" @bind="_move" class="form-control"/>
         </div>
+        
         <div>
-            <button @onclick="MakeMove">Выпад</button>
+            <button @onclick="MakeMove" class="btn btn-primary">Выпад</button>
+        </div>
+        
+        <div>
+            <button @onclick="Reset" class="btn btn-primary">Вернуться к истокам</button>
         </div>
     }
 
@@ -90,25 +96,25 @@
         catch (Exception e)
         {
             _message = "Беды с примыканием";
-            Console.WriteLine(e.Message);
-            Console.WriteLine(e.StackTrace);
+            StateHasChanged();
         }
     }
 
     private void OnBoardChanged(object sender, BoardChangedEventArgs e)
     {
-        Console.WriteLine($"Blazor: receive board");
         _board = e.Board;
         StateHasChanged();
     }
 
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
-        Console.WriteLine($"Blazor: receive {e.Username}: {e.Message}");
         var newMessage = new Message(e.Username, e.Message);
         messageHistory.Add(newMessage);
         StateHasChanged();
     }
+
+    private async Task Reset() => 
+        await _client.ResetBoard();
 
     private async Task MakeMove()
     {
@@ -118,13 +124,9 @@
             return;
         }
 
-        await _client.Move(_move);
-        // if (!answer)
-        //     _message = "Что-то не то";
-        // else
-        // {
-        //     _message = null;
-        // }
+        var answer = await _client.Move(_move);
+        
+        _message = !answer ? "Что-то не то" : null;
         
         StateHasChanged();
     }

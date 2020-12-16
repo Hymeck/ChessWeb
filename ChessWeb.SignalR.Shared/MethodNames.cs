@@ -7,7 +7,7 @@
         public const string Send = "SendMessage";
         public const string Move = "Move";
         public const string GetBoard = "GetBoard";
-        public const string Reset = "ResetGame";
+        public const string Reset = "ResetBoard";
         public const string Update = "UpdateBoard";
     }
 }
