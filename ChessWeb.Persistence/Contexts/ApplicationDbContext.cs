@@ -7,7 +7,6 @@ namespace ChessWeb.Persistence.Contexts
 {
     public class ApplicationDbContext : IdentityDbContext<User, UserRole, string>
     {
-        // protected readonly string databaseName = "ChessWebDb";
         public DbSet<Color> Colors { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Move> Moves { get; set; }
@@ -15,11 +14,6 @@ namespace ChessWeb.Persistence.Contexts
         public DbSet<GameStatus> GameStatuses { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 
-        // public ApplicationDbContext()
-        // {
-        //     
-        // }
-        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -74,15 +68,5 @@ namespace ChessWeb.Persistence.Contexts
             #endregion Side
             
         }
-        
-        // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // {
-        //     // optionsBuilder
-        //     //     // .UseLazyLoadingProxies()
-        //     //     .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
-        //
-        //     optionsBuilder
-        //         .UseNpgsql(GetHerokuConnectionString());
-        // }
     }
 }

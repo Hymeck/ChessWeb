@@ -33,7 +33,7 @@ namespace ChessWeb.Application
             if (Env.IsProduction())
             {
                 services
-                    .AddEntityFrameworkNpgsql()
+                    // .AddEntityFrameworkNpgsql()
                     .AddDbContext<ApplicationDbContext>(options =>
                         options.UseNpgsql(connection));
             }
