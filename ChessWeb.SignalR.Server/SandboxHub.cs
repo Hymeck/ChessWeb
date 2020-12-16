@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ChessWeb.SignalR.Client;
+using ChessWeb.SignalR.Shared;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChessWeb.SignalR.Server

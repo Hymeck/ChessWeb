@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using ChessWeb.SignalR.Client;
 using ChessWeb.SignalR.Server;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

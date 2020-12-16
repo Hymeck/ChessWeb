@@ -9,7 +9,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ChessWeb.SignalR.Client\ChessWeb.SignalR.Client.csproj" />
+        <Reference Include="ChessEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>ChessEngine.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ChessWeb.SignalR.Shared\ChessWeb.SignalR.Shared.csproj" />
     </ItemGroup>
 
 </Project>

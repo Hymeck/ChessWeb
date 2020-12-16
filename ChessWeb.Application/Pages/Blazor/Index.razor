@@ -1,131 +1,143 @@
 ﻿@page "/"
+@using ChessWeb.SignalR.Client
 @inject NavigationManager navigationManager;
-@using ChessWeb.SignalR.Client;
 
+<h1>Резвильня</h1>
 <div class="top-row px-4">
-    @if (chatting)
+    @if (_isPlaying)
     {
-        <p>You are connect as <b>@username</b></p>
-        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="DisconnectAsync">Disconnect</button>
-    }
-</div>
-
-<div class="content px-4">
-    <h1>SignalR chat</h1>
-    @if (!chatting)
-    {
-        <h2>Chat</h2>
-        <p>Enter your name to start chatting</p>
-
-        <input type="text" maxlength="32" @bind="username"/>
-        <button @onclick="Chat">Chat!</button>
-
-        @if (message != null)
-        {
-            <div class="invalid-feedback">@message</div>
-            <small id="emailHelp" class="form-text text-muted">@message</small>
-        }
+        <p>Вы резвитесь как <b>@_username</b></p>
+        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="Disconnect">Стать серьезным</button>
     }
 
-    @if (chatting)
+    @* todo: add board *@
+
+    @if (!_isPlaying)
     {
-        <div id="scrollbox">
-            @foreach (var item in messages)
+        <input maxlength="32" @bind="_username" placeholder="Кликуха"/>
+        <button @onclick="Join">Примкнуть</button>
+    }
+
+    @if (_message != null)
+    {
+        <div class="invalid-feedback">@_message</div>
+        <small id="emailHelp" class="form-text text-muted">@_message</small>
+    }
+
+    @if (_isPlaying)
+    {
+        <div style="font-family: 'Courier New'">
+            @for (var i = 0; i < 8; i++)
             {
-                <div class="@item.CSS">
-                    <div class="user">@item.Username</div>
-                    <div class="user">@item.Body</div>
+                <div>
+                    <p>@_board[i] @(8 - i)</p>
                 </div>
             }
-            <hr/>
-            <textarea class="input-lg" placeholder="Type comments" @bind="newMessage"></textarea>
-            <button class="btn" @onclick="SendAsync">Send</button>
+            <div>
+                <p>a b c d e f g h</p>
+            </div>
         </div>
+        
+        <div>
+            <input placeholder="выпад" @bind="_move"/>
+        </div>
+        <div>
+            <button @onclick="MakeMove">Выпад</button>
+        </div>
+    }
+
+    @foreach (var m in messageHistory)
+    {
+        <p>@m.Username: @m.Body</p>
     }
 </div>
 
 @code
 {
-    bool chatting = false;
-    string username = null;
-    SandboxClient client = null;
-    string message = null;
-    string newMessage = null;
+    private string _username;
+    private string _message;
+    private bool _isPlaying;
+    private string _move;
+    private ChessGameClient _client;
+    private List<Message> messageHistory = new();
+    private string[] _board = new string[8];
 
-    List<Message> messages = new ();
-
-    async Task Chat()
+    public async Task Disconnect()
     {
-        if (string.IsNullOrWhiteSpace(username))
+        await _client.StopAsync();
+        _isPlaying = false;
+        _client = null;
+    }
+
+    public async Task Join()
+    {
+        if (string.IsNullOrWhiteSpace(_username))
         {
-            message = "Please enter a name";
+            _message = "Безымень не пропущен";
             return;
         }
-
         try
         {
-            messages.Clear();
-            client = new SandboxClient(username, navigationManager);
-            client.MessageReceived += MessageReceived;
-            Console.WriteLine("Index: chat starting...");
-            await client.StartAsync();
-            Console.WriteLine("Index: chat starting?");
-            chatting = true;
+            _isPlaying = true;
+            _client = new ChessGameClient(navigationManager, _username);
+            _client.MessageReceived += OnMessageReceived;
+            _client.BoardChanged += OnBoardChanged;
+            await _client.StartAsync();
+            _board = await _client.GetBoard();
+            StateHasChanged();
         }
+
         catch (Exception e)
         {
-            message = $"Error: Failed to start chat {e.Message}";
+            _message = "Беды с примыканием";
             Console.WriteLine(e.Message);
             Console.WriteLine(e.StackTrace);
         }
     }
 
-    private void MessageReceived(object sender, MessageReceivedEventArgs e)
+    private void OnBoardChanged(object sender, BoardChangedEventArgs e)
     {
-        Console.WriteLine($"Blazor: receive {e.Username}: {e.Message}");
-        bool isMine = false;
-        if (!string.IsNullOrWhiteSpace(e.Username))
-        {
-            isMine = string.Equals(e.Username, username, StringComparison.CurrentCultureIgnoreCase);
-        }
-        var newMessage = new Message(e.Username, e.Message, isMine);
-        messages.Add(newMessage);
+        Console.WriteLine($"Blazor: receive board");
+        _board = e.Board;
         StateHasChanged();
     }
 
-    async Task DisconnectAsync()
+    private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
-        if (chatting)
-        {
-            await client.StopAsync();
-            client = null;
-            message = "chat ended";
-            chatting = false;
-        }
+        Console.WriteLine($"Blazor: receive {e.Username}: {e.Message}");
+        var newMessage = new Message(e.Username, e.Message);
+        messageHistory.Add(newMessage);
+        StateHasChanged();
     }
 
-    async Task SendAsync()
+    private async Task MakeMove()
     {
-        if (chatting && !string.IsNullOrWhiteSpace(newMessage))
+        if (string.IsNullOrWhiteSpace(_move))
         {
-            await client.SendAsync(newMessage);
-            newMessage = "";
+            _message = "Пж, пустой выпад нельзя";
+            return;
         }
+
+        await _client.Move(_move);
+        // if (!answer)
+        //     _message = "Что-то не то";
+        // else
+        // {
+        //     _message = null;
+        // }
+        
+        StateHasChanged();
     }
 
-    class Message
+    private class Message
     {
         public string Username { get; set; }
         public string Body { get; set; }
-        public bool Mine { get; set; }
 
-        public Message(string username, string body, bool mine)
+        public Message(string username, string body)
         {
             Username = username;
             Body = body;
-            Mine = mine;
         }
-
-        public string CSS => Mine ? "sent" : "received";
     }
 }

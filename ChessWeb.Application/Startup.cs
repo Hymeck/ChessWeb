@@ -112,7 +112,7 @@ namespace ChessWeb.Application
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapHub<SandboxHub>(SandboxClient.HubUrl);
+                endpoints.MapHub<ChessGameHub>(ChessGameClient.HubUrl);
                 endpoints.MapBlazorHub("/Blazor/_blazor");
                 endpoints.MapFallbackToPage("~/Blazor/{*clientrouts:nonfile}", "/Blazor/_Host");
             });

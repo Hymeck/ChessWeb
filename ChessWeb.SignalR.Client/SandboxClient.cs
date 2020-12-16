@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ChessWeb.SignalR.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 
@@ -41,12 +42,12 @@ namespace ChessWeb.SignalR.Client
 
         private void HandleReceiveMessage(string username, string message)
         {
-            MessageReceived?.Invoke(this, new MessageReceivedEventArgs(username, message));
+            // MessageReceived?.Invoke(this, new MessageReceivedEventArgs(username, message));
         }
 
-        public event MessageReceivedEventHandler MessageReceived;
-
-        public delegate void MessageReceivedEventHandler(object sender, MessageReceivedEventArgs e);
+        // public event MessageReceivedEventHandler MessageReceived;
+        //
+        // public delegate void MessageReceivedEventHandler(object sender, MessageReceivedEventArgs e);
 
         public async Task SendAsync(string message)
         {

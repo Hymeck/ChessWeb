@@ -7,6 +7,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ChessWeb.Service\ChessWeb.Service.csproj" />
+      <ProjectReference Include="..\ChessWeb.SignalR.Client\ChessWeb.SignalR.Client.csproj" />
       <ProjectReference Include="..\ChessWeb.SignalR.Server\ChessWeb.SignalR.Server.csproj" />
     </ItemGroup>
 
