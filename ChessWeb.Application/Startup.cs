@@ -6,6 +6,8 @@ using ChessWeb.Persistence.Contexts;
 using ChessWeb.Persistence.Implementations;
 using ChessWeb.Service.Interfaces;
 using ChessWeb.Service.Services;
+using ChessWeb.SignalR.Client;
+using ChessWeb.SignalR.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -41,7 +43,6 @@ namespace ChessWeb.Application
                 services
                     .AddDbContext<ApplicationDbContext>(options =>
                         options.UseSqlServer(connection));
-                // .AddDbContext<ApplicationDbContext>();
             }
 
             services.AddIdentity<User, UserRole>(opts=> {
@@ -53,6 +54,18 @@ namespace ChessWeb.Application
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+            services.AddSignalR();
             
             services.AddScoped<IChessGameService, ChessGameService>();
             services.AddScoped<IGameService, GameService>();
@@ -65,15 +78,14 @@ namespace ChessWeb.Application
             services.AddTransient<ISideRepository, SideRepository>();
 
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddServerSideBlazor();
             services.AddControllersWithViews();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             else if (env.IsProduction())
             {
@@ -85,14 +97,16 @@ namespace ChessWeb.Application
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapDefaultControllerRoute();
+                endpoints.MapHub<ChessGameHub>(ChessGameClient.HubUrl);
+                endpoints.MapBlazorHub("/Sandbox/_blazor");
+                endpoints.MapFallbackToPage("~/Sandbox/{*clientrouts:nonfile}", "/Sandbox/_Host");
             });
         }
         

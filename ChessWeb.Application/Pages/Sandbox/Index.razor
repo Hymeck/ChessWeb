@@ -1,0 +1,145 @@
+﻿@page "/"
+@using ChessWeb.SignalR.Client
+@inject NavigationManager navigationManager;
+
+<h1>Резвильня</h1>
+<a href="/" target="_self">К дому</a>
+<div class="top-row px-4">
+    @if (_isPlaying)
+    {
+        <p>Вы резвитесь как <b>@_username</b></p>
+        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="Disconnect">Стать серьезным</button>
+    }
+
+    @* todo: add board *@
+
+    @if (!_isPlaying)
+    {
+        <input maxlength="32" @bind="_username" placeholder="Кликуха" class="form-control"/>
+        <button @onclick="Join" class="btn btn-primary">Примкнуть</button>
+    }
+
+    @if (_message != null)
+    {
+        <div class="invalid-feedback">@_message</div>
+        <small id="emailHelp" class="form-text text-muted">@_message</small>
+    }
+
+    @if (_isPlaying)
+    {
+        <div style="font-family: 'Courier New'">
+            @for (var i = 0; i < 8; i++)
+            {
+                <div>
+                    <p>@_board[i] @(8 - i)</p>
+                </div>
+            }
+            <div>
+                <p>abcdefgh</p>
+            </div>
+        </div>
+        
+        <div>
+            <input placeholder="выпад" @bind="_move" class="form-control"/>
+        </div>
+        
+        <div>
+            <button @onclick="MakeMove" class="btn btn-primary">Выпад</button>
+        </div>
+        
+        <div>
+            <button @onclick="Reset" class="btn btn-primary">Вернуться к истокам</button>
+        </div>
+    }
+
+    @foreach (var m in messageHistory)
+    {
+        <p>@m.Username: @m.Body</p>
+    }
+</div>
+
+@code
+{
+    private string _username;
+    private string _message;
+    private bool _isPlaying;
+    private string _move;
+    private ChessGameClient _client;
+    private List<Message> messageHistory = new();
+    private string[] _board = new string[8];
+
+    public async Task Disconnect()
+    {
+        await _client.StopAsync();
+        _isPlaying = false;
+        _client = null;
+    }
+
+    public async Task Join()
+    {
+        if (string.IsNullOrWhiteSpace(_username))
+        {
+            _message = "Безымень не пропущен";
+            return;
+        }
+        try
+        {
+            _isPlaying = true;
+            _client = new ChessGameClient(navigationManager, _username);
+            _client.MessageReceived += OnMessageReceived;
+            _client.BoardChanged += OnBoardChanged;
+            await _client.StartAsync();
+            _board = await _client.GetBoard();
+            StateHasChanged();
+        }
+
+        catch (Exception e)
+        {
+            _message = "Беды с примыканием";
+            StateHasChanged();
+        }
+    }
+
+    private void OnBoardChanged(object sender, BoardChangedEventArgs e)
+    {
+        _board = e.Board;
+        StateHasChanged();
+    }
+
+    private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        var newMessage = new Message(e.Username, e.Message);
+        messageHistory.Add(newMessage);
+        StateHasChanged();
+    }
+
+    private async Task Reset() => 
+        await _client.ResetBoard();
+
+    private async Task MakeMove()
+    {
+        if (string.IsNullOrWhiteSpace(_move))
+        {
+            _message = "Пж, пустой выпад нельзя";
+            return;
+        }
+
+        var answer = await _client.Move(_move);
+        
+        _message = !answer ? "Что-то не то" : null;
+        
+        StateHasChanged();
+    }
+
+    private class Message
+    {
+        public string Username { get; set; }
+        public string Body { get; set; }
+
+        public Message(string username, string body)
+        {
+            Username = username;
+            Body = body;
+        }
+    }
+}

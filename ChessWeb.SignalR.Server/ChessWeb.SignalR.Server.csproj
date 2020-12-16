@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="ChessEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>ChessEngine.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ChessWeb.SignalR.Shared\ChessWeb.SignalR.Shared.csproj" />
+    </ItemGroup>
+
+</Project>

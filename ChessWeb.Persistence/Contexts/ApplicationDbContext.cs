@@ -7,7 +7,7 @@ namespace ChessWeb.Persistence.Contexts
 {
     public class ApplicationDbContext : IdentityDbContext<User, UserRole, string>
     {
-        protected readonly string databaseName = "ChessWebDb";
+        // protected readonly string databaseName = "ChessWebDb";
         public DbSet<Color> Colors { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Move> Moves { get; set; }
@@ -77,9 +77,12 @@ namespace ChessWeb.Persistence.Contexts
         
         // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         // {
+        //     // optionsBuilder
+        //     //     // .UseLazyLoadingProxies()
+        //     //     .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
+        //
         //     optionsBuilder
-        //         // .UseLazyLoadingProxies()
-        //         .UseSqlServer($"Server=(localdb)\\mssqllocaldb;Database={databaseName};Trusted_Connection=True;");
+        //         .UseNpgsql(GetHerokuConnectionString());
         // }
     }
 }
