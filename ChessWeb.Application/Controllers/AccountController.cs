@@ -19,6 +19,7 @@ namespace ChessWeb.Application.Controllers
         private readonly IGameService _gameService;
         private readonly IMailSender _mailSender;
         private readonly ILogger<AccountController> _logger;
+        
         public AccountController(
             UserManager<User> userManager, 
             SignInManager<User> signInManager, 
@@ -86,11 +87,9 @@ namespace ChessWeb.Application.Controllers
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
                 return RedirectToAction("Profile", "Account");
-            else
-            {
-                _logger.LogError($"Email confirm fails. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
-                return NotFound();
-            }
+            
+            _logger.LogError($"Email confirm fails. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
+            return NotFound();
         }
         
         [HttpGet]
@@ -107,7 +106,7 @@ namespace ChessWeb.Application.Controllers
  
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(UserLoginViewModel model)
+        public async Task<IActionResult> Login(UserLoginViewModel model, string returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
@@ -313,6 +312,7 @@ namespace ChessWeb.Application.Controllers
                 };
 
                 await _userManager.CreateAsync(user);
+                await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
             }
 
             await _userManager.AddLoginAsync(user, userInfo);

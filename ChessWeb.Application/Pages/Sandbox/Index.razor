@@ -4,58 +4,60 @@
 
 <h1>Резвильня</h1>
 <a href="/" target="_self">К дому</a>
-<div class="top-row px-4">
-    @if (_isPlaying)
-    {
-        <p>Вы резвитесь как <b>@_username</b></p>
-        <button class="btn btn-sm btn-warning ml-md-auto" @onclick="Disconnect">Стать серьезным</button>
-    }
-
-    @* todo: add board *@
-
-    @if (!_isPlaying)
-    {
-        <input maxlength="32" @bind="_username" placeholder="Кликуха" class="form-control"/>
-        <button @onclick="Join" class="btn btn-primary">Примкнуть</button>
-    }
-
-    @if (_message != null)
-    {
-        <div class="invalid-feedback">@_message</div>
-        <small id="emailHelp" class="form-text text-muted">@_message</small>
-    }
-
-    @if (_isPlaying)
-    {
-        <div style="font-family: 'Courier New'">
-            @for (var i = 0; i < 8; i++)
+<div class="row">
+    <div class="col-md-3">
+        @if (_isPlaying)
             {
+                <p>Вы резвитесь как <b>@_username</b></p>
+                <button class="btn btn-sm btn-warning ml-md-auto" @onclick="Disconnect">Стать серьезным</button>
+            }
+        
+            @* todo: add board *@
+        
+            @if (!_isPlaying)
+            {
+                <input maxlength="32" @bind="_username" placeholder="Кликуха" class="form-control"/>
+                <button @onclick="Join" class="btn btn-primary">Примкнуть</button>
+            }
+        
+            @if (_message != null)
+            {
+                <div class="invalid-feedback">@_message</div>
+                <small id="emailHelp" class="form-text text-muted">@_message</small>
+            }
+        
+            @if (_isPlaying)
+            {
+                <div style="font-family: 'Courier New'">
+                    @for (var i = 0; i < 8; i++)
+                    {
+                        <div>
+                            <p>@_board[i] @(8 - i)</p>
+                        </div>
+                    }
+                    <div>
+                        <p>abcdefgh</p>
+                    </div>
+                </div>
+        
                 <div>
-                    <p>@_board[i] @(8 - i)</p>
+                    <input placeholder="выпад" @bind="_move" class="form-control"/>
+                </div>
+        
+                <div>
+                    <button @onclick="MakeMove" class="btn btn-primary">Выпад</button>
+                </div>
+        
+                <div>
+                    <button @onclick="Reset" class="btn btn-primary">Вернуться к истокам</button>
                 </div>
             }
-            <div>
-                <p>abcdefgh</p>
-            </div>
-        </div>
         
-        <div>
-            <input placeholder="выпад" @bind="_move" class="form-control"/>
-        </div>
-        
-        <div>
-            <button @onclick="MakeMove" class="btn btn-primary">Выпад</button>
-        </div>
-        
-        <div>
-            <button @onclick="Reset" class="btn btn-primary">Вернуться к истокам</button>
-        </div>
-    }
-
-    @foreach (var m in messageHistory)
-    {
-        <p>@m.Username: @m.Body</p>
-    }
+            @foreach (var m in messageHistory)
+            {
+                <p>@m.Username: @m.Body</p>
+            }
+    </div>
 </div>
 
 @code
