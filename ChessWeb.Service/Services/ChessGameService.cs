@@ -77,7 +77,7 @@ namespace ChessWeb.Service.Services
                 ChangeGameState(nextChessGame, ref game, moveEntry, color);
 
                 await _moveRepository.AddAsync(moveEntry);
-                await _gameRepository.UpdateAsync(game);
+                _gameRepository.Update(game);
                 await _gameRepository.SaveChangesAsync();
                 return game;
             }

@@ -49,15 +49,10 @@ namespace ChessWeb.Persistence.Implementations
         public async Task DeleteAsync(long id)
         {
             var game = await FindAsync(id);
-            await DeleteAsync(game);
+            Delete(game);
         }
 
         public bool Any() => 
             _dbContext.Games.Any();
-
-        // public Task JoinAsync(User user, Side side)
-        // {
-        //     throw new NotImplementedException(nameof(JoinAsync));
-        // }
     }
 }

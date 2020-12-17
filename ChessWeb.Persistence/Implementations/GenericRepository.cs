@@ -19,13 +19,13 @@ namespace ChessWeb.Persistence.Implementations
             return entity;
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public T Update(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             return entity;
         }
 
-        public async Task<T> DeleteAsync(T entity)
+        public T Delete(T entity)
         {
             _dbContext.Set<T>().Remove(entity);
             return entity;

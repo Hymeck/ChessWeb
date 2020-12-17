@@ -7,9 +7,9 @@ namespace ChessWeb.Domain.Interfaces.Repositories
     {
         Task<T> AddAsync(T entity);
 
-        Task<T> UpdateAsync(T entity);
+        T Update(T entity);
 
-        Task<T> DeleteAsync(T entity);
+        T Delete(T entity);
         
         Task<T> FindAsync(long id);
         Task<int> SaveChangesAsync();

@@ -28,25 +28,19 @@ namespace ChessWeb.Service.Services
         public async Task<IEnumerable<Game>> GetUserGamesAsync(User user) => 
             await _gameRepository.GetUserGamesAsync(user);
 
-        public async Task CreateGameAsync()
-        {
+        public async Task CreateGameAsync() => 
             await _gameRepository.CreateAsync();
-        }
 
-        public async Task<Game> FindAsync(long id)
-        {
-            return await _gameRepository.FindAsync(id);
-        }
+        public async Task<Game> FindAsync(long id) => 
+            await _gameRepository.FindAsync(id);
 
-        public async Task<Game> GetAsync(long id)
-        {
-            return await _gameRepository.GetAsync(id);
-        }
+        public async Task<Game> GetAsync(long id) => 
+            await _gameRepository.GetAsync(id);
 
         public async Task JoinAsync(User user, Side side)
         {
             side.User = user;
-            await _sideRepository.UpdateAsync(side);
+            _sideRepository.Update(side);
             var game = await _gameRepository.FindAsync(side.GameId);
             user.Games.Add(game);
             
@@ -56,23 +50,18 @@ namespace ChessWeb.Service.Services
                 (game.BlackUser, game.BlackUsername) = (user, user.UserName);
 
             var activePlayerCount = _sideRepository.GetActiveGamePlayerCount(game);
-            // 1 due to db have not changed when  _sideRepository.UpdateAsync(side);
+            // 1 due to db have not changed when  _sideRepository.Update(side);
             if (activePlayerCount == 1)
                 game.Status = (await _gameStatusRepository.PlayStatus()).Status;
             
-            await _gameRepository.UpdateAsync(game);
+            _gameRepository.Update(game);
             await _sideRepository.SaveChangesAsync();
         }
 
         public async Task DeleteGameAsync(Game game)
         {
-            await _gameRepository.DeleteAsync(game);
+            _gameRepository.Delete(game);
             await _gameRepository.SaveChangesAsync();
-        }
-
-        public bool Any()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }

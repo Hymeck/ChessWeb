@@ -38,20 +38,26 @@
                     }
                     else
                     {
-                        <form method="post" asp-action="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
-                            <div>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button class="btn btn-success"
-                                            title="Ворваться посредством @provider.Name"
-                                            name="provider"
-                                            value="@provider.Name"
-                                            type="submit">
-                                        @provider.Name оправдывает цель
-                                    </button><br/>
-                                }
-                            </div>
-                        </form>
+                        <div>
+                            @foreach (var provider in Model.ExternalLogins)
+                            {
+@* <button class="btn btn-success" *@
+                                            @* title="Ворваться посредством @provider.Name" *@
+                                            @* name="provider" *@
+                                            @* value="@provider.Name" *@
+                                            @* type="submit"> *@
+                                        @* @provider.Name оправдывает цель *@
+                                    @* </button><br/> *@
+
+                                <a class="btn btn-success"
+                                   asp-action="ExternalLogin"
+                                   asp-route-returnUrl="@Model.ReturnUrl"
+                                   asp-route-provider="@provider.Name"
+                                   title="Ворваться посредством @provider.Name">
+                                    @provider.Name оправдывает цель
+                                </a><br/>
+                            }
+                        </div>
                     }
                 }
             </div>

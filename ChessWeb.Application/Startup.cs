@@ -30,20 +30,9 @@ namespace ChessWeb.Application
         public void ConfigureServices(IServiceCollection services)
         {
             var connection = DatabaseConnectionString;
-            if (Env.IsProduction())
-            {
-                services
-                    // .AddEntityFrameworkNpgsql()
-                    .AddDbContext<ApplicationDbContext>(options =>
-                        options.UseNpgsql(connection));
-            }
-
-            else
-            {
-                services
-                    .AddDbContext<ApplicationDbContext>(options =>
-                        options.UseSqlServer(connection));
-            }
+            services
+                .AddDbContext<ApplicationDbContext>(options =>
+                    options.UseNpgsql(connection));
 
             services.AddIdentity<User, UserRole>(opts=> {
                     opts.Password.RequiredLength = 5;
@@ -71,8 +60,19 @@ namespace ChessWeb.Application
                 .AddAuthentication()
                 .AddGoogle(options =>
                 {
-                    options.ClientId = Environment.GetEnvironmentVariable("GoogleClientId");
-                    options.ClientSecret = Environment.GetEnvironmentVariable("GoogleSecretClientCode");
+                    var clientId = "GoogleClientId";
+                    var secret = "GoogleSecretClientCode";
+                    if (Env.IsDevelopment())
+                    {
+                        options.ClientId = Configuration[clientId];
+                        options.ClientSecret = Configuration[secret];
+                    }
+
+                    else
+                    {
+                        options.ClientId = Environment.GetEnvironmentVariable(clientId);
+                        options.ClientSecret = Environment.GetEnvironmentVariable(secret);
+                    }
                 });
             
             services.AddScoped<IChessGameService, ChessGameService>();
@@ -135,7 +135,7 @@ namespace ChessWeb.Application
 
         public string DatabaseConnectionString =>
             Env.IsDevelopment()
-                ? Configuration.GetConnectionString("DefaultConnection")
+                ? Configuration["DbConnection"]
                 : GetHerokuConnectionString();
     }
 }

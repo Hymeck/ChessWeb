@@ -105,9 +105,10 @@ namespace ChessWeb.Application.Controllers
         }
  
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginViewModel model, string returnUrl = null)
         {
+            // it need for not absent button of google auth when refresh the page
             model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             
             if (!ModelState.IsValid)
@@ -119,7 +120,10 @@ namespace ChessWeb.Application.Controllers
             var result =
                 await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
             if (result.Succeeded)
-                return RedirectToAction("Index", "Home");
+                return 
+                    !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
+                    ? Redirect(returnUrl)
+                    : RedirectToAction("Index", "Home");
                 
             ModelState.AddModelError("", "Неправильное имя юзверя и (или?) пароль");
             return View(model);
@@ -250,7 +254,7 @@ namespace ChessWeb.Application.Controllers
         
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult ExternalLogin(string provider, string returnUrl)
+        public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             var redirectUrl = Url.Action(
             "ExternalLoginCallback", 
