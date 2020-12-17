@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using ChessWeb.Application.Constants;
 using ChessWeb.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -92,9 +94,15 @@ namespace ChessWeb.Application.Controllers
         }
         
         [HttpGet]
-        public IActionResult Login(string returnUrl = null)
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(string returnUrl = null)
         {
-            return View(new UserLoginViewModel { ReturnUrl = returnUrl });
+            var viewModel = new UserLoginViewModel
+            {
+                ReturnUrl = returnUrl,
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+            return View(viewModel);
         }
  
         [HttpPost]
@@ -237,6 +245,79 @@ namespace ChessWeb.Application.Controllers
                 return View("ChangePasswordConfirmation");
             ModelState.AddModelError("", "Опрокидень смены пароля");
             return View("ChangePassword");
+        }
+        
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult ExternalLogin(string provider, string returnUrl)
+        {
+            var redirectUrl = Url.Action(
+            "ExternalLoginCallback", 
+            "Account", 
+            new {ReturnUrl = returnUrl});
+            
+            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
+            return new ChallengeResult(provider, properties);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> ExternalLoginCallback(string returlUrl = null, string remoteEror = null)
+        {
+            returlUrl ??= Url.Content("~/");
+
+            var viewModel = new UserLoginViewModel
+            {
+                ReturnUrl = returlUrl,
+                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList()
+            };
+
+            if (remoteEror != null)
+            {
+                ModelState.AddModelError("", $"Беды со сторонниками: {remoteEror}");
+                return View("Login", viewModel);
+            }
+
+            var userInfo = await _signInManager.GetExternalLoginInfoAsync();
+            if (userInfo == null)
+            {
+                ModelState.AddModelError("", "Беды с загрузкой сторонних сведений");
+                return View("Login", viewModel);
+            }
+
+            var result = await _signInManager
+                .ExternalLoginSignInAsync(
+                    userInfo.LoginProvider,
+                    userInfo.ProviderKey, 
+                    isPersistent: true, 
+                    bypassTwoFactor: true);
+
+            if (result.Succeeded)
+                return LocalRedirect(returlUrl);
+
+            var email = userInfo.Principal.FindFirstValue(ClaimTypes.Email);
+
+            if (email == null)
+            {
+                return View("Error");
+            }
+                
+            var username = email.Split('@')[0];
+            var user = await _userManager.FindByNameAsync(username);
+
+            if (user == null)
+            {
+                user = new User
+                {
+                    UserName = username,
+                    Email = email
+                };
+
+                await _userManager.CreateAsync(user);
+            }
+
+            await _userManager.AddLoginAsync(user, userInfo);
+            await _signInManager.SignInAsync(user, isPersistent: true);
+            return LocalRedirect(returlUrl);
         }
     }
 }

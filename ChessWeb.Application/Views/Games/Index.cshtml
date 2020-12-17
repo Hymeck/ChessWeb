@@ -18,13 +18,13 @@
                 @if (User.IsInRole(Roles.AdminRole))
                 {
                     <form asp-action="Delete" asp-route-id="@game.Id" method="post">
-                        <a class="btn btn-sm btn-primary" asp-action="GameSides" asp-route-id="@game.Id">Битва и поле для битвы</a>
+                        <a class="btn btn-sm btn-primary" asp-action="GameDetails" asp-route-id="@game.Id">Битва и поле для битвы</a>
                         <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
                     </form>
                 }
                  else
                 {
-                    <a class="btn btn-sm btn-primary" asp-action="GameSides" asp-route-id="@game.Id">Битва и поле для битвы</a>
+                    <a class="btn btn-sm btn-primary" asp-action="GameDetails" asp-route-id="@game.Id">Битва и поле для битвы</a>
                 }
             </td>
         </tr>

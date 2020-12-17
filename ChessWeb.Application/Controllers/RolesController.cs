@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChessWeb.Application.Constants;
@@ -25,77 +26,87 @@ namespace ChessWeb.Application.Controllers
  
         public IActionResult Create() => 
             View();
+        
         [HttpPost]
         public async Task<IActionResult> Create(string name)
         {
-            if (!string.IsNullOrEmpty(name))
+            if (string.IsNullOrEmpty(name))
             {
-                var result = await _roleManager.CreateAsync(new UserRole(name));
-                if (result.Succeeded)
-                {
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                }
+                ModelState.AddModelError("", "Пж, пустота не годится");
+                return View();
             }
-            return View(name);
+
+            if (string.Equals(name, Roles.AdminRole, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(name, Roles.PlayerRole, StringComparison.OrdinalIgnoreCase))
+            {
+                ModelState.AddModelError("", $"Пж, {Roles.AdminRole} и {Roles.PlayerRole} уже забиты");
+                return View();
+            }
+            
+            var result = await _roleManager.CreateAsync(new UserRole(name));
+            if (result.Succeeded)
+                return RedirectToAction("Index");
+                
+            foreach (var error in result.Errors) 
+                ModelState.AddModelError("", error.Description);
+            return View();
         }
          
         [HttpPost]
         public async Task<IActionResult> Delete(string name)
         {
             var role = await _roleManager.FindByNameAsync(name);
-            if (role != null)
+            if (role == null) 
+                return NotFound();
+
+            if (role.Name == Roles.AdminRole || role.Name == Roles.PlayerRole)
             {
-                var result = await _roleManager.DeleteAsync(role);
+                ModelState.AddModelError("", $"Пж, {role} не подлежит выпиливанию из множества ролей");
+                return View("Index");
             }
-            return RedirectToAction("Index");
+            
+            await _roleManager.DeleteAsync(role);
+            return View("Index");
         }
  
-        public IActionResult UserList() => View(_userManager.Users.ToList());
+        public IActionResult UserList() => 
+            View(_userManager.Users.ToList());
  
         public async Task<IActionResult> Edit(string name)
         {
             var user = await _userManager.FindByNameAsync(name);
-            if(user!=null)
+            if (user == null) 
+                return NotFound();
+            
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var allRoles = _roleManager.Roles.ToList();
+            var model = new ChangeRoleViewModel
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var allRoles = _roleManager.Roles.ToList();
-                var model = new ChangeRoleViewModel
-                {
-                    UserId = user.Id,
-                    UserName = user.UserName,
-                    UserEmail = user.Email,
-                    UserRoles = userRoles,
-                    AllRoles = allRoles
-                };
-                return View(model);
-            }
- 
-            return NotFound();
+                UserId = user.Id,
+                UserName = user.UserName,
+                UserEmail = user.Email,
+                UserRoles = userRoles,
+                AllRoles = allRoles
+            };
+            return View(model);
+
         }
         [HttpPost]
         public async Task<IActionResult> Edit(string name, List<string> roles)
         {
             var user = await _userManager.FindByNameAsync(name);
-            if (user!=null)
-            {
-                var userRoles = await _userManager.GetRolesAsync(user);
-                var addedRoles = roles.Except(userRoles);
-                var removedRoles = userRoles.Except(roles);
+            if (user == null) 
+                return NotFound();
+            
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var addedRoles = roles.Except(userRoles);
+            var removedRoles = userRoles.Except(roles);
  
-                await _userManager.AddToRolesAsync(user, addedRoles);
-                await _userManager.RemoveFromRolesAsync(user, removedRoles);
+            await _userManager.AddToRolesAsync(user, addedRoles);
+            await _userManager.RemoveFromRolesAsync(user, removedRoles);
  
-                return RedirectToAction("UserList");
-            }
- 
-            return NotFound();
+            return RedirectToAction("UserList");
+
         }
     }
 }

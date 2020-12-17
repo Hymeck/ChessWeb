@@ -35,7 +35,7 @@
     @foreach (var game in Model.UserGames)
     {
         <tr>
-            <td><a asp-controller="Games" asp-action="GameSides" asp-route-id="@game.Id">@game.Id</a></td>
+            <td><a asp-controller="Games" asp-action="GameDetails" asp-route-id="@game.Id">@game.Id</a></td>
             <td>@game.Fen</td>
             <td>@game.RussianStatusFromByte()</td>
             <td>@game.WhiteUsername</td>

@@ -52,7 +52,7 @@ namespace ChessWeb.Application.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> GameSides(long id)
+        public async Task<IActionResult> GameDetails(long id)
         {
             var game = await _gameService.GetAsync(id);
             if (game == null)

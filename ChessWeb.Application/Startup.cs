@@ -66,6 +66,14 @@ namespace ChessWeb.Application
                 });
             });
             services.AddSignalR();
+
+            services
+                .AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Environment.GetEnvironmentVariable("GoogleClientId");
+                    options.ClientSecret = Environment.GetEnvironmentVariable("GoogleSecretClientCode");
+                });
             
             services.AddScoped<IChessGameService, ChessGameService>();
             services.AddScoped<IGameService, GameService>();
