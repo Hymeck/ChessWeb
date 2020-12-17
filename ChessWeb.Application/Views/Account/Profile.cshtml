@@ -4,44 +4,52 @@
 }
 
 <h2>@ViewBag.Title</h2>
-<table class="table">
-    <tr>
-        <th>@UserLabels.UserName</th>
-        <th>@EmailLabels.Email</th>
-        <th>@EmailLabels.EmailStatus</th>
-    </tr>
-    <tr>
-        <td>@Model.Name</td>
-        <td>@Model.Email</td>
-        <td>
-            @(Model.EmailConfirmed ? EmailLabels.ConfirmedEmail : EmailLabels.NotConfirmedEmail)
-            @if (!Model.EmailConfirmed)
-            {
-                <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">@EmailLabels.ConfirmEmailLink</a>
-            }
-        </td>
-    </tr>
-</table>
-<p><a asp-controller="Account" asp-action="ChangePassword">@PasswordLabels.ChangePasswordLink</a></p>
-<table class="table">
-    <tr>
-        <th>ID игры</th>
-        <th>FEN игры</th>
-        <th>Состояние игры</th>
-        <th>@UserLabels.WhitePlayerName</th>
-        <th>@UserLabels.BlackPlayerName</th>
-        <th>@UserLabels.Winner</th>
-    </tr>
-    @foreach (var game in Model.UserGames)
-    {
-        <tr>
-            <td><a asp-controller="Games" asp-action="GameDetails" asp-route-id="@game.Id">@game.Id</a></td>
-            <td>@game.Fen</td>
-            <td>@game.RussianStatusFromByte()</td>
-            <td>@game.WhiteUsername</td>
-            <td>@game.BlackUsername</td>
-            <td>@game.Winner</td>
-        </tr>
-    }
-</table>
 
+<div class="row">
+    <div class="col-md-3">
+        <table class="table">
+            <tr>
+                <th>@UserLabels.UserName</th>
+                <th>@EmailLabels.Email</th>
+                <th>@EmailLabels.EmailStatus</th>
+            </tr>
+            
+            <tr>
+                <td>@Model.Name</td>
+                <td>@Model.Email</td>
+                <td>
+                    @(Model.EmailConfirmed ? EmailLabels.ConfirmedEmail : EmailLabels.NotConfirmedEmail)
+                    @if (!Model.EmailConfirmed)
+                    {
+                        <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">@EmailLabels.ConfirmEmailLink</a>
+                    }
+                </td>
+            </tr>
+        </table>
+        
+        <p><a asp-controller="Account" asp-action="ChangePassword">@PasswordLabels.ChangePasswordLink</a></p>
+        
+        <table class="table">
+            <tr>
+                <th>ID игры</th>
+                <th>FEN игры</th>
+                <th>Состояние игры</th>
+                <th>@UserLabels.WhitePlayerName</th>
+                <th>@UserLabels.BlackPlayerName</th>
+                <th>@UserLabels.Winner</th>
+            </tr>
+            
+            @foreach (var game in Model.UserGames)
+            {
+                <tr>
+                    <td><a asp-controller="Games" asp-action="GameDetails" asp-route-id="@game.Id">@game.Id</a></td>
+                    <td>@game.Fen</td>
+                    <td>@game.RussianStatusFromByte()</td>
+                    <td>@game.WhiteUsername</td>
+                    <td>@game.BlackUsername</td>
+                    <td>@game.Winner</td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>

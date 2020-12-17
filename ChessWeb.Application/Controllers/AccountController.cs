@@ -108,6 +108,8 @@ namespace ChessWeb.Application.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginViewModel model, string returnUrl = null)
         {
+            model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Неверные вводы");
