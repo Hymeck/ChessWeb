@@ -28,43 +28,35 @@
             <div>
                 <button type="submit" class="btn btn-primary">@LoginLabels.LoginButton</button>
             </div>
-
-            <div>
-                @if (Model.ExternalLogins != null)
-                {
-                    @if (Model.ExternalLogins.Count == 0)
-                    {
-                        <div>Ярень забыл про OAuth</div>
-                    }
-                    else
-                    {
-                        <div>
-                            @foreach (var provider in Model.ExternalLogins)
-                            {
-@* <button class="btn btn-success" *@
-                                            @* title="Ворваться посредством @provider.Name" *@
-                                            @* name="provider" *@
-                                            @* value="@provider.Name" *@
-                                            @* type="submit"> *@
-                                        @* @provider.Name оправдывает цель *@
-                                    @* </button><br/> *@
-
-                                <a class="btn btn-success"
-                                   asp-action="ExternalLogin"
-                                   asp-route-returnUrl="@Model.ReturnUrl"
-                                   asp-route-provider="@provider.Name"
-                                   title="Ворваться посредством @provider.Name">
-                                    @provider.Name оправдывает цель
-                                </a><br/>
-                            }
-                        </div>
-                    }
-                }
-            </div>
-            
-            <div>
-                <a asp-action="ForgotPassword">@LoginLabels.ForgotPasswordButton</a>
-            </div>
         </form>
+        
+        <div>
+            @if (Model.ExternalLogins != null)
+            {
+                @if (Model.ExternalLogins.Count == 0)
+                {
+                    <div>Ярень забыл про OAuth</div>
+                }
+                else
+                {
+                    <div>
+                        @foreach (var provider in Model.ExternalLogins)
+                        {
+                            <a class="btn btn-success"
+                               asp-action="ExternalLogin"
+                               asp-route-returnUrl="@Model.ReturnUrl"
+                               asp-route-provider="@provider.Name"
+                               title="Ворваться посредством @provider.Name">
+                                @provider.Name оправдывает цель
+                            </a><br/>
+                        }
+                    </div>
+                }
+            }
+        </div>
+
+        <div>
+            <a asp-action="ForgotPassword">@LoginLabels.ForgotPasswordButton</a>
+        </div>
     </div>
 </div>
