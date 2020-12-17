@@ -42,13 +42,15 @@
                     <div>
                         @foreach (var provider in Model.ExternalLogins)
                         {
-                            <a class="btn btn-success"
-                               asp-action="ExternalLogin"
-                               asp-route-returnUrl="@Model.ReturnUrl"
-                               asp-route-provider="@provider.Name"
-                               title="Ворваться посредством @provider.Name">
-                                @provider.Name оправдывает цель
-                            </a><br/>
+                            <br/>
+                            <form method="post" 
+                                  asp-action="ExternalLogin" 
+                                  asp-route-returnUrl="@Model.ReturnUrl"
+                                  asp-route-provider="@provider.Name">
+                                <button class="btn btn-success" type="submit" title="Ворваться посредством @provider.Name">
+                                    @provider.Name оправдывает цель
+                                </button>
+                            </form>
                         }
                     </div>
                 }
@@ -56,6 +58,7 @@
         </div>
 
         <div>
+            <br/>
             <a asp-action="ForgotPassword">@LoginLabels.ForgotPasswordButton</a>
         </div>
     </div>
