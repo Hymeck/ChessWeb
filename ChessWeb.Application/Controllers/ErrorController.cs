@@ -10,14 +10,12 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly ILogger<ErrorController> _logger;
 
-        public ErrorController(ILogger<ErrorController> logger)
-        {
+        public ErrorController(ILogger<ErrorController> logger) => 
             _logger = logger;
-        }
 
         public IActionResult Index(int statusCode)
         {
-            ViewData["Error"] = statusCode;
+            ViewBag.Error = statusCode;
             _logger.LogError($"Error. Status code {statusCode}"); 
             return View();
         }
