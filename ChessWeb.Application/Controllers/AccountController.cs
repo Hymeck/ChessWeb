@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ChessWeb.Application.Constants;
@@ -62,15 +63,13 @@ namespace ChessWeb.Application.Controllers
                 await SendConfirmEmailAsync(user);
                     
                 ViewBag.Message = "Навестите почту и сделайте ее твердой";
-                    
-                // return RedirectToAction("Index", "Home");
+                
+                _logger.LogInformation($"{DateTime.UtcNow} UTC. User {user.UserName} is registered.");
                 return View("EmailConfirmInfo");
             }
                 
-            foreach (var error in result.Errors)
-            {
+            foreach (var error in result.Errors) 
                 ModelState.AddModelError(string.Empty, error.Description);
-            }
             return View(model);
         }
         

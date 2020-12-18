@@ -12,7 +12,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessWeb.Service", "ChessWe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessWeb.Client", "ChessWeb.Client\ChessWeb.Client.csproj", "{DC106E28-7333-483D-ABAB-186234F399FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessWeb.Playground.Client", "ChessWeb.Playground.Client\ChessWeb.Playground.Client.csproj", "{92CBFCC1-8F89-4E84-A39D-EF3F26C3EE72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessWeb.Client.Playground", "ChessWeb.Client.Playground\ChessWeb.Client.Playground.csproj", "{92CBFCC1-8F89-4E84-A39D-EF3F26C3EE72}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChessWeb.SignalR.Client", "ChessWeb.SignalR.Client\ChessWeb.SignalR.Client.csproj", "{F9483178-8D45-491B-A70E-574B4E341A1D}"
 EndProject
