@@ -44,6 +44,7 @@ namespace ChessWeb.Application.Controllers
             View();
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
             if (!ModelState.IsValid)
@@ -73,7 +74,8 @@ namespace ChessWeb.Application.Controllers
                 await SendConfirmEmailAsync(user);
                     
                 ViewBag.Message = "Навестите почту и сделайте ее твердой";
-                return View("EmailConfirmInfo");
+                // return View("EmailConfirmInfo");
+                return RedirectToAction("EmailConfirmInfo", "Account");
             }
                 
             foreach (var error in result.Errors) 
