@@ -27,13 +27,14 @@ namespace ChessWeb.Service.Services
             string userName;
             string password;
             string host;
-            var port = 25;
+            int port;
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
                 // require secrets.json
                 userName = configuration["SmtpUsername"];
                 password = configuration["SmtpPassword"];
                 host = configuration["SmtpHost"];
+                port = int.Parse(configuration["SmtpPort"]);
             }
 
             else
@@ -41,6 +42,7 @@ namespace ChessWeb.Service.Services
                 userName = Environment.GetEnvironmentVariable("SmtpUsername");
                 password = Environment.GetEnvironmentVariable("SmtpPassword");
                 host = Environment.GetEnvironmentVariable("SmtpHost");
+                port = int.Parse(Environment.GetEnvironmentVariable("SmtpPort"));
             }
             
             return new SmtpOptions(userName, password, host, port);
@@ -49,12 +51,10 @@ namespace ChessWeb.Service.Services
 
     public class MailSenderService : IMailSender
     {
-        public IConfiguration Configuration { get; set; }
         public SmtpOptions _smtpOptions { get; set; }
 
         public MailSenderService(IConfiguration configuration)
         {
-            Configuration = configuration;
             _smtpOptions = SmtpOptions.FromConfiguration(configuration);
         }
 
@@ -62,7 +62,7 @@ namespace ChessWeb.Service.Services
         {
             var emailMessage = new MimeMessage();
 
-            emailMessage.From.Add(new MailboxAddress("ChessWeb", _smtpOptions.Username));
+            emailMessage.From.Add(new MailboxAddress(nameof(ChessWeb), _smtpOptions.Username));
             emailMessage.To.Add(new MailboxAddress("", recipientName));
             emailMessage.Subject = subject;
 
