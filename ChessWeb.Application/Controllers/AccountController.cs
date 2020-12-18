@@ -39,6 +39,10 @@ namespace ChessWeb.Application.Controllers
         public IActionResult Register() => 
             View();
 
+        [HttpGet]
+        public IActionResult EmailConfirmInfo() =>
+            View();
+
         [HttpPost]
         public async Task<IActionResult> Register(UserRegisterViewModel model)
         {
@@ -53,6 +57,12 @@ namespace ChessWeb.Application.Controllers
                 ModelState.AddModelError("", "Некий иной юзверь зажал этот адрес электронной почты");
                 return View(model);
             }
+            
+            if (await _userManager.FindByNameAsync(model.Name) != null)
+            {
+                ModelState.AddModelError("", "Некий иной юзверь зажал это погоняло");
+                return View(model);
+            }
                 
             var user = new User { UserName = model.Name, Email = model.Email};
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -63,8 +73,6 @@ namespace ChessWeb.Application.Controllers
                 await SendConfirmEmailAsync(user);
                     
                 ViewBag.Message = "Навестите почту и сделайте ее твердой";
-                
-                _logger.LogInformation($"{DateTime.UtcNow} UTC. User {user.UserName} is registered.");
                 return View("EmailConfirmInfo");
             }
                 
@@ -73,8 +81,7 @@ namespace ChessWeb.Application.Controllers
             return View(model);
         }
         
-        [HttpGet]
-        [AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -116,9 +123,10 @@ namespace ChessWeb.Application.Controllers
                 await _signInManager.PasswordSignInAsync(model.Name, model.Password, model.RememberMe, false);
             if (result.Succeeded)
                 return 
-                    !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
-                    ? Redirect(returnUrl)
-                    : RedirectToAction("Index", "Home");
+                    // !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl)
+                    // ? Redirect(returnUrl)
+                    // : RedirectToAction("Index", "Home");
+                    RedirectToAction("Index", "Home");
                 
             ModelState.AddModelError("", "Неправильное имя юзверя и (или?) пароль");
             return View(model);
@@ -162,8 +170,13 @@ namespace ChessWeb.Application.Controllers
                 new { userId = user.Id, code = code }, 
                 protocol: HttpContext.Request.Scheme);
             await _mailSender.SendMailAsync(user.Email, "Бросок пароля прогибом", $"Для броска пароля прогибом ступайте по мосту: <a href='{callbackUrl}'>мост</a>");
-            return View("ForgotPasswordConfirmation");
+            // return View("ForgotPasswordConfirmation");
+            return RedirectToAction("ForgotPasswordConfirmation", "Account");
         }
+        
+        [HttpGet]
+        public IActionResult ForgotPasswordConfirmation() 
+            => View();
         
 
         [Authorize(Roles = Roles.PlayerRole)]
@@ -195,7 +208,8 @@ namespace ChessWeb.Application.Controllers
             await SendConfirmEmailAsync(user);
             
             ViewBag.Message = "Навестите почту и сделайте ее твердой";
-            return View("EmailConfirmInfo");
+            // return View("EmailConfirmInfo");
+            return RedirectToAction("EmailConfirmInfo", "Account");
         }
 
         [HttpGet]
@@ -220,12 +234,17 @@ namespace ChessWeb.Application.Controllers
             
             var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
             if (result.Succeeded)
-                return View("ResetPasswordConfirmation");
+                // return View("ResetPasswordConfirmation");
+                return RedirectToAction("ResetPasswordConfirmation", "Account");
             
             foreach (var error in result.Errors) 
                 ModelState.AddModelError(string.Empty, error.Description);
             return View(model);
         }
+        
+        [HttpGet]
+        public IActionResult ResetPasswordConfirmation() => 
+            View();
         
         [HttpGet]
         public IActionResult ChangePassword() => 
@@ -238,19 +257,25 @@ namespace ChessWeb.Application.Controllers
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Неверные вводы");
-                return View("ChangePassword");
+                // return View("ChangePassword");
+                return View();
             }
 
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (result.Succeeded)
-                return View("ChangePasswordConfirmation");
+                // return View("ChangePasswordConfirmation");
+                return RedirectToAction("ChangePasswordConfirmation", "Account");
             ModelState.AddModelError("", "Опрокидень смены пароля");
-            return View("ChangePassword");
+            // return View("ChangePassword");
+            return View();
         }
         
+        [HttpGet]
+        public IActionResult ChangePasswordConfirmation() => 
+            View();
+        
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult ExternalLogin(string provider, string returnUrl = null)
         {
             var redirectUrl = Url.Action(
@@ -261,8 +286,7 @@ namespace ChessWeb.Application.Controllers
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
         }
-
-        [AllowAnonymous]
+        
         public async Task<IActionResult> ExternalLoginCallback(string returlUrl = null, string remoteEror = null)
         {
             returlUrl ??= Url.Content("~/");

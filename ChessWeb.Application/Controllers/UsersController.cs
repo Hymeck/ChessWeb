@@ -29,8 +29,8 @@ namespace ChessWeb.Application.Controllers
 
             if (!result.Succeeded)
                 ModelState.AddModelError("", "Беды с удалением");
-            
-            return View("Index");
+
+            return RedirectToAction("Index", "Users");
         }
     }
 }

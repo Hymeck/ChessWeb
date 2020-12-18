@@ -22,7 +22,7 @@
                 <td>
                     @if (!Model.EmailConfirmed)
                     {
-                        <form method="post" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">
+                        <form method="post" asp-action="Confirm" asp-route-userName="@Model.Name">
                             <button class="btn btn-sm btn-primary" type="submit">@EmailLabels.ConfirmEmailLink</button>
                         </form>
                     }
