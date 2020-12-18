@@ -79,15 +79,12 @@ namespace ChessWeb.Application.Controllers
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-            {
-                _logger.LogError($"Specified user does not exist. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
                 return NotFound();
-            }
+            
             var result = await _userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
                 return RedirectToAction("Profile", "Account");
             
-            _logger.LogError($"Email confirm fails. Controller: {nameof(AccountController)}. Action: {nameof(ConfirmEmail)}");
             return NotFound();
         }
         
@@ -104,7 +101,6 @@ namespace ChessWeb.Application.Controllers
         }
  
         [HttpPost]
-        // [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(UserLoginViewModel model, string returnUrl = null)
         {
             // it need for not absent button of google auth when refresh the page
@@ -192,11 +188,14 @@ namespace ChessWeb.Application.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> ConfirmAsync(string userName)
+        [HttpPost]
+        public async Task<IActionResult> Confirm(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             await SendConfirmEmailAsync(user);
-            return RedirectToAction("Index", "Home");
+            
+            ViewBag.Message = "Навестите почту и сделайте ее твердой";
+            return View("EmailConfirmInfo");
         }
 
         [HttpGet]
@@ -241,8 +240,7 @@ namespace ChessWeb.Application.Controllers
                 ModelState.AddModelError("", "Неверные вводы");
                 return View("ChangePassword");
             }
-                
-            
+
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (result.Succeeded)
@@ -292,7 +290,7 @@ namespace ChessWeb.Application.Controllers
                 .ExternalLoginSignInAsync(
                     userInfo.LoginProvider,
                     userInfo.ProviderKey, 
-                    isPersistent: true, 
+                    isPersistent: false, 
                     bypassTwoFactor: true);
 
             if (result.Succeeded)
@@ -321,7 +319,7 @@ namespace ChessWeb.Application.Controllers
             }
 
             await _userManager.AddLoginAsync(user, userInfo);
-            await _signInManager.SignInAsync(user, isPersistent: true);
+            await _signInManager.SignInAsync(user, isPersistent: false);
             return LocalRedirect(returlUrl);
         }
     }

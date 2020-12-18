@@ -12,16 +12,19 @@
                 <th>@UserLabels.UserName</th>
                 <th>@EmailLabels.Email</th>
                 <th>@EmailLabels.EmailStatus</th>
+                <th></th>
             </tr>
             
             <tr>
                 <td>@Model.Name</td>
                 <td>@Model.Email</td>
+                <td>@(Model.EmailConfirmed ? EmailLabels.ConfirmedEmail : EmailLabels.NotConfirmedEmail)</td>
                 <td>
-                    @(Model.EmailConfirmed ? EmailLabels.ConfirmedEmail : EmailLabels.NotConfirmedEmail)
                     @if (!Model.EmailConfirmed)
                     {
-                        <a class="btn btn-sm btn-primary" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">@EmailLabels.ConfirmEmailLink</a>
+                        <form method="post" asp-controller="Account" asp-action="Confirm" asp-route-userName="@Model.Name">
+                            <button class="btn btn-sm btn-primary" type="submit">@EmailLabels.ConfirmEmailLink</button>
+                        </form>
                     }
                 </td>
             </tr>
