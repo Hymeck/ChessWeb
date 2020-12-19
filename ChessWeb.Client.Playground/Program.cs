@@ -20,7 +20,8 @@ namespace ChessWeb.Playground.Client
             // HymeckAndRacotyScholarsMate();
             // Look();
             // PrintLastGame();
-            PrintLastGame();
+            // PrintLastGame();
+            PrintCreateGame();
         }
 
         private void PrintLastGame()

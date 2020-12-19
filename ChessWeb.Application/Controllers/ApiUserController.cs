@@ -19,20 +19,17 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
-        private readonly GameRepository _gameRepository;
-        private readonly GameService _gameService;
+        private readonly IGameService _gameService;
         private readonly SideRepository _sideRepository;
 
         public ApiUsersController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
-            GameRepository gameRepository,
-            GameService gameService,
+            IGameService gameService,
             SideRepository sideRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _gameRepository = gameRepository;
             _gameService = gameService;
             _sideRepository = sideRepository;
         }
@@ -41,12 +38,13 @@ namespace ChessWeb.Application.Controllers
         public async Task<ActionResult<string>> GetUserId(string username, string password)
         {
             var result =
-                await _signInManager.PasswordSignInAsync(username, password, isPersistent: true, false);
+                await _signInManager.PasswordSignInAsync(username, password, isPersistent: false, false);
             if (!result.Succeeded)
                 return NotFound();
-
             var user = await _userManager.FindByNameAsync(username);
-            return user.Id;
+            var userId = user.Id;
+            await _signInManager.SignOutAsync();
+            return userId;
         }
         
         [HttpGet("{gameId}/{userId}/{isWhite}")]
