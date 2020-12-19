@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Net.WebSockets;
+using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using ChessWeb.Client;
 using static System.Console;
 
@@ -10,15 +11,17 @@ namespace ChessWeb.Playground.Client
     {
         private static string hymeckUsername = "Hymeck";
         private static string hymeckPassword = "hymeckpass";
-        static void Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
             var program = new Program();
-            // program.Start();
-            program.MainCycle();
-            ReadKey();
+            // await program.MainCycle();
+            program.Start();
+            //todo: uncomment when finish
+            // ReadKey();
+            return 0;
         }
 
-        public void MainCycle()
+        public async Task MainCycle()
         {
             WriteLine("Даровень. Занесло в консоль клиент ChessWeb.");
             labelInput:
@@ -56,11 +59,28 @@ namespace ChessWeb.Playground.Client
                     client = new ChessClient(username, password);
                     break;
                 }
-                catch (WebSocketException)
+                catch (WebException)
                 {
                     WriteLine("Пж, неверные вводы либо учтная запись в небытие.");
                 }
             }
+            
+            WriteLine("Проникновение произошло успешно.");
+            Write("Загрузка ");
+            for (var i = 0; i < 3; i++)
+            {
+                await Task.Delay(1000);
+                Write('.');
+            }
+
+            await Task.Delay(1000);
+            
+            WriteLine();
+            Clear();
+            
+            WriteLine("Передайте парашют выходящему из окна нажатием на любую клавишу.");
+            
+            WriteLine(client.LastActiveGame);
         }
 
         private void InputPassword(out string password)
@@ -77,7 +97,8 @@ namespace ChessWeb.Playground.Client
                         continue;
                     sb = sb.Remove(sb.Length - 1, 1);
                 }
-                sb.Append(key.KeyChar);
+                else 
+                    sb.Append(key.KeyChar);
             }
 
             password = sb.ToString();
@@ -92,7 +113,14 @@ namespace ChessWeb.Playground.Client
             // PrintLastGame();
             // PrintCreateGame();
             // PrintJoinGame();
-            PrintBoard();
+            // PrintBoard();
+            PrintGames();
+        }
+
+        private void PrintGames()
+        {
+            var client = new ChessClient(hymeckUsername, hymeckPassword);
+            WriteLine(client.LastActiveGame);
         }
 
         private void PrintBoard()

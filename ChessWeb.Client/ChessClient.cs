@@ -14,9 +14,9 @@ namespace ChessWeb.Client
         private const string Host = "http://localhost:5000/";
 
         // private static readonly string host = "http://chessbsuir.herokuapp.com/";
-        private const string Users = "api/users/";
+        private const string UserPath = "api/users/";
 
-        private const string Games = "api/games/";
+        private const string GamePath = "api/games/";
         private const string ActiveGames = "active/";
         private const string WaitingGames = "waiting/";
         private const string Create = "create/";
@@ -68,7 +68,7 @@ namespace ChessWeb.Client
         private string CallJoin(string gameId, bool isWhite) =>
             CallUsers($"{gameId}/{userId}/{isWhite}");
         private string CallUsers(string args = "") =>
-            CallServer(Users + args);
+            CallServer(UserPath + args);
 
         private string CallGetUserId() =>
             CallUsers($"{Username}/{Password}");
@@ -80,7 +80,7 @@ namespace ChessWeb.Client
         
         #region Game methods
         private string CallGames(string args = "") =>
-            CallServer(Games + args);
+            CallServer(GamePath + args);
 
         private string CallActiveGames(string id = "") =>
             CallGames(ActiveGames);
@@ -93,6 +93,16 @@ namespace ChessWeb.Client
         {
             CallGames(Create);
             return GetLastGame();
+        }
+
+        public string LastActiveGame
+        {
+            get
+            {
+                var response = CallUsers($"{userId}/last");
+
+                return response;
+            }
         }
 
         public GameInfo GetLastGame()

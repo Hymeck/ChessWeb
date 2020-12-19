@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using ChessWeb.Application.DTO;
 using ChessWeb.Domain.Entities;
 using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Application.Controllers
 {
@@ -65,6 +68,34 @@ namespace ChessWeb.Application.Controllers
 
             await _gameService.JoinAsync(user, side);
             return true;
+        }
+
+        [HttpGet("{userId}/games")]
+        public async Task<ActionResult<IEnumerable<GameDto>>> GetUserGames(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+
+            var games = await _gameService.GetUserGamesAsync(user);
+            return games
+                .Where(x => x.IsPlaying)
+                .Select(GameDto.FromGame).ToList();
+        }
+        
+        [HttpGet("{userId}/last")]
+        public async Task<ActionResult<GameDto>> GetUserLastActiveGame(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return NotFound();
+
+            var games = await _gameService.GetUserGamesAsync(user);
+            return games
+                .Where(x => x.IsPlaying)
+                .OrderByDescending(x => x.Id)
+                .Select(GameDto.FromGame)
+                .FirstOrDefault();
         }
     }
 }
