@@ -42,7 +42,6 @@ namespace ChessWeb.Service.Services
             side.User = user;
             _sideRepository.Update(side);
             var game = await _gameRepository.FindAsync(side.GameId);
-            user.Games.Add(game);
             
             if (side.IsWhite)
                 (game.WhiteUser, game.WhiteUsername) = (user, user.UserName);

@@ -6,9 +6,8 @@ namespace ChessWeb.Playground.Client
 {
     class Program
     {
-        // private static readonly string host = "http://localhost:5000/api/games/";
-        private static readonly string host = "http://chessbsuir.herokuapp.com/api/games/";
-        private static readonly string user = "Hymeck";
+        private static string user = "Hymeck";
+        private static string password = "hymeckpass";
         static void Main(string[] args)
         {
             var program = new Program();
@@ -19,33 +18,48 @@ namespace ChessWeb.Playground.Client
         private void Start()
         {
             // HymeckAndRacotyScholarsMate();
-            Look();
+            // Look();
+            // PrintLastGame();
+            PrintLastGame();
+        }
+
+        private void PrintLastGame()
+        {
+            var client = new ChessClient(user, password);
+            WriteLine(client.GetLastGame());
+        }
+
+        private void PrintCreateGame()
+        {
+            var client = new ChessClient(user, password);
+            var game = client.CreateGame();
+            WriteLine(game);
         }
 
         private void Look()
         {
-            var client = new ChessClient(host, user);
-            var info = client.GetCurrentGame("1");
+            var client = new ChessClient(user, password);
+            var info = client.GetGame("1");
             WriteLine(info);
         }
         
-        private void HymeckAndRacotyScholarsMate()
+        private void HymeckAndRacotyScholarsMate(string gameId = "1")
         {
-            var hymeckClient = new ChessClient(host, user);
-            var racotyClient = new ChessClient(host, "Racoty");
-            WriteLine(hymeckClient.MakeMove("1", "e2e4"));
+            var hymeckClient = new ChessClient(user, password);
+            var racotyClient = new ChessClient("Racoty", "racotypass");
+            WriteLine(hymeckClient.MakeMove(gameId, "e2e4"));
             WriteLine("\n");
-            WriteLine(racotyClient.MakeMove("1", "e7e5"));
+            WriteLine(racotyClient.MakeMove(gameId, "e7e5"));
             WriteLine("\n");
-            WriteLine(hymeckClient.MakeMove("1", "d1h5"));
+            WriteLine(hymeckClient.MakeMove(gameId, "d1h5"));
             WriteLine("\n");
-            WriteLine(racotyClient.MakeMove("1", "b8c6"));
+            WriteLine(racotyClient.MakeMove(gameId, "b8c6"));
             WriteLine("\n");
-            WriteLine(hymeckClient.MakeMove("1", "f1c4"));
+            WriteLine(hymeckClient.MakeMove(gameId, "f1c4"));
             WriteLine("\n");
-            WriteLine(racotyClient.MakeMove("1", "g8f6"));
+            WriteLine(racotyClient.MakeMove(gameId, "g8f6"));
             WriteLine("\n");
-            WriteLine(hymeckClient.MakeMove("1", "h5f7"));
+            WriteLine(hymeckClient.MakeMove(gameId, "h5f7"));
         }
     }
 }

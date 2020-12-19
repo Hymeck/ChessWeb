@@ -74,7 +74,7 @@ namespace ChessWeb.Service.Services
             };
 
             using var client = new SmtpClient();
-            await client.ConnectAsync(_smtpOptions.Host, _smtpOptions.Port, false);
+            await client.ConnectAsync(_smtpOptions.Host, _smtpOptions.Port, useSsl: true);
             await client.AuthenticateAsync(_smtpOptions.Username, _smtpOptions.Password);
             await client.SendAsync(emailMessage);
             await client.DisconnectAsync(true);

@@ -247,29 +247,42 @@ namespace ChessWeb.Application.Controllers
         [HttpGet]
         public IActionResult ResetPasswordConfirmation() => 
             View();
-        
+
         [HttpGet]
-        public IActionResult ChangePassword() => 
-            View();
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+
+            var hasPassword = await _userManager.HasPasswordAsync(user);
+            if (!hasPassword)
+                return RedirectToAction("Profile", "Account");
+
+            return View();
+        }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> ChangePassword(UserChangePasswordViewModel model)
         {
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+
+            var hasPassword = await _userManager.HasPasswordAsync(user);
+            if (!hasPassword)
+            {
+                ModelState.AddModelError("", "Пж, при сторонней авторизации пороль не нужен");
+                return RedirectToAction("Profile", "Account");
+            }
+            
             if (!ModelState.IsValid)
             {
                 ModelState.AddModelError("", "Неверные вводы");
-                // return View("ChangePassword");
                 return View();
             }
-
-            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            
             var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
             if (result.Succeeded)
-                // return View("ChangePasswordConfirmation");
                 return RedirectToAction("ChangePasswordConfirmation", "Account");
             ModelState.AddModelError("", "Опрокидень смены пароля");
-            // return View("ChangePassword");
             return View();
         }
         
@@ -325,10 +338,8 @@ namespace ChessWeb.Application.Controllers
             var email = userInfo.Principal.FindFirstValue(ClaimTypes.Email);
 
             if (email == null)
-            {
                 return View("Error");
-            }
-                
+
             var username = email.Split('@')[0];
             var user = await _userManager.FindByNameAsync(username);
 
@@ -340,13 +351,15 @@ namespace ChessWeb.Application.Controllers
                     Email = email
                 };
 
-                await _userManager.CreateAsync(user);
-                await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
+                var createResult = await _userManager.CreateAsync(user);
+                if (createResult.Succeeded) 
+                    await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
             }
 
             await _userManager.AddLoginAsync(user, userInfo);
             await _signInManager.SignInAsync(user, isPersistent: false);
-            return LocalRedirect(returlUrl);
+            // return LocalRedirect(returlUrl);
+            return RedirectToAction("Index", "Home");
         }
     }
 }

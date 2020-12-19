@@ -35,7 +35,7 @@ namespace ChessWeb.Service.Services
             _colorRepository = colorRepository;
             _userManager = userManager;
         }
-        public async Task<Game> MakeMove(long gameId, string username, string move)
+        public async Task<Game> MakeMove(long gameId, string userId, string move)
         {
             var game = await _gameRepository.GetAsync(gameId);
             if (game == null)
@@ -44,7 +44,7 @@ namespace ChessWeb.Service.Services
             if (game.IsDone || game.IsWaiting)
                 return game;
             
-            var user = await _userManager.FindByNameAsync(username);
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return game;
 
@@ -94,6 +94,18 @@ namespace ChessWeb.Service.Services
                 return game;
             }
         }
+
+        // public async Task<bool> Join(long gameId, string userId, Color color)
+        // {
+        //     var game = await _gameRepository.FindAsync(gameId);
+        //     if (game == null)
+        //         return false;
+        //     var user = await _userManager.FindByIdAsync(userId);
+        //     if (user == null)
+        //         return false;
+        //     
+        //     _
+        // }
 
         private void ChangeGameState(ChessGame chessGame, ref Game game, Move move, Color color)
         {

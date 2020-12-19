@@ -4,27 +4,25 @@ namespace ChessWeb.Client
 {
     public class GameInfo
     {
-        public long gameId;
-        public string fen;
-        public byte status;
-        public string whiteUsername;
-        public string blackUsername;
-        public string lastMove;
-        public string activeColor;
-        // public string YourColor;
-        // public bool IsYourMove;
-        public string winner;
+        public readonly long gameId;
+        public readonly string fen;
+        public readonly byte status;
+        public readonly string whiteUsername;
+        public readonly string blackUsername;
+        public readonly string lastMove;
+        public readonly string activeColor;
+        public readonly string winner;
 
-        public GameInfo(NameValueCollection list)
+        public GameInfo(NameValueCollection parsedJson)
         {
-            gameId = long.Parse(list[nameof(gameId)]);
-            fen = list[nameof(fen)];
-            status = byte.Parse(list[nameof(status)]);
-            whiteUsername = list[nameof(whiteUsername)];
-            blackUsername = list[nameof(blackUsername)];
-            lastMove = list[nameof(lastMove)];
-            activeColor = list[nameof(activeColor)];
-            winner = list[nameof(winner)];
+            gameId = long.Parse(parsedJson[nameof(gameId)]);
+            fen = parsedJson[nameof(fen)];
+            status = byte.Parse(parsedJson[nameof(status)]);
+            whiteUsername = parsedJson[nameof(whiteUsername)];
+            blackUsername = parsedJson[nameof(blackUsername)];
+            lastMove = parsedJson[nameof(lastMove)];
+            activeColor = parsedJson[nameof(activeColor)];
+            winner = parsedJson[nameof(winner)];
         }
 
         public override string ToString() =>

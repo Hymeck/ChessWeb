@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ChessWeb.Application.DTO;
-using ChessWeb.Domain.Entities;
 using ChessWeb.Persistence.Contexts;
 using ChessWeb.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -16,11 +15,13 @@ namespace ChessWeb.Application.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IChessGameService _chessGameService;
+        private readonly IGameService _gameService;
 
-        public ApiGameController(ApplicationDbContext context, IChessGameService chessGameService)
+        public ApiGameController(ApplicationDbContext context, IChessGameService chessGameService, IGameService gameService)
         {
             _context = context;
             _chessGameService = chessGameService;
+            _gameService = gameService;
         }
         
         // GET: api/games
@@ -57,8 +58,6 @@ namespace ChessWeb.Application.Controllers
                 .Where(x => x.Status == 0)
                 .Select(x => GameDto.FromGame(x))
                 .ToListAsync();
-        
-        
 
         // GET: api/games/1
         [HttpGet("{id}")]
@@ -70,13 +69,31 @@ namespace ChessWeb.Application.Controllers
             return new GameDto(game);
         }
         
-        // GET: api/games/1/Hymeck/e2e4
-        [HttpGet("{gameId}/{username}/{move}")]
-        public async Task<ActionResult<GameDto>> GetGame(long gameId, string username, string move)
+        // GET: api/games/1/userId/e2e4
+        [HttpGet("{gameId}/{userId}/{move}")]
+        public async Task<ActionResult<GameDto>> MakeMove(long gameId, string userId, string move)
         {
-            var game = await _chessGameService.MakeMove(gameId, username, move);
+            var game = await _chessGameService.MakeMove(gameId, userId, move);
             var gameDto = GameDto.FromGame(game);
             return gameDto ?? (ActionResult<GameDto>) NotFound();
+        }
+
+        // GET api/games/create
+        [HttpGet("create")]
+        public async Task<ActionResult<GameDto>> CreateGame()
+        {
+            await _gameService.CreateGameAsync();
+            return Ok();
+        }
+        
+        // GET api/games/last
+        [HttpGet("last")]
+        public async Task<ActionResult<GameDto>> GetLastGame()
+        {
+            var game = (await _gameService.GetAllAsync())
+                .OrderByDescending(x => x.Id)
+                .First();
+            return GameDto.FromGame(game);
         }
     }
 }

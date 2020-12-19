@@ -11,6 +11,7 @@
             <div>
                 <strong>@User.Identity.Name</strong>
             </div>
+            <br/>
             
             @if (User.IsInRole(Roles.AdminRole))
             {
@@ -25,7 +26,7 @@
 
             <form method="post" asp-controller="Account" asp-action="Logout">
                 <div>
-                    <button type="submit" class="btn btn-primary">Убежать из зоопарка</button>
+                    <button type="submit" class="btn btn-danger">Убежать из зоопарка</button>
                 </div>
             </form>
         }

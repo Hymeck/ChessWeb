@@ -74,6 +74,9 @@ namespace ChessWeb.Application
                         options.ClientId = Environment.GetEnvironmentVariable(clientId);
                         options.ClientSecret = Environment.GetEnvironmentVariable(secret);
                     }
+
+                    options.CallbackPath = "/signin-google";
+                    // options.
                 });
             
             services.AddScoped<IChessGameService, ChessGameService>();
@@ -100,8 +103,10 @@ namespace ChessWeb.Application
 
             else if (env.IsProduction())
             {
-                app.UseExceptionHandler(Routes.ErrorRoute);
-                app.UseHsts();
+                // todo: uncomment when fix the bugs (unworking almost all pages)
+                // app.UseExceptionHandler(Routes.ErrorRoute);
+                // app.UseHsts();
+                app.UseDeveloperExceptionPage();
             }
  
             app.UseStatusCodePagesWithReExecute("/Error/Index", "?statusCode={0}");
