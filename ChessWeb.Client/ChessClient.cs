@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using System.Net.WebSockets;
 using System.Text.RegularExpressions;
-using static System.Console;
 
 namespace ChessWeb.Client
 {
     public sealed class ChessClient
     {
-        // private static readonly string host = "http://localhost:5000/api/games/";
-        private const string Host = "http://localhost:5000/";
-
-        // private static readonly string host = "http://chessbsuir.herokuapp.com/";
+        // private const string Host = "http://localhost:5000/";
+        private const string Host = "http://chessbsuir.herokuapp.com/";
+        
         private const string UserPath = "api/users/";
-
         private const string GamePath = "api/games/";
         private const string ActiveGames = "active/";
         private const string WaitingGames = "waiting/";
@@ -29,14 +24,15 @@ namespace ChessWeb.Client
 
         private const string pattern = @"""(\w+)\"":""?([^,""}]*)""?";
 
-        // todo: add DI
-        public ChessClient(string username, string password)
+        public ChessClient(string username, string password, IBoardHandler boardHandler)
         {
             Username = username;
             Password = password;
             userId = CallGetUserId();
-            BoardHandler = new BoardHandler();
+            BoardHandler = boardHandler;
         }
+        
+        public ChessClient(string username, string password) : this(username, password, new BoardHandler()) {}
 
         public GameInfo GetGame(string gameId) =>
             new(ParseJson(CallGames(gameId)));
@@ -95,13 +91,13 @@ namespace ChessWeb.Client
             return GetLastGame();
         }
 
-        public string LastActiveGame
+        public GameInfo LastActiveUserGame
         {
             get
             {
                 var response = CallUsers($"{userId}/last");
 
-                return response;
+                return new(ParseJson(response));
             }
         }
 

@@ -104,9 +104,9 @@ namespace ChessWeb.Application
             else if (env.IsProduction())
             {
                 // todo: uncomment when fix the bugs (unworking almost all pages)
-                // app.UseExceptionHandler(Routes.ErrorRoute);
-                // app.UseHsts();
-                app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler(Routes.ErrorRoute);
+                app.UseHsts();
+                // app.UseDeveloperExceptionPage();
             }
  
             app.UseStatusCodePagesWithReExecute("/Error/Index", "?statusCode={0}");
