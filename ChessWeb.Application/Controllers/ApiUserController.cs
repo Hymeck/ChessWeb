@@ -1,15 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using ChessWeb.Application.DTO;
 using ChessWeb.Domain.Entities;
-using ChessWeb.Persistence.Contexts;
-using ChessWeb.Persistence.Implementations;
+using ChessWeb.Domain.Interfaces.Repositories;
 using ChessWeb.Service.Interfaces;
-using ChessWeb.Service.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace ChessWeb.Application.Controllers
 {
@@ -20,13 +15,13 @@ namespace ChessWeb.Application.Controllers
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
         private readonly IGameService _gameService;
-        private readonly SideRepository _sideRepository;
+        private readonly ISideRepository _sideRepository;
 
         public ApiUsersController(
             UserManager<User> userManager,
             SignInManager<User> signInManager,
             IGameService gameService,
-            SideRepository sideRepository)
+            ISideRepository sideRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
