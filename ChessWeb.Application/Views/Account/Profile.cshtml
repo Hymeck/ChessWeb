@@ -23,7 +23,7 @@
                     @if (!Model.EmailConfirmed)
                     {
                         <form method="post" asp-action="Confirm" asp-route-userName="@Model.Name">
-                            <button class="btn btn-sm btn-primary" type="submit">@EmailLabels.ConfirmEmailLink</button>
+                            <button class="btn btn-sm btn-primary" type="submit" disabled>@EmailLabels.ConfirmEmailLink</button>
                         </form>
                     }
                 </td>

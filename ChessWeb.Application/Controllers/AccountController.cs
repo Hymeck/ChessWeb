@@ -71,11 +71,13 @@ namespace ChessWeb.Application.Controllers
             {
                 await _userManager.AddToRoleAsync(user, Roles.PlayerRole);
                 await _signInManager.SignInAsync(user, false);
-                await SendConfirmEmailAsync(user);
-                    
-                ViewBag.Message = "Навестите почту и сделайте ее твердой";
-                // return View("EmailConfirmInfo");
-                return RedirectToAction("EmailConfirmInfo", "Account");
+                // todo: uncomment when mail account will be unblocked
+                // await SendConfirmEmailAsync(user);
+                //     
+                // ViewBag.Message = "Навестите почту и сделайте ее твердой";
+                // // return View("EmailConfirmInfo");
+                // return RedirectToAction("EmailConfirmInfo", "Account");
+                return RedirectToAction("Index", "Home");
             }
                 
             foreach (var error in result.Errors) 

@@ -47,7 +47,7 @@
                                   asp-action="ExternalLogin" 
                                   asp-route-returnUrl="@Model.ReturnUrl"
                                   asp-route-provider="@provider.Name">
-                                <button class="btn btn-success" type="submit" title="Ворваться посредством @provider.Name">
+                                <button class="btn btn-success" type="submit" title="Ворваться посредством @provider.Name" disabled>
                                     @provider.Name оправдывает цель
                                 </button>
                             </form>
