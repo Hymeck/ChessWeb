@@ -22,6 +22,13 @@ namespace ChessWeb.Playground.Client
             PrintLastGame();
             // PrintLastGame();
             // PrintCreateGame();
+            PrintJoinGame();
+        }
+
+        private void PrintJoinGame()
+        {
+            var client = new ChessClient(user, password);
+            WriteLine(client.Join("2", true));
         }
 
         private void PrintLastGame()

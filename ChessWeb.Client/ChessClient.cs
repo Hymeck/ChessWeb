@@ -37,6 +37,18 @@ namespace ChessWeb.Client
             _boardPrinter = new BoardPrinter();
         }
 
+        public GameInfo GetGame(string gameId) =>
+            new(ParseJson(CallGames(gameId)));
+
+        public GameInfo MakeMove(string gameId, string move) =>
+            new(ParseJson(CallMakeMove(gameId, move)));
+
+        public GameInfo Join(string gameId, bool isWhite)
+        {
+            var response = CallJoin(gameId, isWhite);
+            return GetGame(gameId);
+        }
+
         /// <summary>
         /// Core function. Connects to the host with specified args and returns a response as a json string
         /// </summary>
@@ -50,13 +62,10 @@ namespace ChessWeb.Client
             return reader.ReadToEnd();
         }
 
-        public GameInfo GetGame(string gameId) =>
-            new(ParseJson(CallGames(gameId)));
-
-        public GameInfo MakeMove(string gameId, string move) =>
-            new(ParseJson(CallMakeMove(gameId, move)));
-
         #region User methods
+
+        private string CallJoin(string gameId, bool isWhite) =>
+            CallUsers($"{gameId}/{userId}/{isWhite}");
         private string CallUsers(string args = "") =>
             CallServer(Users + args);
 
@@ -103,7 +112,6 @@ namespace ChessWeb.Client
         }
 
         #region Board Printing
-
         public void PrintBoard(GameInfo gameInfo, bool isWhiteSide = true)
         {
             var rows = _boardPrinter.GetBoard(gameInfo.fen);
@@ -136,7 +144,6 @@ namespace ChessWeb.Client
                 Write($" {p}");
             WriteLine($" {y + 1}");
         }
-
         #endregion Board Printing
     }
 }
