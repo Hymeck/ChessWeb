@@ -25,16 +25,17 @@ namespace ChessWeb.Client
         public readonly string Username;
         public readonly string Password;
         private readonly string userId;
-        private readonly IBoardPrinter _boardPrinter;
+        public readonly IBoardHandler BoardHandler;
 
         private const string pattern = @"""(\w+)\"":""?([^,""}]*)""?";
 
+        // todo: add DI
         public ChessClient(string username, string password)
         {
             Username = username;
             Password = password;
             userId = CallGetUserId();
-            _boardPrinter = new BoardPrinter();
+            BoardHandler = new BoardHandler();
         }
 
         public GameInfo GetGame(string gameId) =>
@@ -110,40 +111,5 @@ namespace ChessWeb.Client
 
             return list;
         }
-
-        #region Board Printing
-        public void PrintBoard(GameInfo gameInfo, bool isWhiteSide = true)
-        {
-            var rows = _boardPrinter.GetBoard(gameInfo.fen);
-            if (isWhiteSide)
-            {
-                var y = 7;
-                foreach (var row in rows)
-                {
-                    PrintRow(row, y);
-                    y--;
-                }
-            }
-
-            else
-            {
-                var y = 0;
-                for (var i = rows.Length - 1; i >= 0; i--)
-                {
-                    PrintRow(rows[i], y);
-                    y++;
-                }
-            }
-
-            WriteLine(" a b c d e f g h\n");
-        }
-
-        private void PrintRow(string row, int y)
-        {
-            foreach (var p in row)
-                Write($" {p}");
-            WriteLine($" {y + 1}");
-        }
-        #endregion Board Printing
     }
 }

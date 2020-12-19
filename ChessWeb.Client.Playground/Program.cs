@@ -17,12 +17,29 @@ namespace ChessWeb.Playground.Client
 
         private void Start()
         {
-            // HymeckAndRacotyScholarsMate();
+            // JoinRacoty();
+            // HymeckAndRacotyScholarsMate("2");
             // Look();
-            PrintLastGame();
+            // PrintLastGame();
             // PrintLastGame();
             // PrintCreateGame();
-            PrintJoinGame();
+            // PrintJoinGame();
+            PrintBoard();
+        }
+
+        private void PrintBoard()
+        {
+            var client = new ChessClient(user, password);
+
+            var game = client.GetGame("2");
+            var rows = client.BoardHandler.GetBoard(game.fen);
+            client.BoardHandler.PrintBoard(rows, true, Write);
+        }
+        
+        private void JoinRacoty()
+        {
+            var racotyClient = new ChessClient("Racoty", "racotypass");
+            racotyClient.Join("2", false);
         }
 
         private void PrintJoinGame()
